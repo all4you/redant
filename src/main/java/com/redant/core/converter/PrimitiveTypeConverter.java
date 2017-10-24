@@ -28,6 +28,13 @@ public final class PrimitiveTypeConverter extends AbstractSimpleTypeConverter {
 	@SuppressWarnings("unused")
 	protected Object doConvertValue(Object source, Class<?> toType, Object... params) {
 		/**
+		 * 如果是基础类型，则直接返回
+		 */
+		if (source != null && (!PrimitiveType.isPriType(source.getClass()) || !PrimitiveType.isPriType(toType))) {
+			return null;
+		}
+
+		/**
 		 * 如果都是数组类型，则构造数组
 		 */
 		if (source != null && source.getClass().isArray() && toType.isArray()) {
@@ -39,11 +46,6 @@ public final class PrimitiveTypeConverter extends AbstractSimpleTypeConverter {
 				Array.set(result, i, convert(Array.get(source, i),componentType, params));
 			}
 			return result;
-		}
-		
-		Class<?> vaClass = source.getClass();
-		if (source != null && (!PrimitiveType.isPriType(source.getClass()) || !PrimitiveType.isPriType(toType))) {
-			return null;
 		}
 		return doConvert(source, toType);
 	}

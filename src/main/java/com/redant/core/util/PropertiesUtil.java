@@ -33,14 +33,16 @@ public class PropertiesUtil {
 	 * @return
 	 */
 	private boolean propertiesLoaded(){
-		if(!propertiesLoaded){
-			do{
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}while(!propertiesLoaded);
+		int retryTime = 0;
+		int retryTimeout = 1000;
+		int sleep = 500;
+		while(!propertiesLoaded && retryTime<retryTimeout){
+			try {
+				Thread.sleep(sleep);
+				retryTime+=sleep;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		return propertiesLoaded;
 	}
@@ -68,21 +70,26 @@ public class PropertiesUtil {
 				propertiesUtil = new PropertiesUtil();
 				Properties properties = new Properties();
 				inputStream = PropertiesUtil.class.getResourceAsStream(propertiesPath);
-				properties.load(inputStream);
-				propertiesUtilsHolder.put(propertiesPath, propertiesUtil);
-				propertiesMap.put(propertiesUtil, properties);
+				if(inputStream!=null){
+					properties.load(inputStream);
+					propertiesUtilsHolder.put(propertiesPath, propertiesUtil);
+					propertiesMap.put(propertiesUtil, properties);
+
+					logger.info("PropertiesUtil instance init success.");
+					propertiesUtil.propertiesLoaded = true;
+				}
 			} catch (Exception e) {
 				logger.error("getInstance occur error,cause:",e);
 			} finally{
 				try {
-					inputStream.close();
+					if(inputStream!=null){
+						inputStream.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			logger.info("PropertiesUtil instance init success.");
     	}
-		propertiesUtil.propertiesLoaded = true;
     	return propertiesUtil;
     }
     
@@ -118,7 +125,7 @@ public class PropertiesUtil {
     	String value = getString(key);
     	int intValue;
     	try{
-    		intValue = Integer.valueOf(value);
+    		intValue = Integer.parseInt(value);
     	}catch(Exception e){
     		intValue = defaultValue;
     	}
@@ -134,7 +141,7 @@ public class PropertiesUtil {
     	String value = getString(key);
     	long longValue;
     	try{
-    		longValue = Long.valueOf(value);
+    		longValue = Long.parseLong(value);
     	}catch(Exception e){
     		longValue = defaultValue;
     	}

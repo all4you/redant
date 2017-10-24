@@ -27,67 +27,26 @@ import java.util.Set;
  */
 public class BeanHolder {
 
-    private static Logger logger = LoggerFactory.getLogger(BeanHolder.class);
+    private static final Logger logger = LoggerFactory.getLogger(BeanHolder.class);
 
     /**
      * 保存所有的bean，初始化过一次后不会改变
      */
-    private static Map<String,Object> beanHolderMap;
+    private Map<String,Object> beanHolderMap;
+
+    /**
+     * bean加载完毕的标志
+     */
+    private volatile boolean beanLoaded;
 
     /**
      * BeanHolder的实例(单例)
      */
     private static BeanHolder holder;
 
-    /**
-     * bean加载完毕的标志
-     */
-    private static volatile boolean beanLoaded;
-
     private BeanHolder(){
 
     }
-
-
-    /**
-     * 扫描指定package下指定的类，获取指定的注解
-     * @param packageName
-     * @param beanClass
-     * @param annotationClass
-     * @param <T>
-     * @return
-     */
-    private <T extends Bean> Map<String,T> getAnnotations(String packageName,Class<T> beanClass,Class<? extends Annotation> annotationClass){
-        Map<String,T> annotationClasses = new LinkedHashMap<String,T>();
-        try {
-            /**
-             * 扫描指定package下指定的类，并返回set
-             */
-            Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(packageName,annotationClass);
-
-            /**
-             * 遍历所有类，找出有beanClass注解的类，并封装到linkedHashMap里
-             */
-            for (Class<?> cls : classSet) {
-                T annotation = cls.getAnnotation(beanClass);
-                if (annotation != null) {
-                    try {
-                        if(annotationClasses.containsKey(annotation.name())){
-                            logger.warn("Duplicate annotation with name={}",annotation.name());
-                            continue;
-                        }
-                        annotationClasses.put(annotation.name(), (T)cls.newInstance());
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error("Put annotation into map error,cause:",e);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("getAnnotations error,cause:",e);
-        }
-        return annotationClasses;
-    }
-
 
 
     /**
@@ -112,11 +71,11 @@ public class BeanHolder {
                         name = resource.name();
                         value = beanHolderMap.get(name);
                     }else{ //如果当前注解没有指定name属性,则根据类型进行匹配
-                        for(String key : beanHolderMap.keySet()){
-                            //判断当前属性所属的类型是否在配置文件中存在
-                            if(descriptor.getPropertyType().isAssignableFrom(beanHolderMap.get(key).getClass())){
+                        for(Map.Entry<String,Object>  entry : beanHolderMap.entrySet()){
+                            //判断当前属性所属的类型是否在beanHolderMap中存在
+                            if(descriptor.getPropertyType().isAssignableFrom(entry.getValue().getClass())){
                                 //获取类型匹配的实例对象
-                                value = beanHolderMap.get(key);
+                                value = entry.getValue();
                                 break;
                             }
                         }
@@ -131,6 +90,8 @@ public class BeanHolder {
             logger.info("propertyAnnotation error,cause:",e);
         }
     }
+
+
 
     /**
      * 处理在字段上的注解
@@ -149,11 +110,11 @@ public class BeanHolder {
                         name = resource.name();
                         value = beanHolderMap.get(name);
                     }else{
-                        for(String key : beanHolderMap.keySet()){
+                        for(Map.Entry<String,Object>  entry : beanHolderMap.entrySet()){
                             //判断当前属性所属的类型是否在配置文件中存在
-                            if(field.getType().isAssignableFrom(beanHolderMap.get(key).getClass())){
+                            if(field.getType().isAssignableFrom(entry.getValue().getClass())){
                                 //获取类型匹配的实例对象
-                                value = beanHolderMap.get(key);
+                                value = entry.getValue();
                                 break;
                             }
                         }
@@ -170,22 +131,18 @@ public class BeanHolder {
     }
 
 
-
-
     /**
      * bean是否加载完毕
      * @return
      */
     private boolean beanLoaded(){
-        if(!beanLoaded){
-            do{
-                initBeans();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }while(!beanLoaded);
+        while(!beanLoaded){
+            initBeans();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return beanLoaded;
     }
@@ -241,6 +198,8 @@ public class BeanHolder {
                     }else{
                         logger.warn("No bean classes scanned!");
                     }
+                } catch (RuntimeException e) {
+                    throw e;
                 } catch (Exception e) {
                     logger.error("Init bean classes error,cause:",e);
                 }
@@ -260,8 +219,8 @@ public class BeanHolder {
     public void annotationInject(){
         if(beanLoaded()){
             logger.info("Start annotationInject...");
-            for(String beanName : beanHolderMap.keySet()){
-                Object bean = beanHolderMap.get(beanName);
+            for(Map.Entry<String,Object>  entry : beanHolderMap.entrySet()){
+                Object bean = entry.getValue();
                 if(bean!=null){
                     propertyAnnotation(bean);
                     fieldAnnotation(bean);

@@ -176,9 +176,9 @@ public class ProxyInvocation {
 					}
 
 					Map<String, String> valueMap = new HashMap<String, String>(paramMap.size());
-					for(String paramKey : paramMap.keySet()){
-						List<String> valueList = paramMap.get(paramKey);
-						valueMap.put(paramKey, valueList.get(0));
+					for(Map.Entry<String, List<String>> entry : paramMap.entrySet()){
+						List<String> valueList = entry.getValue();
+						valueMap.put(entry.getKey(), valueList.get(0));
 					}
 					value = valueMap;
 				}else{
@@ -289,10 +289,10 @@ public class ProxyInvocation {
 
 					}else if(Map.class.isAssignableFrom(valueType)){
 						Map<String, String> tempMap = (Map<String, String>) value;
-						for(String tempKey : tempMap.keySet()){
+						for(Map.Entry<String, String> entry : tempMap.entrySet()){
 							List<String> tempList = new ArrayList<String>();
-							tempList.add(tempMap.get(tempKey));
-							paramMap.put(tempKey, tempList);
+							tempList.add(entry.getValue());
+							paramMap.put(entry.getKey(), tempList);
 						}
 					}
 				}

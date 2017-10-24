@@ -28,28 +28,28 @@ import java.util.Set;
  */
 public class RouterHolder {
 
-    private final static Logger routerLogger = LoggerFactory.getLogger("routerMsgLog");
+    private static final Logger routerLogger = LoggerFactory.getLogger("routerMsgLog");
 
     /**
      * 保存所有的RouterController的代理类
      */
-    private static Map<String,ControllerProxy> proxyMap;
+    private Map<String,ControllerProxy> proxyMap;
 
     /**
      * 所有的路由信息
      */
-    private static Router<RenderType> router;
+    private Router<RenderType> router;
+
+    /**
+     * Router加载完毕的标志
+     */
+    private volatile boolean routerLoaded;
 
     /**
      * RouterHolder的实例(单例)
      */
     private static RouterHolder holder;
 
-
-    /**
-     * Router加载完毕的标志
-     */
-    private static volatile boolean routerLoaded;
 
     private RouterHolder(){
 
@@ -140,6 +140,8 @@ public class RouterHolder {
                     } else {
                         routerLogger.warn("No RouterController Scanned!");
                     }
+                } catch (RuntimeException e) {
+                    throw e;
                 } catch (Exception e) {
                     routerLogger.error("Init controller error,cause:", e);
                 }
