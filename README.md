@@ -1,8 +1,12 @@
-# redant
-基于netty的一个轻量级http框架，已实现以下功能：
-1、Bean的统一、注解式管理
-2、Autowired注解实现对象的自动注入
-3、RouterController、RouterMapping、RouterParam注解实现路由的自定义
-4、http请求的路由控制
-5、http请求的参数转换（基础类型、Map、List、JavaBean）
-6、返回结果Render接口定义，目前支持返回html、xml、txt、json等数据
+# 欢迎使用RedAnt
+
+
+**RedAnt**是一款基于netty的轻量级的http框架。特点概述：
+ 
+- **对象管理** ：通过Bean注解，实现对象的全局、统一管理；
+- **自动注入** ：通过Autowired注解，实现Bean对象的自动注入；
+- **自由路由** ：使用RouterController、RouterMapping、RouterParam注解实现路由的自定义；
+- **参数转换** ：通过TypeConverter接口，实现http请求的参数转换（目前支持将参数转换为：基础类型、Map、List、JavaBean）；
+- **结果渲染** ：通过自定义的Render接口，对返回结果进行渲染，目前支持渲染html、xml、plain、json等数据。
+
+-------------------
