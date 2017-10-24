@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>出错了</title>
+</head>
+<body>
+<div>
+    <p>出错啦！错误原因：</p>
+    <p>$errorMessage</p>
+</div>
+</body>
+</html>
