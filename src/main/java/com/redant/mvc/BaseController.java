@@ -1,13 +1,13 @@
 package com.redant.mvc;
 
 
-import com.redant.core.constants.CommonConstants;
-import com.redant.core.enums.RequestMethod;
+import com.redant.common.constants.CommonConstants;
+import com.redant.common.enums.RequestMethod;
 import com.redant.core.render.BaseRender;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
-import com.redant.core.util.HttpRenderUtil;
+import com.redant.common.util.HttpRenderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

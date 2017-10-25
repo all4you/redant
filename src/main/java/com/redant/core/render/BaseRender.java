@@ -1,6 +1,6 @@
 package com.redant.core.render;
 
-import com.redant.core.util.HttpRenderUtil;
+import com.redant.common.util.HttpRenderUtil;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

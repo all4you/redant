@@ -1,6 +1,6 @@
 package com.redant.core.router.annotation;
 
-import com.redant.core.enums.RequestMethod;
+import com.redant.common.enums.RequestMethod;
 import com.redant.core.render.RenderType;
 
 import java.lang.annotation.ElementType;

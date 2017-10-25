@@ -2,13 +2,13 @@ package com.redant.core.router;
 
 import com.redant.core.bean.BeanContext;
 import com.redant.core.bean.annotation.Bean;
-import com.redant.core.constants.CommonConstants;
-import com.redant.core.enums.RequestMethod;
+import com.redant.common.constants.CommonConstants;
+import com.redant.common.enums.RequestMethod;
 import com.redant.core.invocation.ControllerProxy;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
-import com.redant.core.util.ThreadUtil;
+import com.redant.common.util.ThreadUtil;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.commons.collections.CollectionUtils;

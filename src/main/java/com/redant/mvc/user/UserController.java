@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
-import com.redant.core.enums.RequestMethod;
+import com.redant.common.enums.RequestMethod;
 import com.redant.core.render.BaseRender;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;

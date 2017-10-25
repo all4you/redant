@@ -7,13 +7,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveType;
 import com.redant.core.converter.PrimitiveTypeConverter;
-import com.redant.core.enums.ContentType;
-import com.redant.core.exception.InvocationException;
-import com.redant.core.exception.ValidationException;
+import com.redant.common.enums.ContentType;
+import com.redant.common.exception.InvocationException;
+import com.redant.common.exception.ValidationException;
 import com.redant.core.render.Render;
 import com.redant.core.router.annotation.RouterParam;
-import com.redant.core.util.GenericsUtil;
-import com.redant.core.util.ValidateUtil;
+import com.redant.common.util.GenericsUtil;
+import com.redant.common.util.ValidateUtil;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import net.sf.cglib.reflect.FastClass;
@@ -307,7 +307,7 @@ public class ProxyInvocation {
 		}
 
 		private String getContentType(HttpHeaders headers){
-			String contentType = headers.get(com.redant.core.constants.HttpHeaders.CONTENT_TYPE).toString();
+			String contentType = headers.get(com.redant.common.constants.HttpHeaders.CONTENT_TYPE).toString();
 			String[] list = contentType.split(";");
 			return list[0];
 		}

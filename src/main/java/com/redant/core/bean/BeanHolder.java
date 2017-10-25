@@ -3,8 +3,8 @@ package com.redant.core.bean;
 
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
-import com.redant.core.constants.CommonConstants;
-import com.redant.core.util.ThreadUtil;
+import com.redant.common.constants.CommonConstants;
+import com.redant.common.util.ThreadUtil;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;

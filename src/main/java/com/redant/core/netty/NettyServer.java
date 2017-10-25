@@ -1,6 +1,6 @@
 package com.redant.core.netty;
 
-import com.redant.core.constants.CommonConstants;
+import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
