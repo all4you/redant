@@ -2,23 +2,22 @@ package com.redant.mvc.user;
 
 import com.redant.core.bean.annotation.Bean;
 import com.redant.mappers.UserMapper;
+import com.redant.mybatissist.mapper.Mapper;
 import com.redant.mybatissist.sqlsession.SqlSessionContext;
 
 @Bean(name="userService")
 public class UserServiceImpl implements IUserService{
 
-
     /**
-     * UserMapper
+     * mapper
      */
-    private UserMapper userMapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
+    private Mapper mapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
 
     @Override
     public UserBean selectUserInfo(Integer id) {
         UserBean user = new UserBean();
         user.setId(id);
-        user.setUserName("fakeName");
-        return user;
+        return (UserBean)mapper.selectOne(UserBean.class,user);
     }
 
     @Override
@@ -26,7 +25,7 @@ public class UserServiceImpl implements IUserService{
         if(bean==null){
             bean = new UserBean();
         }
-        return userMapper.selectCount(bean);
+        return mapper.selectCount(UserBean.class,bean);
     }
 
 }

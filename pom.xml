@@ -13,9 +13,9 @@
     <properties>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
-        <project-name>redant</project-name>
-        <project-version>1.0.0-SNAPSHOT</project-version>
-        <slf4j.version>1.7.7</slf4j.version>
+        <project.name>redant</project.name>
+        <project.version>1.0.0-SNAPSHOT</project.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.1.7</logback.version>
         <fastjson.version>1.2.13.sec01</fastjson.version>
         <netty.version>4.1.9.Final</netty.version>
@@ -25,6 +25,8 @@
         <hutool.version>3.1.0</hutool.version>
         <javassist.version>3.20.0-GA</javassist.version>
         <velocity.version>1.7</velocity.version>
+        <mysql-connector.version>5.1.38</mysql-connector.version>
+        <mybatis.version>3.4.4</mybatis.version>
     </properties>
 
 
@@ -121,6 +123,21 @@
             <artifactId>velocity</artifactId>
             <version>${velocity.version}</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -143,6 +160,12 @@
                 <includes>
                     <include>**/*.vm</include>
                 </includes>
+            </resource>
+            <resource>
+                <directory>src/test/java</directory>
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
             </resource>
         </resources>
     </build>
