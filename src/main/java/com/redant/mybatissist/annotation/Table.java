@@ -27,7 +27,7 @@ public @interface Table {
     String alias();
 
     /**
-     * 命名规则
+     * 类名转数据库表名的命名规则
      * @return
      */
     NameStyle style() default NameStyle.CAMEL_HUMP;

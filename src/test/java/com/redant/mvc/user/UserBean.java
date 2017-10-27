@@ -15,6 +15,8 @@ public class UserBean extends BaseBean {
 
     private String userName;
 
+    private String password;
+
     public Integer getId() {
         return id;
     }
@@ -31,4 +33,11 @@ public class UserBean extends BaseBean {
         this.userName = userName;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

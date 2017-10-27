@@ -11,13 +11,13 @@ public class UserServiceImpl implements IUserService{
     /**
      * mapper
      */
-    private Mapper mapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
+    private UserMapper mapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
 
     @Override
     public UserBean selectUserInfo(Integer id) {
         UserBean user = new UserBean();
         user.setId(id);
-        return (UserBean)mapper.selectOne(UserBean.class,user);
+        return mapper.selectOne(user,UserBean.class);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class UserServiceImpl implements IUserService{
         if(bean==null){
             bean = new UserBean();
         }
-        return mapper.selectCount(UserBean.class,bean);
+        return mapper.selectCount(bean,UserBean.class);
     }
 
 }

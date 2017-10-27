@@ -3,26 +3,34 @@ package com.redant;
 import com.redant.mappers.UserMapper;
 import com.redant.mvc.user.UserBean;
 import com.redant.mybatissist.mapper.Mapper;
+import com.redant.mybatissist.mapper.SelectMapper;
 import com.redant.mybatissist.sqlsession.SqlSessionContext;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class MapperTest {
 
     private static Logger logger = LoggerFactory.getLogger(MapperTest.class);
 
-    private Mapper mapper;
+    private SqlSession sqlSession;
+
+    private UserMapper mapper;
 
     @Before
     public void beforeTest(){
-        mapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
+        sqlSession = SqlSessionContext.getSqlSession();
+        mapper = sqlSession.getMapper(UserMapper.class);
     }
 
     @After
     public void afterTest(){
+        sqlSession.close();
         mapper = null;
     }
 
@@ -30,7 +38,7 @@ public class MapperTest {
     public void testSelectCount(){
         UserBean bean = new UserBean();
         bean.setUserName("wh");
-        int result = mapper.selectCount(UserBean.class,null);
+        int result = mapper.selectCount(null,UserBean.class);
         logger.info("result:{}",result);
     }
 
@@ -38,7 +46,23 @@ public class MapperTest {
     public void testSelectOne(){
         UserBean bean = new UserBean();
         bean.setUserName("wh");
-        Object result = mapper.selectOne(UserBean.class,bean);
+        bean.setId(1);
+        UserBean result = mapper.selectOne(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
+
+    @Test
+    public void testSelectList(){
+        UserBean bean = new UserBean();
+        bean.setUserName("wh");
+        bean.setId(1);
+        List<UserBean> result = mapper.selectList(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
+
+    @Test
+    public void testSelectAll(){
+        List<UserBean> result = mapper.selectAll(UserBean.class);
         logger.info("result:{}",result);
     }
 

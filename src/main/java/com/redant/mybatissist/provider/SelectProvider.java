@@ -6,7 +6,6 @@ import com.redant.mybatissist.enums.QueryStyle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.jdbc.SQL;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +19,63 @@ public class SelectProvider {
 
 
     /**
+     * 构造查询列
+     * @param beanClass
+     * @param alias
+     * @return
+     */
+    private String makeQueryColumns(Class<?> beanClass,String alias){
+        // 获取所有要查询的列
+        List<String> columnList = ProviderHelper.getColumns(beanClass);
+        StringBuilder columns = new StringBuilder();
+        for(int i=0,s=columnList.size();i<s;i++){
+            columns.append(alias+ProviderHelper.DOT+columnList.get(i));
+            if(i<s-1){
+                columns.append(",");
+            }
+        }
+        return columns.toString();
+    }
+
+    /**
+     *
+     * @param parameters
+     * @return
+     */
+    private String createSql(Map<String, Object> parameters){
+        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+        String tableName = ProviderHelper.getTableName(beanClass);
+        String alias = ProviderHelper.getTableAlias(beanClass);
+        String columns = makeQueryColumns(beanClass,alias);
+        List<QueryCondition> queryConditions = ProviderHelper.getQueryConditions(bean,ProviderHelper.PARAM_RECORD);
+
+        String sql = new SQL(){{
+            SELECT(columns);
+            FROM(tableName+alias);
+            if(CollectionUtils.isNotEmpty(queryConditions)) {
+                for (QueryCondition condition : queryConditions) {
+                    if (condition.getQueryStyle() == QueryStyle.OR) {
+                        OR();
+                    }
+                    String queryModel = condition.getQueryModel() == QueryModel.EQUAL ? " = " : " LIKE ";
+                    WHERE(alias+ProviderHelper.DOT+condition.getColumn()+queryModel+condition.getProp());
+                }
+            }
+        }}.toString();
+        return sql;
+    }
+
+
+    //===============================================================
+
+    /**
      * 查询记录数
      * @param parameters
      * @return
      */
     public String selectCount(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_BEAN_CLASS);
+        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
         Object bean = parameters.get(ProviderHelper.PARAM_RECORD);
         String tableName = ProviderHelper.getTableName(beanClass);
         String alias = ProviderHelper.getTableAlias(beanClass);
@@ -50,42 +100,50 @@ public class SelectProvider {
         return sql;
     }
 
+
     /**
      * 查询单条记录
      * @param parameters
      * @return
      */
     public String selectOne(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_BEAN_CLASS);
-        Object bean = parameters.get(ProviderHelper.PARAM_RECORD);
-        String tableName = ProviderHelper.getTableName(beanClass);
-        String alias = ProviderHelper.getTableAlias(beanClass);
-        // 获取所有要查询的列
-        List<String> columns = ProviderHelper.getColumns(beanClass);
-        StringBuilder sb = new StringBuilder();
-        for(int i=0,s=columns.size();i<s;i++){
-            sb.append(alias+ProviderHelper.DOT+columns.get(i));
-            if(i<s-1){
-                sb.append(",");
-            }
-        }
-        List<QueryCondition> queryConditions = ProviderHelper.getQueryConditions(bean,ProviderHelper.PARAM_RECORD);
+        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
 
-        String sql = new SQL(){{
-            SELECT(sb.toString());
-            FROM(tableName+alias);
-            if(CollectionUtils.isNotEmpty(queryConditions)) {
-                for (QueryCondition condition : queryConditions) {
-                    if (condition.getQueryStyle() == QueryStyle.OR) {
-                        OR();
-                    }
-                    String queryModel = condition.getQueryModel() == QueryModel.EQUAL ? " = " : " LIKE ";
-                    WHERE(alias+ProviderHelper.DOT+condition.getColumn()+queryModel+condition.getProp());
-                }
-            }
-        }}.toString();
+        String sql = createSql(parameters);
+        sql += "\nLIMIT 1";
 
         ProviderHelper.printSql(beanClass,bean,"selectOne",sql);
+        return sql;
+    }
+
+    /**
+     * 查询多条记录
+     * @param parameters
+     * @return
+     */
+    public String selectList(Map<String, Object> parameters){
+        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+
+        String sql = createSql(parameters);
+
+        ProviderHelper.printSql(beanClass,bean,"selectList",sql);
+        return sql;
+    }
+
+    /**
+     * 查询所有记录
+     * @param parameters
+     * @return
+     */
+    public String selectAll(Map<String, Object> parameters){
+        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+
+        String sql = createSql(parameters);
+
+        ProviderHelper.printSql(beanClass,bean,"selectAll",sql);
         return sql;
     }
 

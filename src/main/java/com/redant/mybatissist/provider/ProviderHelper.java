@@ -48,6 +48,12 @@ public class ProviderHelper {
     private static final String PROP_RIGHT = "}";
 
     /**
+     * AS
+     */
+    private static final String AS = " as ";
+
+
+    /**
      * 点号
      */
     public static final String DOT = ".";
@@ -60,7 +66,7 @@ public class ProviderHelper {
     });
 
 
-    public static final String PARAM_BEAN_CLASS = "beanClass";
+    public static final String PARAM_RESULT_TYPE = "resultType";
 
 
     public static final String PARAM_RECORD = "record";
@@ -166,6 +172,10 @@ public class ProviderHelper {
                 column = StringUtil.isNotBlank(c.name())?c.name():StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
             }else{
                 column = StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
+            }
+            // 此处要处理为 select user_name as userName,否则结果转换为bean时无法找到userName属性
+            if(!column.equals(field.getName())){
+                column = column+AS+field.getName();
             }
             columns.add(column);
         }
