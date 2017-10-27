@@ -1,4 +1,4 @@
-package com.redant.mybatissist.interceptor;
+package com.mybatissist.interceptor;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;

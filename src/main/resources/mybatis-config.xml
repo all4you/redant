@@ -40,7 +40,7 @@
     </typeAliases>
 
     <plugins>
-        <plugin interceptor="com.redant.mybatissist.interceptor.ResultTypeInterceptor"/>
+        <plugin interceptor="com.mybatissist.interceptor.ResultTypeInterceptor"/>
     </plugins>
 
     <environments default="development">

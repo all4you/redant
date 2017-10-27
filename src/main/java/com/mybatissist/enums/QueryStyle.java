@@ -1,4 +1,4 @@
-package com.redant.mybatissist.enums;
+package com.mybatissist.enums;
 
 /**
  * 查询方式

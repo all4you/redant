@@ -1,4 +1,4 @@
-package com.redant.mybatissist.annotation;
+package com.mybatissist.annotation;
 
 
 import java.lang.annotation.ElementType;

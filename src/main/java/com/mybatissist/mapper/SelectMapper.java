@@ -1,9 +1,8 @@
-package com.redant.mybatissist.mapper;
+package com.mybatissist.mapper;
 
-import com.redant.mybatissist.provider.ProviderHelper;
-import com.redant.mybatissist.provider.SqlProvider;
+import com.mybatissist.provider.ProviderHelper;
+import com.mybatissist.provider.SqlProvider;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=SqlProvider.class,method="selectCount")
-    int selectCount(@Param(ProviderHelper.PARAM_RECORD) T record,@Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
+    int selectCount(@Param(ProviderHelper.PARAM_RECORD) T record, @Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
 
     /**
      * 查询单条记录

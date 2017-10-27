@@ -1,4 +1,4 @@
-package com.redant.mybatissist.mapper;
+package com.mybatissist.mapper;
 
 /**
  * 更新接口

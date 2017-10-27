@@ -1,4 +1,4 @@
-package com.redant.mybatissist.provider;
+package com.mybatissist.provider;
 
 /**
  * SQL提供者

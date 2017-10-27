@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.redant.mybatissist.enums;
+package com.mybatissist.enums;
 
 /**
  * 命名方式

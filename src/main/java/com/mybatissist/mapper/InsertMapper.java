@@ -1,4 +1,4 @@
-package com.redant.mybatissist.mapper;
+package com.mybatissist.mapper;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
-package com.redant.mybatissist.provider;
+package com.mybatissist.provider;
 
 
-import com.redant.mybatissist.enums.QueryModel;
-import com.redant.mybatissist.enums.QueryStyle;
+import com.mybatissist.enums.QueryModel;
+import com.mybatissist.enums.QueryStyle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.jdbc.SQL;
 

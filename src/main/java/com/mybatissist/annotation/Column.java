@@ -1,8 +1,8 @@
-package com.redant.mybatissist.annotation;
+package com.mybatissist.annotation;
 
 
-import com.redant.mybatissist.enums.QueryModel;
-import com.redant.mybatissist.enums.QueryStyle;
+import com.mybatissist.enums.QueryModel;
+import com.mybatissist.enums.QueryStyle;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

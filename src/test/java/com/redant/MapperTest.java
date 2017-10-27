@@ -2,9 +2,7 @@ package com.redant;
 
 import com.redant.mappers.UserMapper;
 import com.redant.mvc.user.UserBean;
-import com.redant.mybatissist.mapper.Mapper;
-import com.redant.mybatissist.mapper.SelectMapper;
-import com.redant.mybatissist.sqlsession.SqlSessionContext;
+import com.mybatissist.sqlsession.SqlSessionContext;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;

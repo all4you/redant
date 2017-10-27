@@ -1,7 +1,7 @@
-package com.redant.mybatissist.annotation;
+package com.mybatissist.annotation;
 
 
-import com.redant.mybatissist.enums.NameStyle;
+import com.mybatissist.enums.NameStyle;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

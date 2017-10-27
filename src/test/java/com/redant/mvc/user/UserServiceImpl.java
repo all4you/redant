@@ -2,8 +2,7 @@ package com.redant.mvc.user;
 
 import com.redant.core.bean.annotation.Bean;
 import com.redant.mappers.UserMapper;
-import com.redant.mybatissist.mapper.Mapper;
-import com.redant.mybatissist.sqlsession.SqlSessionContext;
+import com.mybatissist.sqlsession.SqlSessionContext;
 
 @Bean(name="userService")
 public class UserServiceImpl implements IUserService{

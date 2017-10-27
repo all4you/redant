@@ -1,4 +1,4 @@
-package com.redant.mybatissist.sqlsession;
+package com.mybatissist.sqlsession;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;

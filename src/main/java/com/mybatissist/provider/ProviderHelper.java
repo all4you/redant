@@ -1,13 +1,13 @@
-package com.redant.mybatissist.provider;
+package com.mybatissist.provider;
 
 
-import com.redant.mybatissist.annotation.Column;
-import com.redant.mybatissist.annotation.Id;
-import com.redant.mybatissist.annotation.Table;
-import com.redant.mybatissist.enums.NameStyle;
-import com.redant.mybatissist.enums.QueryModel;
-import com.redant.mybatissist.enums.QueryStyle;
-import com.redant.mybatissist.util.StringUtil;
+import com.mybatissist.annotation.Column;
+import com.mybatissist.annotation.Id;
+import com.mybatissist.annotation.Table;
+import com.mybatissist.enums.NameStyle;
+import com.mybatissist.enums.QueryModel;
+import com.mybatissist.enums.QueryStyle;
+import com.mybatissist.util.StringUtil;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

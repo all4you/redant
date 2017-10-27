@@ -1,7 +1,7 @@
 package com.redant.mvc.user;
 
 import com.redant.core.bean.BaseBean;
-import com.redant.mybatissist.annotation.Table;
+import com.mybatissist.annotation.Table;
 
 /**
  * UserBean

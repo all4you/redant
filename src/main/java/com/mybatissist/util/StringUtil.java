@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-package com.redant.mybatissist.util;
+package com.mybatissist.util;
 
 
-import com.redant.mybatissist.enums.NameStyle;
+import com.mybatissist.enums.NameStyle;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

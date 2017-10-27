@@ -1,4 +1,4 @@
-package com.redant.mybatissist.mapper;
+package com.mybatissist.mapper;
 
 /**
  * 基础Mapper，其他Mapper都继承自该接口

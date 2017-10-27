@@ -1,7 +1,7 @@
 package com.redant.mappers;
 
 import com.redant.mvc.user.UserBean;
-import com.redant.mybatissist.mapper.Mapper;
+import com.mybatissist.mapper.Mapper;
 
 /**
  * UserMapper
