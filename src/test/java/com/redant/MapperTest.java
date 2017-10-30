@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MapperTest {
@@ -40,7 +41,7 @@ public class MapperTest {
     public void testSelectCount(){
         UserBean bean = new UserBean();
         bean.setUserName("wh");
-        int result = mapper.selectCount(null,UserBean.class);
+        Integer result = mapper.selectCount(null,UserBean.class);
         logger.info("result:{}",result);
     }
 
@@ -97,7 +98,66 @@ public class MapperTest {
         logger.info("result:{}",result);
     }
 
+    //================ Update
+
+    @Test
+    public void testUpdateByPrimaryKey(){
+        UserBean bean = new UserBean();
+        bean.setId(12);
+        bean.setUserName("tx5");
+        bean.setPassword("3553er");
+        int result = mapper.updateByPrimaryKey(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
+
+    @Test
+    public void testUpdateByPrimaryKeySelective(){
+        UserBean bean = new UserBean();
+        bean.setId(12);
+        bean.setUserName("tx5464");
+        int result = mapper.updateByPrimaryKeySelective(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
+
+    @Test
+    public void testUpdateByKey(){
+        UserBean bean = new UserBean();
+        bean.setId(12);
+        bean.setUserName("tx12");
+        List<String> keys = Arrays.asList(new String[]{"id"});
+        int result = mapper.updateByKey(bean,UserBean.class,keys);
+        logger.info("result:{}",result);
+    }
 
 
+    @Test
+    public void testUpdateByKeySelective(){
+        UserBean bean = new UserBean();
+        bean.setUserName("tx12");
+        bean.setPassword("ttt");
+        List<String> keys = Arrays.asList(new String[]{"userName"});
+        int result = mapper.updateByKeySelective(bean,UserBean.class,keys);
+        logger.info("result:{}",result);
+    }
+
+
+    //================ Delete
+
+    @Test
+    public void testDeleteByPrimaryKey(){
+        UserBean bean = new UserBean();
+        bean.setId(1);
+        int result = mapper.deleteByPrimaryKey(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
+
+    @Test
+    public void testDeleteBySelective(){
+        UserBean bean = new UserBean();
+        bean.setUserName("tx3");
+        bean.setPassword("werwe");
+        int result = mapper.deleteBySelective(bean,UserBean.class);
+        logger.info("result:{}",result);
+    }
 
 }

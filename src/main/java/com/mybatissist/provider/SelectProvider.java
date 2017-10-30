@@ -43,20 +43,35 @@ public class SelectProvider {
      * @param parameters
      * @return
      */
-    private String createSql(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+    private String createSql(Map<String, Object> parameters,boolean selectCount,boolean selectOne,String methodName){
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_BEAN_CLASS);
         Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
         String tableName = ProviderHelper.getTableName(beanClass);
         String alias = ProviderHelper.getTableAlias(beanClass);
-        String columns = makeQueryColumns(beanClass,alias);
+        final String pk;
+        final String columns;
+        if(selectCount){
+            pk = ProviderHelper.getPrimaryKey(beanClass);
+            columns = "";
+        }else{
+            pk = "";
+            columns = makeQueryColumns(beanClass,alias);
+        }
         List<ColumnProp> columnProps = ProviderHelper.getColumnProps(bean,ProviderConstants.PARAM_RECORD);
 
         String sql = new SQL(){{
-            SELECT(columns);
+            if(selectCount){
+                SELECT("COUNT("+alias+ProviderConstants.DOT+pk+")");
+            }else{
+                SELECT(columns);
+            }
             FROM(tableName+alias);
             if(CollectionUtils.isNotEmpty(columnProps)) {
                 for (ColumnProp columnProp : columnProps) {
-                    if (columnProp.getQueryStyle() == QueryStyle.OR) {
+                    if(columnProp.getQueryStyle() == QueryStyle.OR){
                         OR();
                     }
                     String queryModel = columnProp.getQueryModel() == QueryModel.EQUAL ? " = " : " LIKE ";
@@ -64,6 +79,10 @@ public class SelectProvider {
                 }
             }
         }}.toString();
+        if(selectOne){
+            sql += ProviderConstants.LIMIT_1;
+        }
+        ProviderHelper.printSql(beanClass,bean,methodName,sql);
         return sql;
     }
 
@@ -76,32 +95,7 @@ public class SelectProvider {
      * @return
      */
     public String selectCount(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-        String tableName = ProviderHelper.getTableName(beanClass);
-        String alias = ProviderHelper.getTableAlias(beanClass);
-        String pk = ProviderHelper.getPrimaryKey(beanClass);
-        List<ColumnProp> columnProps = ProviderHelper.getColumnProps(bean, ProviderConstants.PARAM_RECORD);
-
-        String sql = new SQL(){{
-            SELECT("COUNT("+alias+ProviderConstants.DOT+pk+")");
-            FROM(tableName+alias);
-            if(CollectionUtils.isNotEmpty(columnProps)){
-                for(ColumnProp columnProp : columnProps){
-                    if(columnProp.getQueryStyle()==QueryStyle.OR){
-                        OR();
-                    }
-                    String queryModel = columnProp.getQueryModel()==QueryModel.EQUAL?" = ":" LIKE ";
-                    WHERE(alias+ProviderConstants.DOT+columnProp.getColumn()+queryModel+columnProp.getProp());
-                }
-            }
-        }}.toString();
-
-        ProviderHelper.printSql(beanClass,bean,"selectCount",sql);
-        return sql;
+        return createSql(parameters,true,false,"selectCount");
     }
 
 
@@ -111,17 +105,7 @@ public class SelectProvider {
      * @return
      */
     public String selectOne(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-
-        String sql = createSql(parameters);
-        sql += ProviderConstants.LIMIT_1;
-
-        ProviderHelper.printSql(beanClass,bean,"selectOne",sql);
-        return sql;
+        return createSql(parameters,false,true,"selectOne");
     }
 
     /**
@@ -130,16 +114,7 @@ public class SelectProvider {
      * @return
      */
     public String selectList(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-
-        String sql = createSql(parameters);
-
-        ProviderHelper.printSql(beanClass,bean,"selectList",sql);
-        return sql;
+        return createSql(parameters,false,false,"selectList");
     }
 
     /**
@@ -148,16 +123,7 @@ public class SelectProvider {
      * @return
      */
     public String selectAll(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-
-        String sql = createSql(parameters);
-
-        ProviderHelper.printSql(beanClass,bean,"selectAll",sql);
-        return sql;
+        return createSql(parameters,false,false,"selectAll");
     }
 
 }

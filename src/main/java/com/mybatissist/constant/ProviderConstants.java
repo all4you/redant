@@ -60,7 +60,13 @@ public class ProviderConstants {
     /**
      * 返回类型
      */
-    public static final String PARAM_RESULT_TYPE = "resultType";
+    public static final String PARAM_BEAN_CLASS = "beanClass";
+
+
+    /**
+     * 查询key
+     */
+    public static final String PARAM_KEYS = "keys";
 
 
     /**

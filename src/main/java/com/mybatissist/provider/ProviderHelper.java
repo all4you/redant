@@ -18,7 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 基础方法提供者
@@ -71,8 +73,8 @@ public class ProviderHelper {
      * @return
      */
     public static boolean parametersValid(Map<String, Object> parameters){
-        if(!parameters.containsKey(ProviderConstants.PARAM_RESULT_TYPE) || null==parameters.get(ProviderConstants.PARAM_RESULT_TYPE)){
-            throw new InvalidProviderParamException("Must provide @Param(\""+ProviderConstants.PARAM_RESULT_TYPE+"\")");
+        if(!parameters.containsKey(ProviderConstants.PARAM_BEAN_CLASS) || null==parameters.get(ProviderConstants.PARAM_BEAN_CLASS)){
+            throw new InvalidProviderParamException("Must provide @Param(\""+ProviderConstants.PARAM_BEAN_CLASS +"\")");
         }
         return true;
     }
@@ -239,6 +241,41 @@ public class ProviderHelper {
         }
         return columnProps;
     }
+
+    /**
+     * 根据指定的keys获取条件
+     * @param bean
+     * @param prefix
+     * @return
+     */
+    public static List<ColumnProp> getConditions(Object bean, String prefix,List<String> keys){
+        List<ColumnProp> columnProps = new ArrayList<ColumnProp>();
+        if(bean==null || CollectionUtils.isEmpty(keys)){
+            return columnProps;
+        }
+        try{
+            List<Field> beanFields = getFields(bean.getClass());
+            for (Field field : beanFields) {
+                field.setAccessible(true);
+                if(!keys.contains(field.getName())){
+                    continue;
+                }
+                Object val = field.get(bean);
+                if(val==null){
+                    continue;
+                }
+                ColumnProp columnProp = parseColumnProp(field,prefix);
+                if(columnProp ==null){
+                    continue;
+                }
+                columnProps.add(columnProp);
+            }
+        }catch (Exception e){
+            logger.error("getColumnProps error,cause:",e);
+        }
+        return columnProps;
+    }
+
 
     public static void printSql(Class<?> beanClass,Object bean,String methodName,String sql){
         String param;

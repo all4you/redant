@@ -22,7 +22,7 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectCount")
-    int selectCount(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    Integer selectCount(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
     /**
      * 查询单条记录
@@ -31,7 +31,7 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectOne")
-    T selectOne(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    T selectOne(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
     /**
      * 查询列表
@@ -40,7 +40,7 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectList")
-    List<T> selectList(@Param(ProviderConstants.PARAM_RECORD) Object record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    List<T> selectList(@Param(ProviderConstants.PARAM_RECORD) Object record,@Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
     /**
      * 查询所有记录
@@ -48,6 +48,6 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectAll")
-    List<T> selectAll(@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    List<T> selectAll(@Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
 }

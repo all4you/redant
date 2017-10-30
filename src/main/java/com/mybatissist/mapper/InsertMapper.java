@@ -22,7 +22,7 @@ public interface InsertMapper<T> {
      */
     @Options(useGeneratedKeys=true,keyProperty=ProviderConstants.PARAM_RECORD+".id")
     @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insert")
-    int insert(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    int insert(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
     /**
      * 插入单条记录
@@ -32,7 +32,7 @@ public interface InsertMapper<T> {
      * @return
      */
     @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insertWithId")
-    int insertWithId(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    int insertWithId(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
 
     /**
@@ -43,7 +43,7 @@ public interface InsertMapper<T> {
      */
     @Options(useGeneratedKeys=true,keyProperty=ProviderConstants.PARAM_RECORD+".id")
     @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insertSelective")
-    int insertSelective(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+    int insertSelective(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
 
 

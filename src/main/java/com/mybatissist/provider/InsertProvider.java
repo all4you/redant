@@ -17,17 +17,22 @@ import java.util.Map;
  */
 public class InsertProvider {
 
-
-
-
     /**
      * 生成sql
-     * @param tableName
-     * @param columnProps
+     * @param parameters
      * @param insertWithId
+     * @param methodName
      * @return
      */
-    private String createSql(String tableName,List<ColumnProp> columnProps,boolean insertWithId){
+    private String createSql(Map<String, Object> parameters,boolean insertSelective,boolean insertWithId,String methodName){
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_BEAN_CLASS);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
+        String tableName = ProviderHelper.getTableName(beanClass);
+        List<ColumnProp> columnProps = insertSelective?ProviderHelper.getColumnProps(bean,ProviderConstants.PARAM_RECORD):ProviderHelper.getAllColumnProps(bean,ProviderConstants.PARAM_RECORD);
+
         if(CollectionUtils.isEmpty(columnProps)){
             throw new InvalidProviderParamException("Please provide the object to be inserted which should not be empty!");
         }
@@ -43,20 +48,10 @@ public class InsertProvider {
                 }
             }
         }}.toString();
+        ProviderHelper.printSql(beanClass,bean,methodName,sql);
         return sql;
     }
 
-    /**
-     * 生成插入的values
-     * @param columnProps
-     * @param insertWithId
-     * @return
-     */
-    private String createValues(String tableName,List<ColumnProp> columnProps,boolean insertWithId){
-        String sql = createSql(tableName,columnProps,insertWithId);
-        sql = sql.replaceAll("(INSERT[\\s\\S]*VALUES)",",");
-        return sql;
-    }
 
     //===============================================================
 
@@ -67,18 +62,7 @@ public class InsertProvider {
      * @return
      */
     public String insert(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-        String tableName = ProviderHelper.getTableName(beanClass);
-        List<ColumnProp> columnProps = ProviderHelper.getAllColumnProps(bean,ProviderConstants.PARAM_RECORD);
-
-        String sql = createSql(tableName,columnProps,false);
-
-        ProviderHelper.printSql(beanClass,bean,"insert",sql);
-        return sql;
+        return createSql(parameters,false,false,"insert");
     }
 
     /**
@@ -88,18 +72,7 @@ public class InsertProvider {
      * @return
      */
     public String insertWithId(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-        String tableName = ProviderHelper.getTableName(beanClass);
-        List<ColumnProp> columnProps = ProviderHelper.getAllColumnProps(bean,ProviderConstants.PARAM_RECORD);
-
-        String sql = createSql(tableName,columnProps,true);
-
-        ProviderHelper.printSql(beanClass,bean,"insertWithId",sql);
-        return sql;
+        return createSql(parameters,false,true,"insertWithId");
     }
 
 
@@ -109,18 +82,7 @@ public class InsertProvider {
      * @return
      */
     public String insertSelective(Map<String, Object> parameters){
-        if(!ProviderHelper.parametersValid(parameters)){
-            return null;
-        }
-        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
-        String tableName = ProviderHelper.getTableName(beanClass);
-        List<ColumnProp> columnProps = ProviderHelper.getColumnProps(bean,ProviderConstants.PARAM_RECORD);
-
-        String sql = createSql(tableName,columnProps,false);
-
-        ProviderHelper.printSql(beanClass,bean,"insertSelective",sql);
-        return sql;
+        return createSql(parameters, true,false,"insertSelective");
     }
 
 
