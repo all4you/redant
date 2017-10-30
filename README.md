@@ -1,7 +1,7 @@
 # 欢迎使用RedAnt
 
 
-**RedAnt**是一款基于netty的轻量级的http框架。特点概述：
+**RedAnt**是一款基于netty、支持http协议的web框架。特点概述：
  
 - **对象管理** ：通过Bean注解，实现对象的全局、统一管理；
 - **自动注入** ：通过Autowired注解，实现Bean对象的自动注入；
