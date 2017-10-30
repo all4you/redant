@@ -1,6 +1,7 @@
 package com.mybatissist.provider;
 
 
+import com.mybatissist.constant.ProviderConstants;
 import com.mybatissist.enums.QueryModel;
 import com.mybatissist.enums.QueryStyle;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,7 +30,7 @@ public class SelectProvider {
         List<String> columnList = ProviderHelper.getColumns(beanClass);
         StringBuilder columns = new StringBuilder();
         for(int i=0,s=columnList.size();i<s;i++){
-            columns.append(alias+ProviderHelper.DOT+columnList.get(i));
+            columns.append(alias+ProviderConstants.DOT+columnList.get(i));
             if(i<s-1){
                 columns.append(",");
             }
@@ -38,28 +39,28 @@ public class SelectProvider {
     }
 
     /**
-     *
+     * 生成sql
      * @param parameters
      * @return
      */
     private String createSql(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
         String tableName = ProviderHelper.getTableName(beanClass);
         String alias = ProviderHelper.getTableAlias(beanClass);
         String columns = makeQueryColumns(beanClass,alias);
-        List<QueryCondition> queryConditions = ProviderHelper.getQueryConditions(bean,ProviderHelper.PARAM_RECORD);
+        List<ColumnProp> columnProps = ProviderHelper.getColumnProps(bean,ProviderConstants.PARAM_RECORD);
 
         String sql = new SQL(){{
             SELECT(columns);
             FROM(tableName+alias);
-            if(CollectionUtils.isNotEmpty(queryConditions)) {
-                for (QueryCondition condition : queryConditions) {
-                    if (condition.getQueryStyle() == QueryStyle.OR) {
+            if(CollectionUtils.isNotEmpty(columnProps)) {
+                for (ColumnProp columnProp : columnProps) {
+                    if (columnProp.getQueryStyle() == QueryStyle.OR) {
                         OR();
                     }
-                    String queryModel = condition.getQueryModel() == QueryModel.EQUAL ? " = " : " LIKE ";
-                    WHERE(alias+ProviderHelper.DOT+condition.getColumn()+queryModel+condition.getProp());
+                    String queryModel = columnProp.getQueryModel() == QueryModel.EQUAL ? " = " : " LIKE ";
+                    WHERE(alias+ProviderConstants.DOT+columnProp.getColumn()+queryModel+columnProp.getProp());
                 }
             }
         }}.toString();
@@ -75,23 +76,26 @@ public class SelectProvider {
      * @return
      */
     public String selectCount(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
-        Object bean = parameters.get(ProviderHelper.PARAM_RECORD);
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
         String tableName = ProviderHelper.getTableName(beanClass);
         String alias = ProviderHelper.getTableAlias(beanClass);
         String pk = ProviderHelper.getPrimaryKey(beanClass);
-        List<QueryCondition> queryConditions = ProviderHelper.getQueryConditions(bean,ProviderHelper.PARAM_RECORD);
+        List<ColumnProp> columnProps = ProviderHelper.getColumnProps(bean, ProviderConstants.PARAM_RECORD);
 
         String sql = new SQL(){{
-            SELECT("COUNT("+alias+ProviderHelper.DOT+pk+")");
+            SELECT("COUNT("+alias+ProviderConstants.DOT+pk+")");
             FROM(tableName+alias);
-            if(CollectionUtils.isNotEmpty(queryConditions)){
-                for(QueryCondition condition : queryConditions){
-                    if(condition.getQueryStyle()==QueryStyle.OR){
+            if(CollectionUtils.isNotEmpty(columnProps)){
+                for(ColumnProp columnProp : columnProps){
+                    if(columnProp.getQueryStyle()==QueryStyle.OR){
                         OR();
                     }
-                    String queryModel = condition.getQueryModel()==QueryModel.EQUAL?" = ":" LIKE ";
-                    WHERE(alias+ProviderHelper.DOT+condition.getColumn()+queryModel+condition.getProp());
+                    String queryModel = columnProp.getQueryModel()==QueryModel.EQUAL?" = ":" LIKE ";
+                    WHERE(alias+ProviderConstants.DOT+columnProp.getColumn()+queryModel+columnProp.getProp());
                 }
             }
         }}.toString();
@@ -107,11 +111,14 @@ public class SelectProvider {
      * @return
      */
     public String selectOne(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
 
         String sql = createSql(parameters);
-        sql += "\nLIMIT 1";
+        sql += ProviderConstants.LIMIT_1;
 
         ProviderHelper.printSql(beanClass,bean,"selectOne",sql);
         return sql;
@@ -123,8 +130,11 @@ public class SelectProvider {
      * @return
      */
     public String selectList(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
 
         String sql = createSql(parameters);
 
@@ -138,8 +148,11 @@ public class SelectProvider {
      * @return
      */
     public String selectAll(Map<String, Object> parameters){
-        Class<?> beanClass = (Class)parameters.get(ProviderHelper.PARAM_RESULT_TYPE);
-        Object bean = parameters.containsKey(ProviderHelper.PARAM_RECORD)?parameters.get(ProviderHelper.PARAM_RECORD):null;
+        if(!ProviderHelper.parametersValid(parameters)){
+            return null;
+        }
+        Class<?> beanClass = (Class)parameters.get(ProviderConstants.PARAM_RESULT_TYPE);
+        Object bean = parameters.containsKey(ProviderConstants.PARAM_RECORD)?parameters.get(ProviderConstants.PARAM_RECORD):null;
 
         String sql = createSql(parameters);
 

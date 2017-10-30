@@ -102,11 +102,12 @@ public class SqlSessionHolder {
 
 	/**
 	 * 获取SqlSession
+	 * @param autoCommit
 	 * @return
 	 */
-	public SqlSession getSqlSession() {
+	public SqlSession getSqlSession(boolean autoCommit) {
 		if(builded()){
-			return sqlSessionFactory.openSession();
+			return sqlSessionFactory.openSession(autoCommit);
 		}
 		return null;
 	}

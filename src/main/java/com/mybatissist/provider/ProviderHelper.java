@@ -4,10 +4,13 @@ package com.mybatissist.provider;
 import com.mybatissist.annotation.Column;
 import com.mybatissist.annotation.Id;
 import com.mybatissist.annotation.Table;
+import com.mybatissist.constant.ProviderConstants;
 import com.mybatissist.enums.NameStyle;
 import com.mybatissist.enums.QueryModel;
 import com.mybatissist.enums.QueryStyle;
+import com.mybatissist.exception.InvalidProviderParamException;
 import com.mybatissist.util.StringUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -33,56 +36,16 @@ public class ProviderHelper {
 
 
     /**
-     * 空格
-     */
-    private static final String SPACE = " ";
-
-    /**
-     * 属性左括号
-     */
-    private static final String PROP_LEFT = "#{";
-
-    /**
-     * 属性右括号
-     */
-    private static final String PROP_RIGHT = "}";
-
-    /**
-     * AS
-     */
-    private static final String AS = " as ";
-
-
-    /**
-     * 点号
-     */
-    public static final String DOT = ".";
-
-    /**
-     * 丢弃的字段
-     */
-    public static final List<String> ABANDON_FIELDS =  Arrays.asList(new String[]{
-        "SERIALVERSIONUID"
-    });
-
-
-    public static final String PARAM_RESULT_TYPE = "resultType";
-
-
-    public static final String PARAM_RECORD = "record";
-
-
-    /**
-     * 从field中转换出QueryCondition
+     * 从field中转换出ColumnProp
      * @param field
      * @param prefix
      * @return
      */
-    private static QueryCondition parseQueryCondition(Field field,String prefix){
+    private static ColumnProp parseColumnProp(Field field, String prefix){
         QueryStyle queryStyle = QueryStyle.AND;
         QueryModel queryModel = QueryModel.EQUAL;
         String column;
-        String prop = PROP_LEFT + (StringUtils.isNotBlank(prefix)?prefix+DOT:"") + field.getName() + PROP_RIGHT;
+        String prop = ProviderConstants.PROP_LEFT + (StringUtils.isNotBlank(prefix)?prefix+ ProviderConstants.DOT:"") + field.getName() + ProviderConstants.PROP_RIGHT;
         // 如果当前字段有Column注解
         if(field.isAnnotationPresent(Column.class)){
             Column c = field.getAnnotation(Column.class);
@@ -96,11 +59,23 @@ public class ProviderHelper {
         }else{
             column = StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
         }
-        return new QueryCondition(queryStyle,queryModel,column,prop);
+        return new ColumnProp(queryStyle,queryModel,column,prop);
     }
 
 
     //===============================================================
+
+    /**
+     * 检查参数
+     * @param parameters
+     * @return
+     */
+    public static boolean parametersValid(Map<String, Object> parameters){
+        if(!parameters.containsKey(ProviderConstants.PARAM_RESULT_TYPE) || null==parameters.get(ProviderConstants.PARAM_RESULT_TYPE)){
+            throw new InvalidProviderParamException("Must provide @Param(\""+ProviderConstants.PARAM_RESULT_TYPE+"\")");
+        }
+        return true;
+    }
 
     /**
      * 获取表名
@@ -116,7 +91,7 @@ public class ProviderHelper {
         }else{
             tableName = StringUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.CAMEL_HUMP);
         }
-        return SPACE+tableName+SPACE;
+        return ProviderConstants.SPACE+tableName+ProviderConstants.SPACE;
     }
 
     /**
@@ -145,7 +120,7 @@ public class ProviderHelper {
         Field[] beanFields = (Field[])ArrayUtils.addAll(beanClass.getDeclaredFields(),beanClass.getSuperclass().getDeclaredFields());
         for(int i=0,s=beanFields.length;i<s;i++){
             Field field = beanFields[i];
-            if (!ABANDON_FIELDS.contains(field.getName().toUpperCase())) {
+            if (!ProviderConstants.ABANDON_FIELDS.contains(field.getName().toUpperCase())) {
                 fields.add(field);
             }
         }
@@ -175,7 +150,7 @@ public class ProviderHelper {
             }
             // 此处要处理为 select user_name as userName,否则结果转换为bean时无法找到userName属性
             if(!column.equals(field.getName())){
-                column = column+AS+field.getName();
+                column = column+ProviderConstants.AS+field.getName();
             }
             columns.add(column);
         }
@@ -212,10 +187,10 @@ public class ProviderHelper {
      * @param prefix
      * @return
      */
-    public static List<QueryCondition> getQueryConditions(Object bean,String prefix){
-        List<QueryCondition> queryConditions = new ArrayList<QueryCondition>();
+    public static List<ColumnProp> getColumnProps(Object bean, String prefix){
+        List<ColumnProp> columnProps = new ArrayList<ColumnProp>();
         if(bean==null){
-            return queryConditions;
+            return columnProps;
         }
         try{
             List<Field> beanFields = getFields(bean.getClass());
@@ -225,16 +200,16 @@ public class ProviderHelper {
                 if(val==null){
                     continue;
                 }
-                QueryCondition queryCondition = parseQueryCondition(field,prefix);
-                if(queryCondition==null){
+                ColumnProp columnProp = parseColumnProp(field,prefix);
+                if(columnProp ==null){
                     continue;
                 }
-                queryConditions.add(queryCondition);
+                columnProps.add(columnProp);
             }
         }catch (Exception e){
-            logger.error("getQueryConditions error,cause:",e);
+            logger.error("getColumnProps error,cause:",e);
         }
-        return queryConditions;
+        return columnProps;
     }
 
 
@@ -244,29 +219,39 @@ public class ProviderHelper {
      * @param prefix
      * @return
      */
-    public static List<QueryCondition> getAllQueryConditions(Object bean,String prefix){
-        List<QueryCondition> queryConditions = new ArrayList<QueryCondition>();
+    public static List<ColumnProp> getAllColumnProps(Object bean, String prefix){
+        List<ColumnProp> columnProps = new ArrayList<ColumnProp>();
         if(bean==null){
-            return queryConditions;
+            return columnProps;
         }
         try{
             List<Field> beanFields = getFields(bean.getClass());
             for (Field field : beanFields) {
                 field.setAccessible(true);
-                QueryCondition queryCondition = parseQueryCondition(field,prefix);
-                if(queryCondition==null){
+                ColumnProp columnProp = parseColumnProp(field,prefix);
+                if(columnProp ==null){
                     continue;
                 }
-                queryConditions.add(queryCondition);
+                columnProps.add(columnProp);
             }
         }catch (Exception e){
-            logger.error("getAllQueryConditions error,cause:",e);
+            logger.error("getAllColumnProps error,cause:",e);
         }
-        return queryConditions;
+        return columnProps;
     }
 
     public static void printSql(Class<?> beanClass,Object bean,String methodName,String sql){
-        logger.info("\n==========================sql info==========================\nbeanClass:{},methodName:{}\nexecute sql:\n{}\nparams:{}\n==========================sql info==========================",beanClass,methodName,sql,(bean!=null?bean.toString():""));
+        String param;
+        if(bean instanceof List){
+            List list = (List)bean;
+            param = CollectionUtils.isNotEmpty(list)?ArrayUtils.toString(list):"";
+        }else{
+            param = bean!=null?bean.toString():"";
+        }
+        logger.info("\n==========================sql info=========================="+
+                    "\nbeanClass:{},methodName:{}"+
+                    "\nexecute sql:\n{}\nparams:{}"+
+                    "\n==========================sql info==========================",beanClass,methodName,sql,param);
     }
 
     /**

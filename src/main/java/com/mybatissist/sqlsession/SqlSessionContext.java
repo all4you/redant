@@ -30,9 +30,10 @@ public class SqlSessionContext {
 
     /**
      * 获取SqlSessionFactory
+     * @param autoCommit
      */
-    public static SqlSession getSqlSession(){
-        return sqlSessionHolder.getSqlSession();
+    public static SqlSession getSqlSession(boolean autoCommit){
+        return sqlSessionHolder.getSqlSession(autoCommit);
     }
 
 

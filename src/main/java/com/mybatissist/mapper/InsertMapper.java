@@ -1,6 +1,9 @@
 package com.mybatissist.mapper;
 
-import java.util.List;
+import com.mybatissist.constant.ProviderConstants;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 插入接口
@@ -12,31 +15,36 @@ public interface InsertMapper<T> {
 
     /**
      * 插入单条记录
+     * 实体必须包含`id`属性，并且必须为自增列
      * @param record
+     * @param beanClass
      * @return
      */
-    int insert(T record);
+    @Options(useGeneratedKeys=true,keyProperty=ProviderConstants.PARAM_RECORD+".id")
+    @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insert")
+    int insert(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+
+    /**
+     * 插入单条记录
+     * 使用指定的id
+     * @param record
+     * @param beanClass
+     * @return
+     */
+    @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insertWithId")
+    int insertWithId(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
+
 
     /**
      * 插入单条记录,属性为null的字段不会插入
      * @param record
+     * @param beanClass
      * @return
      */
-    int insertSelective(T record);
+    @Options(useGeneratedKeys=true,keyProperty=ProviderConstants.PARAM_RECORD+".id")
+    @InsertProvider(type=com.mybatissist.provider.InsertProvider.class,method="insertSelective")
+    int insertSelective(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
 
-    /**
-     * 批量插入记录
-     * @param records
-     * @return
-     */
-    int insertBatch(List<T> records);
-
-    /**
-     * 批量插入记录,属性为null的字段不会插入
-     * @param records
-     * @return
-     */
-    int insertBatchSelective(List<T> records);
 
 
 }

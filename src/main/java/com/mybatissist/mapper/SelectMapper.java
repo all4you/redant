@@ -1,7 +1,6 @@
 package com.mybatissist.mapper;
 
-import com.mybatissist.provider.ProviderHelper;
-import com.mybatissist.provider.SqlProvider;
+import com.mybatissist.constant.ProviderConstants;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 
@@ -22,8 +21,8 @@ public interface SelectMapper<T> {
      * @param beanClass
      * @return
      */
-    @SelectProvider(type=SqlProvider.class,method="selectCount")
-    int selectCount(@Param(ProviderHelper.PARAM_RECORD) T record, @Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
+    @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectCount")
+    int selectCount(@Param(ProviderConstants.PARAM_RECORD) T record, @Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
 
     /**
      * 查询单条记录
@@ -31,8 +30,8 @@ public interface SelectMapper<T> {
      * @param beanClass
      * @return
      */
-    @SelectProvider(type=SqlProvider.class,method="selectOne")
-    T selectOne(@Param(ProviderHelper.PARAM_RECORD) T record,@Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
+    @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectOne")
+    T selectOne(@Param(ProviderConstants.PARAM_RECORD) T record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
 
     /**
      * 查询列表
@@ -40,15 +39,15 @@ public interface SelectMapper<T> {
      * @param record
      * @return
      */
-    @SelectProvider(type=SqlProvider.class,method="selectList")
-    List<T> selectList(@Param(ProviderHelper.PARAM_RECORD) Object record,@Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
+    @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectList")
+    List<T> selectList(@Param(ProviderConstants.PARAM_RECORD) Object record,@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
 
     /**
      * 查询所有记录
      * @param beanClass
      * @return
      */
-    @SelectProvider(type=SqlProvider.class,method="selectAll")
-    List<T> selectAll(@Param(ProviderHelper.PARAM_RESULT_TYPE) Class<T> beanClass);
+    @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectAll")
+    List<T> selectAll(@Param(ProviderConstants.PARAM_RESULT_TYPE) Class<T> beanClass);
 
 }

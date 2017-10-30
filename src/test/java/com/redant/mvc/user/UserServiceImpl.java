@@ -10,7 +10,7 @@ public class UserServiceImpl implements IUserService{
     /**
      * mapper
      */
-    private UserMapper mapper = SqlSessionContext.getSqlSession().getMapper(UserMapper.class);
+    private UserMapper mapper = SqlSessionContext.getSqlSession(true).getMapper(UserMapper.class);
 
     @Override
     public UserBean selectUserInfo(Integer id) {

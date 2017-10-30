@@ -6,11 +6,11 @@ import com.mybatissist.enums.QueryStyle;
 import java.io.Serializable;
 
 /**
- * 查询条件
+ * 列名-属性对
  * @author gris.wang
  * @create 2017-10-20
  */
-public class QueryCondition implements Serializable{
+public class ColumnProp implements Serializable{
 
     /**
      * 查询方式
@@ -25,7 +25,7 @@ public class QueryCondition implements Serializable{
     private QueryModel queryModel;
 
     /**
-     * 表字段
+     * 列名
      */
     private String column;
 
@@ -35,7 +35,7 @@ public class QueryCondition implements Serializable{
     private String prop;
 
 
-    public QueryCondition(QueryStyle queryStyle,QueryModel queryModel,String column,String prop){
+    public ColumnProp(QueryStyle queryStyle, QueryModel queryModel, String column, String prop){
         this.queryStyle = queryStyle;
         this.queryModel = queryModel;
         this.column = column;
