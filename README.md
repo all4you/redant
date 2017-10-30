@@ -16,7 +16,7 @@
 
 ## Mybatissist
 
-> Mybatissist 是一个基于Mybatis注解的通用CRUD工具，使用Mybatissist可以仅仅关注数据库表和实体类的映射，而不必关系具体的操作过程，也不需要编写额外的Mapper.xml来指定SQL语句，只需要定义好实体类和xxxMapper接口，且保证该xxxMapper接口继承自通用的Mapper接口，既能使用通用接口中的所有CRUD方法。
+> Mybatissist 是一个基于Mybatis注解的通用CRUD工具，使用Mybatissist可以仅仅关注数据库表和实体类的映射，而不必关心具体的操作过程，也不需要额外的Mapper.xml来编写SQL语句，只需要定义好实体类和xxxMapper接口，并且保证该xxxMapper接口继承自通用的Mapper接口，既能使用通用接口中所有的CRUD方法。
 
 
 ### 通用Mapper接口
