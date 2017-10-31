@@ -1,0 +1,12 @@
+.idea/
+.settings/
+*.iml
+*.class
+*.project
+*.classpath
+web/target/
+web/.settings/
+dal/target/
+dal/.settings
+target/
+*.gitignore
