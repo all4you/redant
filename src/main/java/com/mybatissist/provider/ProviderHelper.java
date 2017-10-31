@@ -34,7 +34,7 @@ public class ProviderHelper {
      * 获取日志对象
      * @return
      */
-    public static Logger logger = LoggerFactory.getLogger(ProviderHelper.class);
+    public static final Logger logger = LoggerFactory.getLogger(ProviderHelper.class);
 
 
     /**

@@ -1,6 +1,7 @@
 package com.mybatissist.constant;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,9 +53,9 @@ public class ProviderConstants {
     /**
      * 丢弃的字段
      */
-    public static final List<String> ABANDON_FIELDS =  Arrays.asList(new String[]{
+    public static final List<String> ABANDON_FIELDS = Collections.unmodifiableList(Arrays.asList(new String[]{
             "SERIALVERSIONUID"
-    });
+    }));
 
 
     /**

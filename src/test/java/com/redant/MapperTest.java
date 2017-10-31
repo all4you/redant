@@ -42,7 +42,7 @@ public class MapperTest {
     public void testSelectCount(){
         UserBean bean = new UserBean();
         bean.setUserName("wh");
-        Integer result = mapper.selectCount(null,UserBean.class);
+        Integer result = mapper.selectCount(bean,UserBean.class);
         logger.info("result:{}",result);
     }
 
@@ -63,7 +63,7 @@ public class MapperTest {
         int pageNum = 1;
         int pageSize = 3;
         // 使用PageHelper插件进行分页操作，实际返回的结果是Page类型
-        List<UserBean> result = mapper.selectList(null,pageNum,pageSize,UserBean.class);
+        List<UserBean> result = mapper.selectList(bean,pageNum,pageSize,UserBean.class);
         logger.info("result:{}",Arrays.toString(result.toArray()));
     }
 
