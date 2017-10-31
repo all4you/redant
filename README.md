@@ -20,6 +20,7 @@
 > >2：可以将代码下载后用maven打成jar包，使用java命令运行。
 
 > 启动后直接在浏览器中访问 http://127.0.0.1:8888 (默认端口可以在redant.properties文件中修改)，如果可以正常返回 “Welcome to redant!”即说明项目启动成功。目前项目中内置了三个Controller，服务器启动时会将所有的Controller打印出来：
+
 > GET  /                               HTML
 >
 > GET  /UserController/getUserCount    JSON
