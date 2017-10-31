@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 抽象的渲染类
+ * 基础渲染类
  * @author gris.wang
  * @create 2017-10-20
  */
