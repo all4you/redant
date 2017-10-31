@@ -15,8 +15,13 @@
         <java.encoding>UTF-8</java.encoding>
         <project.name>redant</project.name>
         <project.version>1.0.0-SNAPSHOT</project.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.5</commons-lang3.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-beanutils.version>1.9.2</commons-beanutils.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.1.7</logback.version>
+        <junit.version>4.12</junit.version>
         <fastjson.version>1.2.13.sec01</fastjson.version>
         <netty.version>4.1.9.Final</netty.version>
         <cglib.version>3.2.4</cglib.version>
@@ -27,6 +32,7 @@
         <velocity.version>1.7</velocity.version>
         <mysql-connector.version>5.1.38</mysql-connector.version>
         <mybatis.version>3.4.4</mybatis.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
     </properties>
 
 
@@ -34,22 +40,22 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons-lang.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <version>${commons-collections.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
+            <version>${commons-beanutils.version}</version>
         </dependency>
         <!-- 日志文件管理包 -->
         <!-- 格式化对象，方便输出日志 -->
@@ -67,6 +73,11 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -134,9 +145,9 @@
             <version>${mybatis.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>${pagehelper.version}</version>
         </dependency>
     </dependencies>
 

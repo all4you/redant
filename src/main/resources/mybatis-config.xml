@@ -41,6 +41,11 @@
 
     <plugins>
         <plugin interceptor="com.mybatissist.interceptor.ResultTypeInterceptor"/>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="supportMethodsArguments" value="true"/>
+            <property name="params" value="pageNum=pageNum;pageSize=pageSize;"/>
+        </plugin>
     </plugins>
 
     <environments default="development">

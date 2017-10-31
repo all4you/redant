@@ -1,5 +1,6 @@
 package com.redant;
 
+import com.github.pagehelper.Page;
 import com.mybatissist.sqlsession.SqlSessionContext;
 import com.redant.mappers.UserMapper;
 import com.redant.mvc.user.UserBean;
@@ -59,14 +60,17 @@ public class MapperTest {
         UserBean bean = new UserBean();
         bean.setUserName("wh");
         bean.setId(1);
-        List<UserBean> result = mapper.selectList(bean,UserBean.class);
-        logger.info("result:{}",result);
+        int pageNum = 1;
+        int pageSize = 3;
+        // 使用PageHelper插件进行分页操作，实际返回的结果是Page类型
+        List<UserBean> result = mapper.selectList(null,pageNum,pageSize,UserBean.class);
+        logger.info("result:{}",Arrays.toString(result.toArray()));
     }
 
     @Test
     public void testSelectAll(){
         List<UserBean> result = mapper.selectAll(UserBean.class);
-        logger.info("result:{}",result);
+        logger.info("result:{}",Arrays.toString(result.toArray()));
     }
 
     //================ Insert

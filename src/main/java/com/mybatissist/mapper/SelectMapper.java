@@ -1,5 +1,6 @@
 package com.mybatissist.mapper;
 
+import com.mybatissist.constant.PageHelperConstants;
 import com.mybatissist.constant.ProviderConstants;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -40,7 +41,7 @@ public interface SelectMapper<T> {
      * @return
      */
     @SelectProvider(type=com.mybatissist.provider.SelectProvider.class,method="selectList")
-    List<T> selectList(@Param(ProviderConstants.PARAM_RECORD) Object record,@Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
+    List<T> selectList(@Param(ProviderConstants.PARAM_RECORD) Object record, @Param(PageHelperConstants.PAGE_NUM) int pageNum, @Param(PageHelperConstants.PAGE_SIZE) int pageSize, @Param(ProviderConstants.PARAM_BEAN_CLASS) Class<T> beanClass);
 
     /**
      * 查询所有记录
