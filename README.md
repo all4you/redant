@@ -20,7 +20,6 @@
 > >2：可以将代码下载后用maven打成jar包，使用java命令运行。
 
 > 启动后直接在浏览器中访问 http://127.0.0.1:8888 (默认端口可以在redant.properties文件中修改)，如果可以正常返回 “Welcome to redant!”即说明项目启动成功。目前项目中内置了三个Controller，服务器启动时会将所有的Controller打印出来：
- 
 > GET  /                               HTML
 >
 > GET  /UserController/getUserCount    JSON
@@ -52,7 +51,7 @@ public class UserController {
 ```
 
 
-## 自由路由
+## 路由管理
 
 > 使用RouterController来定义一个路由Controller类，RouterMapping用以指定Controller中每个具体的方法，RouterController+RouterMapping唯一匹配一个http请求的路由，RouterParam用以标识方法的参数，用以实现http请求参数的转换，基础类型的参数必须使用RouterParam注解进行标识，POJO对象可以不使用RouterParam标识。
 
@@ -150,7 +149,7 @@ public class MapperTest {
     public void testSelectCount(){
         UserBean bean = new UserBean();
         bean.setUserName("wh");
-        Integer result = mapper.selectCount(null,UserBean.class);
+        Integer result = mapper.selectCount(bean,UserBean.class);
         logger.info("result:{}",result);
     }
 
@@ -171,7 +170,7 @@ public class MapperTest {
         int pageNum = 1;
         int pageSize = 3;
         // 使用PageHelper插件进行分页操作，实际返回的结果是Page类型
-        List<UserBean> result = mapper.selectList(null,pageNum,pageSize,UserBean.class);
+        List<UserBean> result = mapper.selectList(bean,pageNum,pageSize,UserBean.class);
         logger.info("result:{}",Arrays.toString(result.toArray()));
     }
 
