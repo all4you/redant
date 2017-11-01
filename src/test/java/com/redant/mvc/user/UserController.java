@@ -22,7 +22,7 @@ public class UserController {
     @RouterMapping(path="/getUserInfo",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
     public BaseRender getUserInfo(UserBean userBean,@RouterParam(key="pid") Integer pid){
         JSONObject object = new JSONObject();
-        object.put("user",userService.selectUserInfo(34));
+        object.put("user",userService.selectUserInfo(userBean.getId()));
         object.put("pid",pid);
         return new BaseRender(RenderType.JSON,object);
     }

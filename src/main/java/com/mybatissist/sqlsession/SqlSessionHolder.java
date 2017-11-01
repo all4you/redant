@@ -22,6 +22,7 @@ public class SqlSessionHolder {
 
 	/**
 	 * 产生sqlSession的工厂
+	 * sqlSessionFactory需要保持全局唯一，所以需要实现为单例
 	 */
 	private SqlSessionFactory sqlSessionFactory;
 

@@ -1,6 +1,5 @@
 package com.redant;
 
-import com.github.pagehelper.Page;
 import com.mybatissist.sqlsession.SqlSessionContext;
 import com.redant.mappers.UserMapper;
 import com.redant.mvc.user.UserBean;

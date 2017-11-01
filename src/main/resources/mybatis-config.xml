@@ -51,7 +51,7 @@
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
-            <dataSource type="UNPOOLED">
+            <dataSource type="POOLED">
                 <property name="driver" value="${dataSource.driver}"/>
                 <property name="url" value="${dataSource.url}"/>
                 <property name="username" value="${dataSource.username}"/>
