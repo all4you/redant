@@ -48,7 +48,7 @@ public class SqlSessionContext {
 
             @Override
             public void run() {
-                Connection result = SqlSessionContext.getSqlSession(true).getConnection();
+                SqlSession result = SqlSessionContext.getSqlSession(true);
                 logger.info("result={},currentThread={}",result,Thread.currentThread().getName());
             }
         }

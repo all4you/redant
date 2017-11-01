@@ -19,7 +19,12 @@ public class Config {
     /**
      * 是否对各个SQLProvider生成的sql语句进行缓存
      */
-    private boolean useSqlCache;
+    private boolean cacheSql;
+
+    /**
+     * 是否对SqlSession进行缓存
+     */
+    private boolean cacheSqlSession;
 
     /**
      * 单例
@@ -53,13 +58,22 @@ public class Config {
         return config.printSql;
     }
 
-    public Config useSqlCache(boolean useSqlCache){
-        config.useSqlCache = useSqlCache;
+    public Config cacheSql(boolean cacheSql){
+        config.cacheSql = cacheSql;
         return config;
     }
 
-    public boolean useSqlCache(){
-        return config.useSqlCache;
+    public boolean cacheSql(){
+        return config.cacheSql;
+    }
+
+    public Config cacheSqlSession(boolean cacheSqlSession){
+        config.cacheSqlSession = cacheSqlSession;
+        return config;
+    }
+
+    public boolean cacheSqlSession(){
+        return config.cacheSqlSession;
     }
 
 
