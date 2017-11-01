@@ -5,6 +5,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+
 /**
  * SqlSession上下文
  * @author gris.wang
@@ -38,7 +40,7 @@ public class SqlSessionContext {
 
 
     public static void main(String[] args) {
-        int loopTimes = 20;
+        int loopTimes = 200;
 
         class Runner implements Runnable{
 
@@ -46,7 +48,7 @@ public class SqlSessionContext {
 
             @Override
             public void run() {
-                SqlSessionFactory result = SqlSessionContext.getSqlSessionFactory();
+                Connection result = SqlSessionContext.getSqlSession(true).getConnection();
                 logger.info("result={},currentThread={}",result,Thread.currentThread().getName());
             }
         }

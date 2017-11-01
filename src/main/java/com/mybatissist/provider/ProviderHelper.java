@@ -4,6 +4,7 @@ package com.mybatissist.provider;
 import com.mybatissist.annotation.Column;
 import com.mybatissist.annotation.Id;
 import com.mybatissist.annotation.Table;
+import com.mybatissist.config.Config;
 import com.mybatissist.constant.ProviderConstants;
 import com.mybatissist.enums.NameStyle;
 import com.mybatissist.enums.QueryModel;
@@ -277,7 +278,17 @@ public class ProviderHelper {
     }
 
 
+    /**
+     * 打印sql语句
+     * @param beanClass
+     * @param bean
+     * @param methodName
+     * @param sql
+     */
     public static void printSql(Class<?> beanClass,Object bean,String methodName,String sql){
+        if(!Config.instance().printSql()){
+            return;
+        }
         String param;
         if(bean instanceof List){
             List list = (List)bean;
@@ -287,7 +298,8 @@ public class ProviderHelper {
         }
         logger.info("\n==========================sql info=========================="+
                     "\nbeanClass:{},methodName:{}"+
-                    "\nexecute sql:\n{}\nparams:{}"+
+                    "\nexecute sql:\n{}"+
+                    "\nparams:{}"+
                     "\n==========================sql info==========================",beanClass,methodName,sql,param);
     }
 

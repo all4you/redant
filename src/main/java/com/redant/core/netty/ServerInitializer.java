@@ -1,5 +1,6 @@
 package com.redant.core.netty;
 
+import com.redant.common.constants.CommonConstants;
 import com.redant.core.ControllerDispatcher;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -21,13 +22,12 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
         // add gizp compressor for http response content
         p.addLast(new HttpContentCompressor());
 
-        p.addLast(new HttpObjectAggregator(1048576));
+        p.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
 
         p.addLast(new ChunkedWriteHandler());
 
         p.addLast(new ControllerDispatcher());
 
-//        p.addLast(new BadClientSilencer());
     }
 
 }

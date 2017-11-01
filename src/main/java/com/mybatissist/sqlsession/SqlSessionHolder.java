@@ -32,10 +32,16 @@ public class SqlSessionHolder {
 	private volatile boolean builded;
 
 	/**
-	 *
+	 * 实例
 	 */
 	private static SqlSessionHolder holder;
 
+	/**
+	 * 私有构造方法
+	 */
+	private SqlSessionHolder(){
+
+	}
 
 	/**
 	 * sqlSessionFactory是否创建完毕
