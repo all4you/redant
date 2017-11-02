@@ -136,6 +136,7 @@ public class SqlSessionHolder {
 	public SqlSession getSqlSession(boolean autoCommit) {
 		if(builded()){
 			SqlSession sqlSession;
+			// 如果设置了使用SQLSession缓存
 			if(Config.instance().cacheSqlSession() && sqlSessionCache!=null) {
 				sqlSession = sqlSessionCache.getSqlSession();
 				if (sqlSession != null) {
@@ -178,12 +179,13 @@ public class SqlSessionHolder {
 		/**
 		 * 缓存容器
 		 */
-		private CacheContainer<Integer,SqlSession> cacheContainer = new CacheContainer(capacity,timeout, CacheType.FIFO);
+		private CacheContainer<Integer,SqlSession> cacheContainer;
 
 
 		public SqlSessionCache(SqlSessionFactory sqlSessionFactory,boolean autoCommit){
 			this.sqlSessionFactory = sqlSessionFactory;
 			this.autoCommit = autoCommit;
+			this.cacheContainer = new CacheContainer(capacity,timeout, CacheType.FIFO);
 		}
 
 		/**
@@ -192,7 +194,7 @@ public class SqlSessionHolder {
 		public void cacheSqlSession(){
 			for(int index=0;index<this.capacity;index++){
 				SqlSession sqlSession = this.sqlSessionFactory.openSession(this.autoCommit);
-				cacheContainer.put(index,sqlSession);
+				this.cacheContainer.put(index,sqlSession);
 			}
 		}
 
@@ -203,7 +205,7 @@ public class SqlSessionHolder {
 		public void addSqlSession(SqlSession sqlSession){
 			// 随机获取一个0-capacity之间的数字
 			Integer index = RandomUtils.nextInt(this.capacity);
-			cacheContainer.put(index,sqlSession);
+			this.cacheContainer.put(index,sqlSession);
 		}
 
 		/**
@@ -213,7 +215,7 @@ public class SqlSessionHolder {
 		public SqlSession getSqlSession(){
 			// 随机获取一个0-capacity之间的数字
 			Integer index = RandomUtils.nextInt(this.capacity);
-			return cacheContainer.get(index);
+			return this.cacheContainer.get(index);
 		}
 	}
 
