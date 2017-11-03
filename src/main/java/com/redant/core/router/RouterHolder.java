@@ -176,7 +176,7 @@ public class RouterHolder {
     public ControllerProxy getControllerProxy(RouteResult<?> routeResult){
         if(routerLoaded()) {
             ControllerProxy controllerProxy = proxyMap.get(routeResult.decodedPath());
-            routerLogger.info("\n=========================  getControllerProxy =========================\nrouteResult={}\ncontrollerProxy={}\n=========================  getControllerProxy =========================", routeResult, controllerProxy);
+            routerLogger.debug("\n=========================  getControllerProxy =========================\nrouteResult={}\ncontrollerProxy={}\n=========================  getControllerProxy =========================", routeResult, controllerProxy);
             return controllerProxy;
         }
         return null;
