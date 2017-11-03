@@ -9,7 +9,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +85,7 @@ public class HttpRenderUtil {
 			return EMPTY_CONTENT.getBytes(CharsetUtil.UTF_8);
 		}
 		String data = content.toString();
-		data = StringUtils.isBlank(data)?EMPTY_CONTENT:data;
+		data = (data==null || data.trim().length()==0)?EMPTY_CONTENT:data;
 		return data.getBytes(CharsetUtil.UTF_8);
 	}
 

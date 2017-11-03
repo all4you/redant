@@ -4,16 +4,16 @@ package com.redant.core.invocation;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.redant.core.DataHolder;
-import com.redant.core.converter.PrimitiveType;
-import com.redant.core.converter.PrimitiveTypeConverter;
 import com.redant.common.enums.ContentType;
 import com.redant.common.exception.InvocationException;
 import com.redant.common.exception.ValidationException;
-import com.redant.core.render.Render;
-import com.redant.core.router.annotation.RouterParam;
 import com.redant.common.util.GenericsUtil;
 import com.redant.common.util.ValidateUtil;
+import com.redant.core.DataHolder;
+import com.redant.core.converter.PrimitiveConverter;
+import com.redant.core.converter.PrimitiveTypeUtil;
+import com.redant.core.render.Render;
+import com.redant.core.router.annotation.RouterParam;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import net.sf.cglib.reflect.FastClass;
@@ -27,6 +27,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+
 
 /**
  * 封装了ControllerProxy的调用过程
@@ -55,47 +56,6 @@ public class ProxyInvocation {
 
 		}
 
-		private Render invoke(Object controller,Method method,String methodName) throws Exception {
-			if (method == null) {
-				throw new NoSuchMethodException("Can not find specified method: " + methodName);
-			}
-			return exec(controller,method);
-		}
-
-		/**
-		 * 供内部使用的调用所指定方法的方法
-		 *
-		 * @param method
-		 *            所指定的需要被调用的方法
-		 * @return 调用方法后所返回的结果
-		 * @throws Exception
-		 */
-		private Render exec(Object controller, Method method) throws Exception {
-
-			Class<?> clazz = controller.getClass();
-			String methodName = method.getName();
-
-			Class<?>[] parameterTypes = method.getParameterTypes();
-			Object[] parameters = getParameters(method,parameterTypes);
-
-			Render result;
-			try {
-				// 使用 CGLib 执行反射调用
-				FastClass fastClass = FastClass.create(clazz);
-				FastMethod fastMethod = fastClass.getMethod(methodName, parameterTypes);
-				// 调用，并得到调用结果
-				result = (Render)fastMethod.invoke(controller, parameters);
-
-			} catch(InvocationTargetException e){
-				String msg = "调用出错,请求类["+controller.getClass().getName()+"],方法名[" + method.getName() + "],参数[" + Arrays.toString(parameters)+"]";
-				throw getInvokeException(msg, e);
-			} catch (ClassCastException e){
-				String msg = "返回类型应该为Render的实现类,请求类["+controller.getClass().getName()+"],方法名[" + method.getName()+"]";
-				throw getInvokeException(msg, e);
-			}
-			return result;
-		}
-
 		/**
 		 * 获得方法调用的参数
 		 * @param method
@@ -111,7 +71,7 @@ public class ProxyInvocation {
 			Annotation[][] annotationArray = method.getParameterAnnotations();
 
 			//获取参数列表
-			Map<String, List<String>> paramMap = getParamMap();
+			Map<String, List<String>> paramMap = getParameterMap();
 
 			//构造调用所需要的参数数组
 			for (int i = 0; i < parameterTypes.length; i++) {
@@ -121,7 +81,7 @@ public class ProxyInvocation {
 				// 如果该参数没有RouterParam注解
 				if (annotation == null || annotation.length == 0) {
 					// 如果该参数类型是基础类型，则需要加RouterParam注解
-					if(PrimitiveType.isPriType(type)){
+					if(PrimitiveTypeUtil.isPriType(type)){
 						logger.warn("Must specify a @RouterParam annotation for primitive type parameter in method={}", method.getName());
 						continue;
 					}
@@ -133,7 +93,7 @@ public class ProxyInvocation {
 					RouterParam param = (RouterParam) annotation[0];
 					try{
 						//生成当前的调用参数
-						parameter = getParamValue(paramMap, type, param, method, i);
+						parameter = parseParameter(paramMap, type, param, method, i);
 						if(param.checkNull()){
 							ValidateUtil.checkNull(param.key(), parameter);
 						}
@@ -159,7 +119,7 @@ public class ProxyInvocation {
 		 * @throws IllegalAccessException
 		 */
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private Object getParamValue(Map<String, List<String>> paramMap, Class<?> type, RouterParam param, Method method, int index) throws InstantiationException, IllegalAccessException{
+		private Object parseParameter(Map<String, List<String>> paramMap, Class<?> type, RouterParam param, Method method, int index) throws InstantiationException, IllegalAccessException{
 			Object value = null;
 			String key = param.key();
 			String defaultValue= param.defaultValue();
@@ -185,15 +145,15 @@ public class ProxyInvocation {
 					List<String> params = paramMap.get(key);
 					if(params != null){
 						// 基础类型
-						if(PrimitiveType.isPriType(type)){
-							value = PrimitiveTypeConverter.getInstance().convert(params.get(0), type);
+						if(PrimitiveTypeUtil.isPriType(type)){
+							value = PrimitiveConverter.getInstance().convert(params.get(0), type);
 
-						// 数组
+							// 数组
 						}else if(type.isArray()){
 							String[] strArray = params.toArray(new String[]{});
-							value = PrimitiveTypeConverter.getInstance().convert(strArray, type);
+							value = PrimitiveConverter.getInstance().convert(strArray, type);
 
-						// List
+							// List
 						}else if(List.class.isAssignableFrom(type)){
 							List<Object> list;
 							List<Class> types = GenericsUtil.getMethodGenericParameterTypes(method, index);
@@ -205,14 +165,14 @@ public class ProxyInvocation {
 							}
 							for(int i = 0; i < params.size(); i++){
 								if(params.get(i).length() > 0){
-									list.add(PrimitiveTypeConverter.getInstance().convert(params.get(i), listType));
+									list.add(PrimitiveConverter.getInstance().convert(params.get(i), listType));
 								}
 							}
 							value = list;
 						}
 					}else{
-						if(defaultValue != null && PrimitiveType.isPriType(type)){
-							value = PrimitiveTypeConverter.getInstance().convert(defaultValue, type);
+						if(defaultValue != null && PrimitiveTypeUtil.isPriType(type)){
+							value = PrimitiveConverter.getInstance().convert(defaultValue, type);
 						}
 					}
 				}
@@ -224,7 +184,7 @@ public class ProxyInvocation {
 		/**
 		 * 获取请求参数 Map
 		 */
-		private  Map<String, List<String>> getParamMap(){
+		private  Map<String, List<String>> getParameterMap(){
 			Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
 
 			Object msg = DataHolder.getRequest();
@@ -264,7 +224,7 @@ public class ProxyInvocation {
 						valueList = new ArrayList<String>();
 					}
 
-					if(PrimitiveType.isPriType(valueType)){
+					if(PrimitiveTypeUtil.isPriType(valueType)){
 						valueList.add(value.toString());
 						paramMap.put(key, valueList);
 
@@ -315,6 +275,46 @@ public class ProxyInvocation {
 		private InvocationException getInvokeException(String msg, Throwable cause){
 			return new InvocationException(msg,cause);
 		}
+
+
+		//==================================
+
+
+		/**
+		 * 执行方法的调用
+		 * @param controller
+		 * @param method
+		 * @param methodName
+		 * @return
+		 * @throws Exception
+		 */
+		public Render invoke(Object controller,Method method,String methodName) throws Exception {
+			if (method == null) {
+				throw new NoSuchMethodException("Can not find specified method: " + methodName);
+			}
+
+			Class<?> clazz = controller.getClass();
+			Class<?>[] parameterTypes = method.getParameterTypes();
+			Object[] parameters = getParameters(method,parameterTypes);
+
+			Render result;
+			try {
+				// 使用 CGLib 执行反射调用
+				FastClass fastClass = FastClass.create(clazz);
+				FastMethod fastMethod = fastClass.getMethod(methodName, parameterTypes);
+				// 调用，并得到调用结果
+				result = (Render)fastMethod.invoke(controller, parameters);
+
+			} catch(InvocationTargetException e){
+				String msg = "调用出错,请求类["+controller.getClass().getName()+"],方法名[" + method.getName() + "],参数[" + Arrays.toString(parameters)+"]";
+				throw getInvokeException(msg, e);
+			} catch (ClassCastException e){
+				String msg = "返回类型应该为Render的实现类,请求类["+controller.getClass().getName()+"],方法名[" + method.getName()+"]";
+				throw getInvokeException(msg, e);
+			}
+			return result;
+		}
+
 	}
 
 
