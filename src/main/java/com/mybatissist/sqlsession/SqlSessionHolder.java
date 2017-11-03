@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * SqlSessionHolder
@@ -29,11 +31,6 @@ public class SqlSessionHolder {
 	 * sqlSessionFactory需要保持全局唯一，所以需要实现为单例
 	 */
 	private SqlSessionFactory sqlSessionFactory;
-
-	/**
-	 * 自动提交
-	 */
-	private boolean autoCommit = true;
 
 	/**
 	 * sqlSessionFactory创建完毕的标志
@@ -103,7 +100,7 @@ public class SqlSessionHolder {
 
 					if(Config.instance().cacheSqlSession()) {
 						// 操作sqlSession缓存
-						sqlSessionCache = new SqlSessionCache(sqlSessionFactory, autoCommit);
+						sqlSessionCache = new SqlSessionCache(sqlSessionFactory);
 						sqlSessionCache.cacheSqlSession();
 					}
 
@@ -138,7 +135,7 @@ public class SqlSessionHolder {
 			SqlSession sqlSession;
 			// 如果设置了使用SQLSession缓存
 			if(Config.instance().cacheSqlSession() && sqlSessionCache!=null) {
-				sqlSession = sqlSessionCache.getSqlSession();
+				sqlSession = sqlSessionCache.getSqlSession(autoCommit);
 				if (sqlSession != null) {
 					logger.debug("get sqlSession from sqlSessionCache");
 					return sqlSession;
@@ -147,7 +144,7 @@ public class SqlSessionHolder {
 			sqlSession = sqlSessionFactory.openSession(autoCommit);
 			logger.debug("create sqlSession by sqlSessionFactory");
 			if(Config.instance().cacheSqlSession() && sqlSessionCache!=null) {
-				sqlSessionCache.addSqlSession(sqlSession);
+				sqlSessionCache.addSqlSession(sqlSession,autoCommit);
 				logger.debug("add sqlSession to sqlSessionCache");
 			}
 			return sqlSession;
@@ -174,18 +171,24 @@ public class SqlSessionHolder {
 
 		private SqlSessionFactory sqlSessionFactory;
 
-		private boolean autoCommit;
+		private Map<Boolean,String> keyWrapper;
 
 		/**
 		 * 缓存容器
 		 */
-		private CacheContainer<Integer,SqlSession> cacheContainer;
+		private CacheContainer<String,SqlSession> cacheContainer;
 
-
-		public SqlSessionCache(SqlSessionFactory sqlSessionFactory,boolean autoCommit){
+		/**
+		 * 构造函数
+		 * @param sqlSessionFactory
+		 */
+		public SqlSessionCache(SqlSessionFactory sqlSessionFactory){
 			this.sqlSessionFactory = sqlSessionFactory;
-			this.autoCommit = autoCommit;
 			this.cacheContainer = new CacheContainer(capacity,timeout, CacheType.FIFO);
+			this.keyWrapper = new HashMap<Boolean,String>(){{
+				this.put(Boolean.TRUE,"autoCommit");
+				this.put(Boolean.FALSE,"noAutoCommit");
+			}};
 		}
 
 		/**
@@ -193,8 +196,10 @@ public class SqlSessionHolder {
 		 */
 		public void cacheSqlSession(){
 			for(int index=0;index<this.capacity;index++){
-				SqlSession sqlSession = this.sqlSessionFactory.openSession(this.autoCommit);
-				this.cacheContainer.put(index,sqlSession);
+				SqlSession autoCommitSqlSession = this.sqlSessionFactory.openSession(true);
+				SqlSession noAutoCommitSqlSession = this.sqlSessionFactory.openSession();
+				this.cacheContainer.put(this.keyWrapper.get(Boolean.TRUE)+index,autoCommitSqlSession);
+				this.cacheContainer.put(this.keyWrapper.get(Boolean.FALSE)+index,noAutoCommitSqlSession);
 			}
 		}
 
@@ -202,20 +207,20 @@ public class SqlSessionHolder {
 		 * 添加一个SqlSession到缓存中去
 		 * @param sqlSession
 		 */
-		public void addSqlSession(SqlSession sqlSession){
-			// 随机获取一个0-capacity之间的数字
+		public void addSqlSession(SqlSession sqlSession,boolean autoCommit){
+			// 随机获取一个[0,capacity)之间的数字
 			Integer index = RandomUtils.nextInt(this.capacity);
-			this.cacheContainer.put(index,sqlSession);
+			this.cacheContainer.put(this.keyWrapper.get(Boolean.valueOf(autoCommit))+index,sqlSession);
 		}
 
 		/**
 		 * 随机获取一个SqlSession
 		 * @return
 		 */
-		public SqlSession getSqlSession(){
-			// 随机获取一个0-capacity之间的数字
+		public SqlSession getSqlSession(boolean autoCommit){
+			// 随机获取一个[0,capacity)之间的数字
 			Integer index = RandomUtils.nextInt(this.capacity);
-			return this.cacheContainer.get(index);
+			return this.cacheContainer.get(this.keyWrapper.get(Boolean.valueOf(autoCommit))+index);
 		}
 	}
 

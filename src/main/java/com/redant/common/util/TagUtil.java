@@ -1,8 +1,8 @@
 package com.redant.common.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class TagUtil {
 	
-	private static Log logger = LogFactory.getLog(TagUtil.class);
-	
+	private final static Logger logger = LoggerFactory.getLogger(TagUtil.class);
+
 	private static class GHandle{
 		public static Map<String,Long> tags = Collections.synchronizedMap(new HashMap<String,Long>());
 	}

@@ -1,8 +1,8 @@
 package com.redant.mvc.user;
 
+import com.mybatissist.util.MapperUtil;
 import com.redant.core.bean.annotation.Bean;
 import com.redant.mappers.UserMapper;
-import com.mybatissist.sqlsession.SqlSessionContext;
 
 @Bean(name="userService")
 public class UserServiceImpl implements IUserService{
@@ -10,7 +10,7 @@ public class UserServiceImpl implements IUserService{
     /**
      * mapper
      */
-    private UserMapper mapper = SqlSessionContext.getSqlSession(true).getMapper(UserMapper.class);
+    private UserMapper mapper = MapperUtil.getMapper(UserMapper.class);
 
     @Override
     public UserBean selectUserInfo(Integer id) {

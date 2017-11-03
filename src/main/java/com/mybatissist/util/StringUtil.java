@@ -100,6 +100,7 @@ public class StringUtil {
 
     /**
      * 将驼峰风格替换为下划线风格
+     * @param str
      */
     public static String camelhumpToUnderline(String str) {
         final int size;
@@ -122,6 +123,7 @@ public class StringUtil {
 
     /**
      * 将下划线风格替换为驼峰风格
+     * @param str
      */
     public static String underlineToCamelhump(String str) {
         Matcher matcher = UNDERLINE_TO_CAMEL_PATTERN.matcher(str);

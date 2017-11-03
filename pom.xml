@@ -57,8 +57,6 @@
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
         </dependency>
-        <!-- 日志文件管理包 -->
-        <!-- 格式化对象，方便输出日志 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
