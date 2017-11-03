@@ -10,10 +10,10 @@ import com.mybatissist.enums.NameStyle;
 import com.mybatissist.enums.QueryModel;
 import com.mybatissist.enums.QueryStyle;
 import com.mybatissist.exception.InvalidProviderParamException;
-import com.mybatissist.util.StringUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import com.mybatissist.util.NameStyleUtil;
+import com.xiaoleilu.hutool.util.ArrayUtil;
+import com.xiaoleilu.hutool.util.CollectionUtil;
+import com.xiaoleilu.hutool.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class ProviderHelper {
         QueryStyle queryStyle = QueryStyle.AND;
         QueryModel queryModel = QueryModel.EQUAL;
         String column;
-        String prop = ProviderConstants.PROP_LEFT + (StringUtils.isNotBlank(prefix)?prefix+ ProviderConstants.DOT:"") + field.getName() + ProviderConstants.PROP_RIGHT;
+        String prop = ProviderConstants.PROP_LEFT + (StrUtil.isNotBlank(prefix)?prefix+ ProviderConstants.DOT:"") + field.getName() + ProviderConstants.PROP_RIGHT;
         // 如果当前字段有Column注解
         if(field.isAnnotationPresent(Column.class)){
             Column c = field.getAnnotation(Column.class);
@@ -58,9 +58,9 @@ public class ProviderHelper {
             }
             queryStyle = c.queryStyle();
             queryModel = c.queryModel();
-            column = StringUtil.isNotBlank(c.name())?c.name():StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
+            column = StrUtil.isNotBlank(c.name())?c.name():NameStyleUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
         }else{
-            column = StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
+            column = NameStyleUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
         }
         return new ColumnProp(queryStyle,queryModel,column,prop);
     }
@@ -90,9 +90,9 @@ public class ProviderHelper {
         if(beanClass.isAnnotationPresent(Table.class)){
             Table bean = beanClass.getAnnotation(Table.class);
             NameStyle style = bean.style();
-            tableName = StringUtil.isNotBlank(bean.name())?bean.name():StringUtil.convertByNameStyle(beanClass.getSimpleName(),style);
+            tableName = StrUtil.isNotBlank(bean.name())?bean.name():NameStyleUtil.convertByNameStyle(beanClass.getSimpleName(),style);
         }else{
-            tableName = StringUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.CAMEL_HUMP);
+            tableName = NameStyleUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.CAMEL_HUMP);
         }
         return ProviderConstants.SPACE+tableName+ProviderConstants.SPACE;
     }
@@ -106,9 +106,9 @@ public class ProviderHelper {
         String tableAlias;
         if(beanClass.isAnnotationPresent(Table.class)){
             Table bean = beanClass.getAnnotation(Table.class);
-            tableAlias = StringUtil.isNotBlank(bean.alias())?bean.alias():StringUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.LOWER_CASE);
+            tableAlias = StrUtil.isNotBlank(bean.alias())?bean.alias():NameStyleUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.LOWER_CASE);
         }else{
-            tableAlias = StringUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.LOWER_CASE);
+            tableAlias = NameStyleUtil.convertByNameStyle(beanClass.getSimpleName(),NameStyle.LOWER_CASE);
         }
         return tableAlias;
     }
@@ -120,7 +120,7 @@ public class ProviderHelper {
      */
     public static List<Field> getFields(Class<?> beanClass) {
         List<Field> fields = new ArrayList<Field>();
-        Field[] beanFields = (Field[])ArrayUtils.addAll(beanClass.getDeclaredFields(),beanClass.getSuperclass().getDeclaredFields());
+        Field[] beanFields = (Field[]) ArrayUtil.addAll(beanClass.getDeclaredFields(),beanClass.getSuperclass().getDeclaredFields());
         for(int i=0,s=beanFields.length;i<s;i++){
             Field field = beanFields[i];
             if (!ProviderConstants.ABANDON_FIELDS.contains(field.getName().toUpperCase())) {
@@ -147,9 +147,9 @@ public class ProviderHelper {
                 if(c.ignore()){
                     continue;
                 }
-                column = StringUtil.isNotBlank(c.name())?c.name():StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
+                column = StrUtil.isNotBlank(c.name())?c.name():NameStyleUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
             }else{
-                column = StringUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
+                column = NameStyleUtil.convertByNameStyle(field.getName(),NameStyle.CAMEL_HUMP);
             }
             // 此处要处理为 select user_name as userName,否则结果转换为bean时无法找到userName属性
             if(!column.equals(field.getName())){
@@ -172,11 +172,11 @@ public class ProviderHelper {
             // 如果当前字段有Id注解
             if(field.isAnnotationPresent(Id.class)){
                 Id i = field.getAnnotation(Id.class);
-                id = StringUtil.isNotBlank(i.name())?i.name():field.getName();
+                id = StrUtil.isNotBlank(i.name())?i.name():field.getName();
                 break;
             }
         }
-        if(StringUtil.isBlank(id)){
+        if(StrUtil.isBlank(id)){
             logger.warn("No primaryKey column found in beanClass:[{}],will use 'id' instead.",beanClass);
             id = "id";
         }
@@ -251,7 +251,7 @@ public class ProviderHelper {
      */
     public static List<ColumnProp> getConditions(Object bean, String prefix,List<String> keys){
         List<ColumnProp> columnProps = new ArrayList<ColumnProp>();
-        if(bean==null || CollectionUtils.isEmpty(keys)){
+        if(bean==null || CollectionUtil.isEmpty(keys)){
             return columnProps;
         }
         try{
@@ -292,7 +292,7 @@ public class ProviderHelper {
         String param;
         if(bean instanceof List){
             List list = (List)bean;
-            param = CollectionUtils.isNotEmpty(list)?ArrayUtils.toString(list):"";
+            param = CollectionUtil.isNotEmpty(list)?ArrayUtil.toString(list):"";
         }else{
             param = bean!=null?bean.toString():"";
         }
@@ -330,7 +330,7 @@ public class ProviderHelper {
 
     public static void main(String[] args) {
         List<Field> beanFields = ProviderHelper.getFields(User.class);
-        logger.info(ArrayUtils.toString(beanFields));
+        logger.info(ArrayUtil.toString(beanFields));
     }
 
 }

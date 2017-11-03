@@ -31,48 +31,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * String工具类
+ * NameStyle工具类
  * @author gris.wang
  * @create 2017-10-20
  */
-public class StringUtil {
-
-    /**
-     * 空
-     * @param str
-     * @return
-     */
-    public static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
-    }
-
-    /**
-     * 非空
-     * @param str
-     * @return
-     */
-    public static boolean isNotEmpty(String str) {
-        return !isEmpty(str);
-    }
-
-    /**
-     * 空
-     * @param str
-     * @return
-     */
-    public static boolean isBlank(String str) {
-        return str == null || str.trim().length() == 0;
-    }
-
-    /**
-     * 非空
-     * @param str
-     * @return
-     */
-    public static boolean isNotBlank(String str) {
-        return !isBlank(str);
-    }
-
+public class NameStyleUtil {
 
     /**
      * 根据指定的样式进行转换

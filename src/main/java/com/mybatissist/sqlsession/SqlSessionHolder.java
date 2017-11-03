@@ -3,7 +3,7 @@ package com.mybatissist.sqlsession;
 import com.mybatissist.cache.CacheContainer;
 import com.mybatissist.cache.CacheType;
 import com.mybatissist.config.Config;
-import org.apache.commons.lang.math.RandomUtils;
+import com.xiaoleilu.hutool.util.RandomUtil;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -209,7 +209,7 @@ public class SqlSessionHolder {
 		 */
 		public void addSqlSession(SqlSession sqlSession,boolean autoCommit){
 			// 随机获取一个[0,capacity)之间的数字
-			Integer index = RandomUtils.nextInt(this.capacity);
+			Integer index = RandomUtil.randomInt(this.capacity);
 			this.cacheContainer.put(this.keyWrapper.get(Boolean.valueOf(autoCommit))+index,sqlSession);
 		}
 
@@ -219,7 +219,7 @@ public class SqlSessionHolder {
 		 */
 		public SqlSession getSqlSession(boolean autoCommit){
 			// 随机获取一个[0,capacity)之间的数字
-			Integer index = RandomUtils.nextInt(this.capacity);
+			Integer index = RandomUtil.randomInt(this.capacity);
 			return this.cacheContainer.get(this.keyWrapper.get(Boolean.valueOf(autoCommit))+index);
 		}
 	}

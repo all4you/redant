@@ -5,8 +5,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-
 /**
  * SqlSession上下文
  * @author gris.wang
