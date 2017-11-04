@@ -8,7 +8,7 @@
 - **自由路由** ：使用RouterController、RouterMapping、RouterParam注解实现路由的自定义；
 - **参数转换** ：通过TypeConverter接口，实现http请求的参数转换（目前支持：基础类型、Map、List、JavaBean）；
 - **结果渲染** ：通过自定义的Render接口，对返回结果进行渲染，目前支持渲染html、xml、plain、json等数据；
-- **通用查询** ：内置Mybatissist持久层CRUD通用方法操作助手，使用PageHelper插件处理分页。
+- **数据助手** ：内置Mybatissist持久层CRUD通用方法操作助手，使用PageHelper插件处理分页。
 
 -------------------
 
