@@ -55,6 +55,10 @@ public class HttpSession {
     //=====================================
 
 
+    public HttpSession(ChannelHandlerContext context){
+        this(context.channel().id(),context);
+    }
+
     public HttpSession(ChannelId id,ChannelHandlerContext context){
         this(id,context,System.currentTimeMillis());
     }

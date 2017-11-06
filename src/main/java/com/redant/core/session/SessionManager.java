@@ -2,6 +2,7 @@ package com.redant.core.session;
 
 import com.redant.common.exception.InvalidSessionException;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelId;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -17,14 +18,13 @@ public class SessionManager {
     /**
      * 保存session对象的map
      */
-    private Map<ChannelHandlerContext,HttpSession> sessionMap;
+    private Map<ChannelId,HttpSession> sessionMap;
 
     private static SessionManager manager;
 
     private SessionManager(){
 
     }
-
 
 
     //======================================
@@ -40,11 +40,20 @@ public class SessionManager {
                 manager = new SessionManager();
                 if (manager.sessionMap == null) {
                     // 需要线程安全的Map
-                    manager.sessionMap = new ConcurrentHashMap<ChannelHandlerContext, HttpSession>();
+                    manager.sessionMap = new ConcurrentHashMap<ChannelId,HttpSession>();
                 }
             }
         }
         return manager;
+    }
+
+    /**
+     * 判断session是否存在
+     * @param context
+     * @return
+     */
+    public boolean containsSession(ChannelHandlerContext context){
+        return context!=null && context.channel()!=null && context.channel().id()!=null && manager.sessionMap.get(context.channel().id())!=null;
     }
 
     /**
@@ -53,10 +62,10 @@ public class SessionManager {
      * @param session
      */
     public void addSession(ChannelHandlerContext context,HttpSession session){
-        if(context==null || session==null){
+        if(context==null || context.channel()==null || context.channel().id()==null || session==null){
             throw new InvalidSessionException("context or session is null");
         }
-        manager.sessionMap.put(context,session);
+        manager.sessionMap.put(context.channel().id(),session);
     }
 
     /**
@@ -65,10 +74,10 @@ public class SessionManager {
      * @return
      */
     public HttpSession getSession(ChannelHandlerContext context){
-        if(context==null){
+        if(context==null || context.channel()==null || context.channel().id()==null){
             throw new InvalidSessionException("context is null");
         }
-        return manager.sessionMap.get(context);
+        return manager.sessionMap.get(context.channel().id());
     }
 
     /**
@@ -80,7 +89,8 @@ public class SessionManager {
     public HttpSession getSession(ChannelHandlerContext context,boolean createIfNull){
         HttpSession session = getSession(context);
         if(session==null && createIfNull){
-            session = new HttpSession(context.channel().id(),context);
+            session = new HttpSession(context);
+            manager.sessionMap.put(context.channel().id(),session);
         }
         return session;
     }
@@ -90,9 +100,9 @@ public class SessionManager {
      * 需要在定时器中执行该方法
      */
     public void clearExpireSession(){
-        Iterator<Map.Entry<ChannelHandlerContext,HttpSession>> iterator = manager.sessionMap.entrySet().iterator();
+        Iterator<Map.Entry<ChannelId,HttpSession>> iterator = manager.sessionMap.entrySet().iterator();
         while(iterator.hasNext()){
-            Map.Entry<ChannelHandlerContext,HttpSession> sessionEntry = iterator.next();
+            Map.Entry<ChannelId,HttpSession> sessionEntry = iterator.next();
             if(sessionEntry.getValue()==null || sessionEntry.getValue().isExpire()){
                 iterator.remove();
             }
