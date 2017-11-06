@@ -492,8 +492,8 @@ public class Router<T> {
      * Helper for toString.
      *
      * <p>For example, returns
-     * "io.netty.example.http.router.HttpRouterServerHandler" instead of
-     * "class io.netty.example.http.router.HttpRouterServerHandler"
+     * "io.server.example.http.router.HttpRouterServerHandler" instead of
+     * "class io.server.example.http.router.HttpRouterServerHandler"
      */
     private static String targetToString(Object target) {
         if (target instanceof Class) {

@@ -1,4 +1,4 @@
-package com.redant.core.netty;
+package com.redant.core.server;
 
 import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.ServerBootstrap;
