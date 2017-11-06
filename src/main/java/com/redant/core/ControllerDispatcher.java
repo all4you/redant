@@ -1,6 +1,7 @@
 package com.redant.core;
 
 import com.redant.common.exception.InvocationException;
+import com.redant.core.cookie.CookieHelper;
 import com.redant.core.invocation.ProxyInvocation;
 import com.redant.core.invocation.ControllerProxy;
 import com.redant.core.render.Render;
@@ -11,8 +12,14 @@ import com.redant.common.util.HttpRenderUtil;
 import com.redant.common.constants.HttpHeaders;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Set;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -99,11 +106,15 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
         if(!close && !forceClose){
             response.headers().add(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         }
+        CookieHelper.setCookie(request,response);
         ChannelFuture future = channel.write(response);
         if(close || forceClose){
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }
+
+
+
 
     private boolean isClose(){
         return request.headers().contains(HttpHeaders.CONNECTION, CONNECTION_CLOSE, true) ||
