@@ -2,7 +2,7 @@ package com.mybatissist.sqlsession;
 
 import com.mybatissist.cache.CacheContainer;
 import com.mybatissist.cache.CacheType;
-import com.mybatissist.config.Config;
+import com.mybatissist.config.MybatissistConfig;
 import com.xiaoleilu.hutool.util.RandomUtil;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -22,7 +22,7 @@ import java.util.Map;
  * @create 2017-10-20
  *
  */
-public class SqlSessionHolder {
+public final class SqlSessionHolder {
 
 	private static final Logger logger = LoggerFactory.getLogger(SqlSessionHolder.class);
 
@@ -86,19 +86,28 @@ public class SqlSessionHolder {
 		}
 	}
 
+
 	/**
 	 * 创建sqlSessionFactory
 	 */
 	public void buildFactory(){
+		buildFactory(MybatissistConfig.instance().mybatisConfig());
+	}
+
+	/**
+	 * 创建sqlSessionFactory
+	 * @param mybatisConfigPath
+	 */
+	public void buildFactory(String mybatisConfigPath){
 		synchronized (SqlSessionHolder.class){
 			if(sqlSessionFactory==null){
 				logger.info("Start to build sqlSessionFactory...");
 				try {
-					Reader reader  = Resources.getResourceAsReader("mybatis-config.xml");
+					Reader reader = Resources.getResourceAsReader(mybatisConfigPath);
 					sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 					reader.close();
 
-					if(Config.instance().cacheSqlSession()) {
+					if(MybatissistConfig.instance().cacheSqlSession()) {
 						// 操作sqlSession缓存
 						sqlSessionCache = new SqlSessionCache(sqlSessionFactory);
 						sqlSessionCache.cacheSqlSession();
@@ -134,7 +143,7 @@ public class SqlSessionHolder {
 		if(builded()){
 			SqlSession sqlSession;
 			// 如果设置了使用SQLSession缓存
-			if(Config.instance().cacheSqlSession() && sqlSessionCache!=null) {
+			if(MybatissistConfig.instance().cacheSqlSession() && sqlSessionCache!=null) {
 				sqlSession = sqlSessionCache.getSqlSession(autoCommit);
 				if (sqlSession != null) {
 					logger.debug("get sqlSession from sqlSessionCache");
@@ -143,7 +152,7 @@ public class SqlSessionHolder {
 			}
 			sqlSession = sqlSessionFactory.openSession(autoCommit);
 			logger.debug("create sqlSession by sqlSessionFactory");
-			if(Config.instance().cacheSqlSession() && sqlSessionCache!=null) {
+			if(MybatissistConfig.instance().cacheSqlSession() && sqlSessionCache!=null) {
 				sqlSessionCache.addSqlSession(sqlSession,autoCommit);
 				logger.debug("add sqlSession to sqlSessionCache");
 			}

@@ -1,7 +1,5 @@
 package com.mybatissist.config;
 
-import com.mybatissist.sqlsession.SqlSessionContext;
-import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +8,16 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @since 2017/11/1
  */
-public class Config {
+public class MybatissistConfig {
 
-    private Config(){
+    private MybatissistConfig(){
 
     }
+
+    /**
+     * 默认的mybatis配置文件
+     */
+    private String mybatisConfig = "mybatis-config.xml";
 
     /**
      * 是否打印sql语句
@@ -34,11 +37,11 @@ public class Config {
     /**
      * 单例
      */
-    private static Config config;
+    private static MybatissistConfig config;
 
     static{
         if(config==null){
-            config = new Config();
+            config = new MybatissistConfig();
         }
     }
 
@@ -50,11 +53,15 @@ public class Config {
      * 获取实例
      * @return
      */
-    public static Config instance(){
+    public static MybatissistConfig instance(){
         return config;
     }
 
-    public Config printSql(boolean printSql){
+    public String mybatisConfig(){
+        return config.mybatisConfig;
+    }
+
+    public MybatissistConfig printSql(boolean printSql){
         config.printSql = printSql;
         return config;
     }
@@ -63,7 +70,7 @@ public class Config {
         return config.printSql;
     }
 
-    public Config cacheSelectSql(boolean cacheSelectSql){
+    public MybatissistConfig cacheSelectSql(boolean cacheSelectSql){
         config.cacheSelectSql = cacheSelectSql;
         return config;
     }
@@ -72,7 +79,7 @@ public class Config {
         return config.cacheSelectSql;
     }
 
-    public Config cacheSqlSession(boolean cacheSqlSession){
+    public MybatissistConfig cacheSqlSession(boolean cacheSqlSession){
         config.cacheSqlSession = cacheSqlSession;
         return config;
     }
@@ -83,7 +90,7 @@ public class Config {
 
     @Override
     public String toString() {
-        return "["+super.toString()+"]:{printSql:"+config.printSql+",cacheSelectSql:"+config.cacheSelectSql+",cacheSqlSession:"+config.cacheSqlSession+"}";
+        return "["+super.toString()+"]:{mybatisConfig:"+config.mybatisConfig+",printSql:"+config.printSql+",cacheSelectSql:"+config.cacheSelectSql+",cacheSqlSession:"+config.cacheSqlSession+"}";
     }
 
     public static void main(String[] args) {
@@ -95,7 +102,7 @@ public class Config {
 
             @Override
             public void run() {
-                Config result = Config.instance();
+                MybatissistConfig result = MybatissistConfig.instance();
                 logger.info("result={},currentThread={}",result,Thread.currentThread().getName());
             }
         }

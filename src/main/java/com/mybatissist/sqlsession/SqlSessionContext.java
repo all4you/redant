@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @create 2017-10-20
  */
-public class SqlSessionContext {
+public final class SqlSessionContext {
 
     private static final SqlSessionHolder sqlSessionHolder = SqlSessionHolder.create();
 
@@ -19,6 +19,14 @@ public class SqlSessionContext {
      */
     public static void buildFactory(){
         sqlSessionHolder.buildFactory();
+    }
+
+    /**
+     * 初始化SqlSessionFactory
+     * @param mybatisConfigPath
+     */
+    public static void buildFactory(String mybatisConfigPath){
+        sqlSessionHolder.buildFactory(mybatisConfigPath);
     }
 
     /**
