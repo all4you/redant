@@ -187,7 +187,7 @@ public class ProxyInvocation {
 		private  Map<String, List<String>> getParameterMap(){
 			Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
 
-			Object msg = DataHolder.getRequest();
+			Object msg = DataHolder.get(DataHolder.HolderType.REQUEST);
 			HttpRequest request = (HttpRequest) msg;
 			HttpMethod method = request.method();
 			if(HttpMethod.GET.equals(method)){

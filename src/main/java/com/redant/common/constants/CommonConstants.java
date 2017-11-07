@@ -2,6 +2,11 @@ package com.redant.common.constants;
 
 import com.redant.common.util.PropertiesUtil;
 
+/**
+ * 公共常量
+ * @author gris.wang
+ * @since 2017-10-20
+ */
 public class CommonConstants {
 
 
@@ -36,5 +41,6 @@ public class CommonConstants {
      */
     public static final String SERVER_INTERNAL_ERROR_DESC = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("server.internal.error.desc");
 
+    public static final String FAVICON_ICO = "/favicon.ico";
 
 }

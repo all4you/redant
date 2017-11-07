@@ -1,31 +1,26 @@
-package com.redant.core;
+package com.redant.core.handler;
 
+import com.redant.common.constants.CommonConstants;
+import com.redant.common.constants.HttpHeaders;
 import com.redant.common.exception.InvocationException;
-import com.redant.core.cookie.CookieHelper;
-import com.redant.core.invocation.ProxyInvocation;
+import com.redant.common.util.HttpRenderUtil;
+import com.redant.core.DataHolder;
 import com.redant.core.invocation.ControllerProxy;
+import com.redant.core.invocation.ProxyInvocation;
 import com.redant.core.render.Render;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.RouteResult;
 import com.redant.core.router.RouterContext;
-import com.redant.common.util.HttpRenderUtil;
-import com.redant.common.constants.HttpHeaders;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.cookie.Cookie;
-import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * 控制器
+ * 请求分发控制器
  * @author gris.wang
  * @create 2017-10-20
  */
@@ -38,8 +33,6 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
     private static final String CONNECTION_KEEP_ALIVE = "keep-alive";
     private static final String CONNECTION_CLOSE = "close";
 
-    private final static String FAVICON_ICO = "/favicon.ico";
-
     private HttpRequest request;
     private FullHttpResponse response;
     private Channel channel;
@@ -47,7 +40,8 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
-        DataHolder.removeRequest(); // 释放ThreadLocal对象
+        // 释放ThreadLocal对象
+        DataHolder.removeAll();
     }
 
     @Override
@@ -59,12 +53,10 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
             if (HttpUtil.is100ContinueExpected(request)) {
                 ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
             }
-            if(request.uri().equals(FAVICON_ICO)){
+            if(request.uri().equals(CommonConstants.FAVICON_ICO)){
                 return;
             }
             try{
-                DataHolder.storeRequest(request);
-
                 // 获得路由结果
                 RouteResult<RenderType> routeResult = RouterContext.getRouteResult(request.method(),request.uri());
                 // 根据路由获得具体的ControllerProxy
@@ -102,19 +94,17 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
     }
 
     private void writeResponse(boolean forceClose){
+        DataHolder.store(DataHolder.HolderType.RESPONSE,response);
+
         boolean close = isClose();
         if(!close && !forceClose){
             response.headers().add(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         }
-        CookieHelper.setCookie(request,response);
         ChannelFuture future = channel.write(response);
         if(close || forceClose){
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }
-
-
-
 
     private boolean isClose(){
         return request.headers().contains(HttpHeaders.CONNECTION, CONNECTION_CLOSE, true) ||
