@@ -35,13 +35,6 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
     private HttpRequest request;
     private FullHttpResponse response;
     private Channel channel;
-    
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
-        // 释放ThreadLocal对象
-        DataHolder.removeAll();
-    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
@@ -84,6 +77,13 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
                 writeResponse(true);
             }
         }
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+        // 释放ThreadLocal对象
+        DataHolder.removeAll();
     }
 
     @Override

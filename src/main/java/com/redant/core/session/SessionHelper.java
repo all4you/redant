@@ -9,20 +9,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Session管理器
+ * Session辅助器
  * @author gris.wang
  * @since 2017/11/6
  */
-public class SessionManager {
+public class SessionHelper {
 
     /**
      * 保存session对象的map
      */
     private Map<ChannelId,HttpSession> sessionMap;
 
-    private static SessionManager manager;
+    private static SessionHelper manager;
 
-    private SessionManager(){
+    private SessionHelper(){
 
     }
 
@@ -34,10 +34,10 @@ public class SessionManager {
      * 获取单例
      * @return
      */
-    public static SessionManager instange(){
-        synchronized (SessionManager.class) {
+    public static SessionHelper instange(){
+        synchronized (SessionHelper.class) {
             if (manager == null) {
-                manager = new SessionManager();
+                manager = new SessionHelper();
                 if (manager.sessionMap == null) {
                     // 需要线程安全的Map
                     manager.sessionMap = new ConcurrentHashMap<ChannelId,HttpSession>();
