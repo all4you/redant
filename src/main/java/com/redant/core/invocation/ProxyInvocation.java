@@ -267,7 +267,7 @@ public class ProxyInvocation {
 		}
 
 		private String getContentType(HttpHeaders headers){
-			String contentType = headers.get(com.redant.common.constants.HttpHeaders.CONTENT_TYPE).toString();
+			String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE).toString();
 			String[] list = contentType.split(";");
 			return list[0];
 		}

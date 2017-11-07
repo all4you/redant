@@ -1,13 +1,9 @@
 package com.redant.common.util;
 
 import com.redant.common.constants.CommonConstants;
-import com.redant.common.constants.HttpHeaders;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +96,8 @@ public class HttpRenderUtil {
 		}
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, byteBuf);
-		response.headers().add(HttpHeaders.CONTENT_TYPE, contentType);
-		response.headers().add(HttpHeaders.CONTENT_LENGTH, String.valueOf(byteBuf.readableBytes()));
+		response.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
+		response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(byteBuf.readableBytes()));
 		return response;
 	}
 

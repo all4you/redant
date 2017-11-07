@@ -1,7 +1,6 @@
 package com.redant.core.handler;
 
 import com.redant.common.constants.CommonConstants;
-import com.redant.common.constants.HttpHeaders;
 import com.redant.common.exception.InvocationException;
 import com.redant.common.util.HttpRenderUtil;
 import com.redant.core.DataHolder;
@@ -98,7 +97,7 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
 
         boolean close = isClose();
         if(!close && !forceClose){
-            response.headers().add(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
+            response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         }
         ChannelFuture future = channel.write(response);
         if(close || forceClose){
@@ -107,8 +106,8 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler {
     }
 
     private boolean isClose(){
-        return request.headers().contains(HttpHeaders.CONNECTION, CONNECTION_CLOSE, true) ||
-                (request.protocolVersion().equals(HttpVersion.HTTP_1_0) && !request.headers().contains(HttpHeaders.CONNECTION, CONNECTION_KEEP_ALIVE, true));
+        return request.headers().contains(HttpHeaderNames.CONNECTION, CONNECTION_CLOSE, true) ||
+                (request.protocolVersion().equals(HttpVersion.HTTP_1_0) && !request.headers().contains(HttpHeaderNames.CONNECTION, CONNECTION_KEEP_ALIVE, true));
     }
 
 }
