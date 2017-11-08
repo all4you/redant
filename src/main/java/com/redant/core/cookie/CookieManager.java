@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 操作Cookie的辅助类包装器
+ * Cookie管理器
  * @author gris.wang
  * @since 2017/11/6
  */

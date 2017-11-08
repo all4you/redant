@@ -4,7 +4,7 @@ import com.redant.core.DataHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * Session管理器包装器
+ * Session管理器
  * @author gris.wang
  * @since 2017/11/6
  */
