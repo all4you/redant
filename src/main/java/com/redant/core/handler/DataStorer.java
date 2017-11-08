@@ -5,13 +5,17 @@ import com.redant.core.DataHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 将请求数据存储起来
  * @author gris.wang
  * @since 2017/11/7
  */
-public class DataStoreHandler extends ChannelInboundHandlerAdapter {
+public class DataStorer extends ChannelInboundHandlerAdapter {
+
+    private final static Logger logger = LoggerFactory.getLogger(DataStorer.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -29,5 +33,17 @@ public class DataStoreHandler extends ChannelInboundHandlerAdapter {
          */
         ctx.fireChannelRead(msg);
     }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.close();
+        logger.error("ctx close,cause:",cause);
+    }
+
 
 }

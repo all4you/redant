@@ -2,7 +2,8 @@ package com.redant.core.server;
 
 import com.redant.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
-import com.redant.core.handler.DataStoreHandler;
+import com.redant.core.handler.DataStorer;
+import com.redant.core.handler.ResponseConsumer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -32,9 +33,11 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
         p.addLast(new ChunkedWriteHandler());
 
-        p.addLast(new DataStoreHandler());
+        p.addLast(new DataStorer());
 
         p.addLast(new ControllerDispatcher());
+
+        p.addLast(new ResponseConsumer());
 
     }
 

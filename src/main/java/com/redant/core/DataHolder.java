@@ -26,6 +26,10 @@ public class DataHolder {
 		 * context
 		 */
 		CONTEXT("context"),
+		/**
+		 * forceClose
+		 */
+		FORCE_CLOSE("forceClose"),
 		;
 
 		private String type;

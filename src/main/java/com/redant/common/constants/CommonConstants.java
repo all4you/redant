@@ -43,4 +43,8 @@ public class CommonConstants {
 
     public static final String FAVICON_ICO = "/favicon.ico";
 
+    public static final String CONNECTION_KEEP_ALIVE = "keep-alive";
+
+    public static final String CONNECTION_CLOSE = "close";
+
 }
