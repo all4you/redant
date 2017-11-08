@@ -7,6 +7,8 @@
 - **自动注入** ：通过Autowired注解，实现Bean对象的自动注入；
 - **自由路由** ：使用RouterController、RouterMapping、RouterParam注解实现路由的自定义；
 - **参数转换** ：通过TypeConverter接口，实现http请求的参数转换（目前支持：基础类型、Map、List、JavaBean）；
+- **Session** ：实现了自定义的Session管理，一个session就是一个ChannelHandlerContext；
+- **Cookie** ：实现了自定义的Cookie管理，cookie需要在writeResponse之前写入response的header中；
 - **结果渲染** ：通过自定义的Render接口，对返回结果进行渲染，目前支持渲染html、xml、plain、json等数据；
 - **数据助手** ：内置Mybatissist持久层CRUD通用方法操作助手，使用PageHelper插件处理分页。
 
@@ -83,15 +85,294 @@ public class UserController {
 
 
 
+## Session管理
+
+> 实现了自定义的Session管理，Session是基于Netty的ChannelHandlerContext（以下简称context）实现的，使用context中通道的channelId作为sessionId。每个session使用一个map来存储需要保存的属性值。
+
+##### HttpSession
+``` java
+/**
+ * HttpSession
+ * @author gris.wang
+ * @since 2017/11/6
+ */
+public class HttpSession {
+
+    /**
+     * 会话id
+     */
+    private ChannelId id;
+
+    /**
+     * 会话保存的ChannelHandlerContext
+     */
+    private ChannelHandlerContext context;
+
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+
+    /**
+     * 过期时间
+     * 每次请求时都更新过期时间
+     */
+    private Long expireTime;
+
+    /**
+     * Session中存储的数据
+     */
+    private Map<String,Object> sessionMap;
+
+    private void assertCookieMapNotNull(){
+        if(sessionMap==null){
+            sessionMap= new HashMap<String,Object>();
+        }
+    }
 
 
-## 通用查询助手-Mybatissist
+    private HttpSession(){
+
+    }
+
+
+    //=====================================
+
+
+    public HttpSession(ChannelHandlerContext context){
+        this(context.channel().id(),context);
+    }
+
+    public HttpSession(ChannelId id,ChannelHandlerContext context){
+        this(id,context,System.currentTimeMillis());
+    }
+
+    public HttpSession(ChannelId id,ChannelHandlerContext context,Long createTime){
+        this(id,context,createTime,createTime + SessionConfig.instance().sessionTimeOut());
+    }
+
+    public HttpSession(ChannelId id,ChannelHandlerContext context,Long createTime,Long expireTime){
+        this.id = id;
+        this.context = context;
+        this.createTime = createTime;
+        this.expireTime = expireTime;
+        assertCookieMapNotNull();
+    }
+
+    public getXXX(){}
+
+    public setXXX(){}
+    
+    /**
+     * 是否过期
+     * @return
+     */
+    public boolean isExpire(){
+        return this.expireTime>=System.currentTimeMillis();
+    }
+
+    /**
+     * 设置attribute
+     * @param key
+     * @param val
+     */
+    public void setAttribute(String key,Object val){
+        sessionMap.put(key,val);
+    }
+
+    /**
+     * 获取key的值
+     * @param key
+     */
+    public void getAttribute(String key){
+        sessionMap.get(key);
+    }
+
+    /**
+     * 是否存在key
+     * @param key
+     */
+    public boolean containsAttribute(String key){
+        return sessionMap.containsKey(key);
+    }
+}
+```
+
+
+## Cookie管理
+
+> 实现了自定义的Cookie管理，需要注意的是`cookie需要在writeResponse之前写入response的header中`。
+
+##### CookieHelper
+``` java
+/**
+ * 操作Cookie的辅助类
+ * @author gris.wang
+ * @since 2017/11/6
+ */
+public class CookieHelper {
+
+    /**
+     * 获取HttpRequest中的Cookies
+     * @param request
+     * @return
+     */
+    public static Set<Cookie> getCookies(HttpRequest request){
+        Set<Cookie> cookies;
+        String value = request.headers().get(HttpHeaderNames.COOKIE);
+        if (value == null) {
+            cookies = Collections.emptySet();
+        } else {
+            cookies = ServerCookieDecoder.STRICT.decode(value);
+        }
+        return cookies;
+    }
+
+    /**
+     * 设置Cookie
+     * @param response
+     * @param cookie
+     */
+    public static void setCookie(HttpResponse response,Cookie cookie){
+        response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+    }
+
+    /**
+     * 设置所有的Cookie
+     * @param request
+     * @param response
+     */
+    public static void setCookies(HttpRequest request,HttpResponse response){
+        Set<Cookie> cookies = getCookies(request);
+        if (!cookies.isEmpty()) {
+            for (Cookie cookie : cookies) {
+                setCookie(response,cookie);
+            }
+        }
+    }
+
+
+    /**
+     * 添加一个Cookie
+     * @param response response
+     * @param name  cookie名字
+     * @param value cookie值
+     */
+    public static void addCookie(HttpResponse response,String name,String value){
+        CookieHelper.addCookie(response,name,value,null);
+    }
+
+    /**
+     * 添加一个Cookie
+     * @param response response
+     * @param name  cookie名字
+     * @param value cookie值
+     * @param domain cookie所在域
+     */
+    public static void addCookie(HttpResponse response,String name,String value,String domain){
+        CookieHelper.addCookie(response,name,value,domain,0);
+    }
+
+
+    /**
+     * 添加一个Cookie
+     * @param response response
+     * @param name  cookie名字
+     * @param value cookie值
+     * @param maxAge cookie生命周期  以秒为单位
+     */
+    public static void addCookie(HttpResponse response,String name,String value,long maxAge){
+        CookieHelper.addCookie(response,name,value,null,maxAge);
+    }
+
+    /**
+     * 添加一个Cookie
+     * @param response response
+     * @param name  cookie名字
+     * @param value cookie值
+     * @param domain cookie所在域
+     * @param maxAge cookie生命周期  以秒为单位
+     */
+    public static void addCookie(HttpResponse response,String name,String value,String domain,long maxAge){
+        Cookie cookie = new DefaultCookie(name,value);
+        cookie.setPath("/");
+        if(domain!=null && domain.trim().length()>0) {
+            cookie.setDomain(domain);
+        }
+        if(maxAge>0){
+            cookie.setMaxAge(maxAge);
+        }
+        setCookie(response,cookie);
+    }
+
+    /**
+     * 将cookie封装到Map里面
+     * @param request HttpRequest
+     * @return
+     */
+    public static Map<String,Cookie> getCookieMap(HttpRequest request){
+        Map<String,Cookie> cookieMap = new HashMap<String,Cookie>();
+        Set<Cookie> cookies = getCookies(request);
+        if(null!=cookies && !cookies.isEmpty()){
+            for(Cookie cookie : cookies){
+                cookieMap.put(cookie.name(), cookie);
+            }
+        }
+        return cookieMap;
+    }
+
+    /**
+     * 根据名字获取Cookie
+     * @param request HttpRequest
+     * @param name cookie名字
+     * @return
+     */
+    public static Cookie getCookie(HttpRequest request,String name){
+        Map<String,Cookie> cookieMap = getCookieMap(request);
+        return cookieMap.containsKey(name)?cookieMap.get(name):null;
+    }
+
+    /**
+     * 获取Cookie的值
+     * @param request HttpRequest
+     * @param name cookie名字
+     * @return
+     */
+    public static String getCookieValue(HttpRequest request,String name){
+        Cookie cookie = getCookie(request,name);
+        return cookie.value();
+    }
+
+    /**
+     * 删除一个Cookie
+     * @param request
+     * @param response
+     * @param name
+     * @return
+     */
+    public static boolean deleteCookie(HttpRequest request,HttpResponse response,String name) {
+        Cookie cookie = getCookie(request,name);
+        if(cookie!=null){
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            setCookie(response,cookie);
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+
+
+## Mybatissist--通用CRUD工具
 
 > Mybatissist 是一个基于Mybatis注解的通用CRUD工具，使用Mybatissist可以仅仅关注数据库表和实体类的映射，而不必关系具体的操作过程，也不需要编写额外的Mapper.xml来指定SQL语句，只需要定义好实体类和xxxMapper接口，且保证该xxxMapper接口继承自通用的Mapper接口，既能使用通用接口中的所有CRUD方法。
 
 
 ##### 通用Mapper接口
 ``` java
+// 所有需要使用通用CRUD操作的接口都需要继承该Mapper接口
 public interface Mapper<T> extends InsertMapper<T>,UpdateMapper<T>,DeleteMapper<T>,SelectMapper<T> {
 
 }
@@ -100,7 +381,8 @@ public interface Mapper<T> extends InsertMapper<T>,UpdateMapper<T>,DeleteMapper<
 
 ##### 实体类
 ``` java
-@Table(name="user_bean",alias="u")
+// 使用@Table注解指定表名和别名，如果不指定会将类名根据驼峰转换为下划线的结果作为表名
+@Table(name="user_bean",alias="u") 
 public class UserBean extends BaseBean {
 
     private Integer id;
@@ -122,7 +404,7 @@ public interface UserMapper extends Mapper<UserBean> {
 
 
 
-##### 测试方法
+##### 所有通用的CRUD方法
 ``` java
 public class MapperTest {
 
@@ -138,6 +420,8 @@ public class MapperTest {
     public void beforeTest(){
         sqlSession = SqlSessionContext.getSqlSession(autoCommit);
         mapper = sqlSession.getMapper(UserMapper.class);
+        // 也可以通过MapperUtil来获取mapper对象
+        // mapper = MapperUtil.getMapper(UserMapper.class);
     }
 
     @After
@@ -276,3 +560,5 @@ public class MapperTest {
 
 }
 ```
+
+

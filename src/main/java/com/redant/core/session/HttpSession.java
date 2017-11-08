@@ -37,12 +37,12 @@ public class HttpSession {
     /**
      * Session中存储的数据
      */
-    private Map<String,Object> cookieMap;
+    private Map<String,Object> sessionMap;
 
 
     private void assertCookieMapNotNull(){
-        if(cookieMap==null){
-            cookieMap = new HashMap<String,Object>();
+        if(sessionMap ==null){
+            sessionMap = new HashMap<String,Object>();
         }
     }
 
@@ -121,7 +121,7 @@ public class HttpSession {
      * @param val
      */
     public void setAttribute(String key,Object val){
-        cookieMap.put(key,val);
+        sessionMap.put(key,val);
     }
 
     /**
@@ -129,7 +129,7 @@ public class HttpSession {
      * @param key
      */
     public void getAttribute(String key){
-        cookieMap.get(key);
+        sessionMap.get(key);
     }
 
     /**
@@ -137,7 +137,7 @@ public class HttpSession {
      * @param key
      */
     public boolean containsAttribute(String key){
-        return cookieMap.containsKey(key);
+        return sessionMap.containsKey(key);
     }
 
 
