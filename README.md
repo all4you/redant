@@ -84,8 +84,8 @@
 
 
 
-[1]: https://github.com/all4you/redant/wiki/1:Bean?_blank {:target="_blank"}
-[2]: https://github.com/all4you/redant/wiki/2:Router?_blank {:target="_blank"}
-[3]: https://github.com/all4you/redant/wiki/3:Session?_blank {:target="_blank"}
-[4]: https://github.com/all4you/redant/wiki/4:Cookie?_blank {:target="_blank"}
-[5]: https://github.com/all4you/redant/wiki/5:Mybatissist {:target="_blank"}
+[1]: https://github.com/all4you/redant/wiki/1:Bean
+[2]: https://github.com/all4you/redant/wiki/2:Router
+[3]: https://github.com/all4you/redant/wiki/3:Session
+[4]: https://github.com/all4you/redant/wiki/4:Cookie
+[5]: https://github.com/all4you/redant/wiki/5:Mybatissist
