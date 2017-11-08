@@ -40,7 +40,7 @@ public class HttpSession {
     private Map<String,Object> sessionMap;
 
 
-    private void assertCookieMapNotNull(){
+    private void assertSessionMapNotNull(){
         if(sessionMap ==null){
             sessionMap = new HashMap<String,Object>();
         }
@@ -72,7 +72,7 @@ public class HttpSession {
         this.context = context;
         this.createTime = createTime;
         this.expireTime = expireTime;
-        assertCookieMapNotNull();
+        assertSessionMapNotNull();
     }
 
     public ChannelId getId() {

@@ -62,5 +62,4 @@ public class SessionManager {
         SessionHelper.instange().clearExpireSession();
     }
 
-
 }
