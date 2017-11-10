@@ -1,14 +1,20 @@
 package com.redant.core.server;
 
 import com.redant.common.constants.CommonConstants;
+import com.redant.core.handler.ControllerDispatcher;
+import com.redant.core.handler.DataStorer;
+import com.redant.core.handler.ResponseConsumer;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,4 +50,30 @@ public final class NettyServer {
             workerGroup.shutdownGracefully();
         }
     }
+
+    private static class ServerInitializer extends ChannelInitializer<SocketChannel> {
+
+        @Override
+        public void initChannel(SocketChannel ch) {
+            ChannelPipeline p = ch.pipeline();
+
+            // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
+            p.addLast(new HttpServerCodec());
+
+            // add gizp compressor for http response content
+            p.addLast(new HttpContentCompressor());
+
+            p.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
+
+            p.addLast(new ChunkedWriteHandler());
+
+            p.addLast(new DataStorer());
+
+            p.addLast(new ControllerDispatcher());
+
+            p.addLast(new ResponseConsumer());
+
+        }
+    }
+
 }
