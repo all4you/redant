@@ -9,4 +9,5 @@ web/.settings/
 dal/target/
 dal/.settings
 target/
+logback/
 *.gitignore
