@@ -7,6 +7,7 @@ import com.redant.common.enums.RequestMethod;
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
 import com.redant.core.render.BaseRender;
+import com.redant.core.render.Render;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
@@ -20,7 +21,7 @@ public class UserController {
     private IUserService userService;
 
     @RouterMapping(path="/getUserInfo",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public BaseRender getUserInfo(UserBean userBean,@RouterParam(key="pid") Integer pid){
+    public Render getUserInfo(UserBean userBean, @RouterParam(key="pid") Integer pid){
         JSONObject object = new JSONObject();
         object.put("user",userService.selectUserInfo(userBean.getId()));
         object.put("pid",pid);
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @RouterMapping(path="/getUserList",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public BaseRender getUserList(){
+    public Render getUserList(){
         JSONArray array = new JSONArray();
         JSONObject object = new JSONObject();
         UserBean user = new UserBean();
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @RouterMapping(path="/getUserCount",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public BaseRender getUserCount(UserBean userBean){
+    public Render getUserCount(UserBean userBean){
         JSONObject object = new JSONObject();
         int count = userService.selectCount(userBean);
         object.put("count",count);

@@ -1,7 +1,7 @@
 package com.redant.core.cookie;
 
 import com.redant.core.DataHolder;
-import io.netty.channel.ChannelHandlerContext;
+import com.redant.core.render.Render;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -29,9 +29,10 @@ public class CookieManager {
      * 设置Cookie
      * @param cookie
      */
-    public static void setCookie(Cookie cookie){
+    public static void setCookie(Render render, Cookie cookie){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.setCookie(response,cookie);
+
     }
 
     /**

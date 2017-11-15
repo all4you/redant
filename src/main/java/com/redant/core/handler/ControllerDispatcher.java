@@ -11,8 +11,8 @@ import com.redant.core.router.RouteResult;
 import com.redant.core.router.RouterContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
             boolean forceClose = false;
-            FullHttpResponse response;
+            HttpResponse response;
             try{
                 // 获得路由结果
                 RouteResult<RenderType> routeResult = RouterContext.getRouteResult(request.method(),request.uri());
@@ -44,7 +44,7 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                 }else {
                     // 每一个Controller的方法返回类型约定为Render的实现类
                     Render render = ProxyInvocation.invoke(controllerProxy);
-                    response = render.process();
+                    response = render.render();
                 }
             }catch(Exception e){
                 routerLogger.error("Server Internal Error,cause:",e);

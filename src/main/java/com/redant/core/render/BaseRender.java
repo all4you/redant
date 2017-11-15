@@ -2,6 +2,7 @@ package com.redant.core.render;
 
 import com.redant.common.util.HttpRenderUtil;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.cookie.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +24,17 @@ public class BaseRender implements Render {
 		this.bytes = convertBytes(content);
 	}
 
+	public BaseRender(RenderType renderType, Object content, Cookie cookie){
+		this.renderType = renderType;
+		this.bytes = convertBytes(content);
+	}
+
 	public byte[] convertBytes(Object content){
 		return HttpRenderUtil.getBytes(content);
 	}
 
 	@Override
-	public FullHttpResponse process() throws Exception {
+	public FullHttpResponse render() throws Exception {
 		FullHttpResponse response;
 		switch (renderType) {
 		case JSON:

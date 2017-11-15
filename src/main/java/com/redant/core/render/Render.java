@@ -14,6 +14,6 @@ public interface Render {
 	 * @return
 	 * @throws Exception
 	 */
-	FullHttpResponse process() throws Exception;
+	FullHttpResponse render() throws Exception;
 
 }
