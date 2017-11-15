@@ -3,7 +3,7 @@ package com.redant.core.render;
 import io.netty.handler.codec.http.cookie.Cookie;
 
 /**
- * @auther gris.wang
+ * @author gris.wang
  * @since 2017/11/15
  **/
 public interface CookieRender extends Render{

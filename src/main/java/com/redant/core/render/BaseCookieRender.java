@@ -8,7 +8,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
 
 /**
  * 可以处理Cookie的渲染类
- * @auther gris.wang
+ * @author gris.wang
  * @since 2017/11/15
  **/
 public class BaseCookieRender extends BaseRender implements CookieRender {
