@@ -3,7 +3,7 @@ package com.redant.mvc;
 
 import com.redant.common.constants.CommonConstants;
 import com.redant.common.enums.RequestMethod;
-import com.redant.core.render.BaseRender;
+import com.redant.core.render.DefaultRender;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
@@ -24,9 +24,9 @@ public class BaseController {
 
 
     @RouterMapping(requestMethod=RequestMethod.GET,renderType=RenderType.HTML)
-    public BaseRender index(){
+    public DefaultRender index(){
         String content = HttpRenderUtil.getPageContent(CommonConstants.BASE_VIEW_PATH+"index.vm",null);
-        return new BaseRender(RenderType.HTML,content);
+        return new DefaultRender(RenderType.HTML,content);
     }
 
 

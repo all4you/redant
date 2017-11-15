@@ -3,7 +3,6 @@ package com.redant.core.render;
 import com.redant.core.DataHolder;
 import com.redant.core.cookie.CookieHelper;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
 
 /**
@@ -11,10 +10,10 @@ import io.netty.handler.codec.http.cookie.Cookie;
  * @author gris.wang
  * @since 2017/11/15
  **/
-public class BaseCookieRender extends BaseRender implements CookieRender {
+public class DefaultCookieRender extends DefaultRender implements CookieRender {
 
 
-    public BaseCookieRender(RenderType renderType, Object content){
+    public DefaultCookieRender(RenderType renderType, Object content){
         super(renderType,content);
     }
 

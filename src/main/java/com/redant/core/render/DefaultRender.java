@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @create 2017-10-20
  */
-public class BaseRender implements Render {
+public class DefaultRender implements Render {
 
-	private static final Logger logger = LoggerFactory.getLogger(BaseRender.class);
+	private static final Logger logger = LoggerFactory.getLogger(DefaultRender.class);
 
 	public RenderType renderType;
 
@@ -20,7 +20,7 @@ public class BaseRender implements Render {
 
 	protected FullHttpResponse response;
 
-	public BaseRender(RenderType renderType, Object content){
+	public DefaultRender(RenderType renderType, Object content){
 		this.renderType = renderType;
 		this.bytes = convertBytes(content);
 	}

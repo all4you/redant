@@ -24,7 +24,7 @@ public class UserController {
         JSONObject object = new JSONObject();
         object.put("user",userService.selectUserInfo(userBean.getId()));
         object.put("pid",pid);
-        CookieRender render = new BaseCookieRender(RenderType.JSON,object);
+        CookieRender render = new DefaultCookieRender(RenderType.JSON,object);
         // 设置Cookie
         render.setCookie(new DefaultCookie("ak","47"));
         return render;
@@ -39,7 +39,7 @@ public class UserController {
         user.setUserName("wang");
         object.put("user",user);
         array.add(object);
-        CookieRender render = new BaseCookieRender(RenderType.JSON,array);
+        CookieRender render = new DefaultCookieRender(RenderType.JSON,array);
         // 设置Cookie
         render.setCookie(new DefaultCookie("ak","47"));
         return render;
@@ -50,7 +50,7 @@ public class UserController {
         JSONObject object = new JSONObject();
         int count = userService.selectCount(userBean);
         object.put("count",count);
-        return new BaseRender(RenderType.JSON,object);
+        return new DefaultRender(RenderType.JSON,object);
     }
 
 }
