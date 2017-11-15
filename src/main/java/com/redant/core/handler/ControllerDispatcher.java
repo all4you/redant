@@ -44,7 +44,7 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                 }else {
                     // 每一个Controller的方法返回类型约定为Render的实现类
                     Render render = ProxyInvocation.invoke(controllerProxy);
-                    response = render.render();
+                    response = render.response();
                 }
             }catch(Exception e){
                 routerLogger.error("Server Internal Error,cause:",e);

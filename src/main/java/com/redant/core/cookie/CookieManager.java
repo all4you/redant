@@ -1,7 +1,6 @@
 package com.redant.core.cookie;
 
 import com.redant.core.DataHolder;
-import com.redant.core.render.Render;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -14,6 +13,7 @@ import java.util.Set;
  * @author gris.wang
  * @since 2017/11/6
  */
+
 public class CookieManager {
 
     /**
@@ -29,15 +29,16 @@ public class CookieManager {
      * 设置Cookie
      * @param cookie
      */
-    public static void setCookie(Render render, Cookie cookie){
+    @Deprecated
+    public static void setCookie(Cookie cookie){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.setCookie(response,cookie);
-
     }
 
     /**
      * 设置所有的Cookie
      */
+    @Deprecated
     public static void setCookies(){
         HttpRequest request = DataHolder.getHttpRequest();
         HttpResponse response = DataHolder.getHttpResponse();
@@ -49,6 +50,7 @@ public class CookieManager {
      * @param name  cookie名字
      * @param value cookie值
      */
+    @Deprecated
     public static void addCookie(String name,String value){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,null);
@@ -60,6 +62,7 @@ public class CookieManager {
      * @param value cookie值
      * @param domain cookie所在域
      */
+    @Deprecated
     public static void addCookie(String name,String value,String domain){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,domain,0);
@@ -72,6 +75,7 @@ public class CookieManager {
      * @param value cookie值
      * @param maxAge cookie生命周期  以秒为单位
      */
+    @Deprecated
     public static void addCookie(String name,String value,long maxAge){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,null,maxAge);
@@ -85,6 +89,7 @@ public class CookieManager {
      * @param domain cookie所在域
      * @param maxAge cookie生命周期  以秒为单位
      */
+    @Deprecated
     public static void addCookie(String name,String value,String domain,long maxAge){
         HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,domain,maxAge);
@@ -124,6 +129,7 @@ public class CookieManager {
      * @param name
      * @return
      */
+    @Deprecated
     public static boolean deleteCookie(String name) {
         HttpRequest request = DataHolder.getHttpRequest();
         HttpResponse response = DataHolder.getHttpResponse();
