@@ -1,5 +1,10 @@
 package com.redant.core;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +62,22 @@ public class DataHolder {
 
 	public static Object get(HolderType holderType){
 		return LOCAL_DATA.get()!=null?LOCAL_DATA.get().get(holderType.getType()):null;
+	}
+
+	public static HttpRequest getHttpRequest(){
+		return (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+	}
+
+	public static FullHttpResponse getHttpResponse(){
+		return (FullHttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+	}
+
+	public static boolean getForceClose(){
+		return (boolean)DataHolder.get(DataHolder.HolderType.FORCE_CLOSE);
+	}
+
+	public static ChannelHandlerContext getContext(){
+		return (ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT);
 	}
 
 	public static void remove(HolderType holderType){

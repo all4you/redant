@@ -22,7 +22,7 @@ public class SessionManager {
      * @return
      */
     public static boolean containsSession(){
-        ChannelHandlerContext context = (ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT);
+        ChannelHandlerContext context = DataHolder.getContext();
         return SessionHelper.instange().containsSession(context);
     }
 
@@ -31,7 +31,7 @@ public class SessionManager {
      * @param session
      */
     public static void addSession(HttpSession session){
-        ChannelHandlerContext context = (ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT);
+        ChannelHandlerContext context = DataHolder.getContext();
         SessionHelper.instange().addSession(context, session);
     }
 
@@ -40,7 +40,7 @@ public class SessionManager {
      * @return
      */
     public static HttpSession getSession(){
-        ChannelHandlerContext context = (ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT);
+        ChannelHandlerContext context = DataHolder.getContext();
         return SessionHelper.instange().getSession(context);
     }
 
@@ -50,7 +50,7 @@ public class SessionManager {
      * @return
      */
     public static HttpSession getSession(boolean createIfNull){
-        ChannelHandlerContext context = (ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT);
+        ChannelHandlerContext context = DataHolder.getContext();
         return SessionHelper.instange().getSession(context,createIfNull);
     }
 

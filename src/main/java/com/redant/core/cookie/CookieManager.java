@@ -1,6 +1,7 @@
 package com.redant.core.cookie;
 
 import com.redant.core.DataHolder;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -20,7 +21,7 @@ public class CookieManager {
      * @return
      */
     public static Set<Cookie> getCookies(){
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+        HttpRequest request = DataHolder.getHttpRequest();
         return CookieHelper.getCookies(request);
     }
 
@@ -29,7 +30,7 @@ public class CookieManager {
      * @param cookie
      */
     public static void setCookie(Cookie cookie){
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.setCookie(response,cookie);
     }
 
@@ -37,8 +38,8 @@ public class CookieManager {
      * 设置所有的Cookie
      */
     public static void setCookies(){
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpRequest request = DataHolder.getHttpRequest();
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.setCookies(request,response);
     }
 
@@ -48,7 +49,7 @@ public class CookieManager {
      * @param value cookie值
      */
     public static void addCookie(String name,String value){
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,null);
     }
 
@@ -59,7 +60,7 @@ public class CookieManager {
      * @param domain cookie所在域
      */
     public static void addCookie(String name,String value,String domain){
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,domain,0);
     }
 
@@ -71,7 +72,7 @@ public class CookieManager {
      * @param maxAge cookie生命周期  以秒为单位
      */
     public static void addCookie(String name,String value,long maxAge){
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,null,maxAge);
     }
 
@@ -84,7 +85,7 @@ public class CookieManager {
      * @param maxAge cookie生命周期  以秒为单位
      */
     public static void addCookie(String name,String value,String domain,long maxAge){
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpResponse response = DataHolder.getHttpResponse();
         CookieHelper.addCookie(response,name,value,domain,maxAge);
     }
 
@@ -93,7 +94,7 @@ public class CookieManager {
      * @return
      */
     public static Map<String,Cookie> getCookieMap(){
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+        HttpRequest request = DataHolder.getHttpRequest();
         return CookieHelper.getCookieMap(request);
     }
 
@@ -103,7 +104,7 @@ public class CookieManager {
      * @return
      */
     public static Cookie getCookie(String name){
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+        HttpRequest request = DataHolder.getHttpRequest();
         return CookieHelper.getCookie(request,name);
     }
 
@@ -113,7 +114,7 @@ public class CookieManager {
      * @return
      */
     public static String getCookieValue(String name){
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+        HttpRequest request = DataHolder.getHttpRequest();
         return CookieHelper.getCookieValue(request,name);
     }
 
@@ -123,8 +124,8 @@ public class CookieManager {
      * @return
      */
     public static boolean deleteCookie(String name) {
-        HttpRequest request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
-        HttpResponse response = (HttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+        HttpRequest request = DataHolder.getHttpRequest();
+        HttpResponse response = DataHolder.getHttpResponse();
         return CookieHelper.deleteCookie(request,response,name);
     }
 

@@ -27,16 +27,16 @@ public class ResponseConsumer extends SimpleChannelInboundHandler {
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(msg instanceof HttpRequest){
-            request = (HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST);
+            request = (HttpRequest)msg;
             if(request.uri().equals(CommonConstants.FAVICON_ICO)){
                 return;
             }
             if (HttpUtil.is100ContinueExpected(request)) {
                 ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
             }
-            channel = ((ChannelHandlerContext)DataHolder.get(DataHolder.HolderType.CONTEXT)).channel();
-            forceClose = (boolean)DataHolder.get(DataHolder.HolderType.FORCE_CLOSE);
-            response = (FullHttpResponse)DataHolder.get(DataHolder.HolderType.RESPONSE);
+            channel = ctx.channel();
+            forceClose = DataHolder.getForceClose();
+            response = DataHolder.getHttpResponse();
             writeResponse();
         }
     }

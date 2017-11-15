@@ -59,11 +59,13 @@ public final class NettyServer {
             ChannelPipeline p = ch.pipeline();
 
             // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
+            // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
             p.addLast(new HttpServerCodec());
 
             // add gizp compressor for http response content
             p.addLast(new HttpContentCompressor());
 
+            // 指定最大的content_length
             p.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
 
             p.addLast(new ChunkedWriteHandler());
