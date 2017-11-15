@@ -35,14 +35,15 @@ public final class NettyServer {
             ServerBootstrap b = new ServerBootstrap();
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ServerInitializer());
+             .channel(NioServerSocketChannel.class)
+             .handler(new LoggingHandler(LogLevel.INFO))
+             .childHandler(new ServerInitializer());
 
-            Channel ch = b.bind(CommonConstants.SERVER_PORT).sync().channel();
+            ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
             logger.info("NettyServer Startup at port:{}",CommonConstants.SERVER_PORT);
 
-            ch.closeFuture().sync();
+            // 等待服务端Socket关闭
+            future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             logger.error("InterruptedException:",e);
         } finally {
