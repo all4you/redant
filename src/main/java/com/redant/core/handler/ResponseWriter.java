@@ -11,13 +11,13 @@ import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * 响应以及消息消费者
+ * 写响应
  * @author gris.wang
  * @since 2017/11/7
  */
-public class ResponseConsumer extends SimpleChannelInboundHandler {
+public class ResponseWriter extends SimpleChannelInboundHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ResponseConsumer.class);
+    private final static Logger logger = LoggerFactory.getLogger(ResponseWriter.class);
 
     private HttpRequest request;
     private Channel channel;

@@ -3,7 +3,7 @@ package com.redant.core.server;
 import com.redant.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
 import com.redant.core.handler.DataStorer;
-import com.redant.core.handler.ResponseConsumer;
+import com.redant.core.handler.ResponseWriter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -74,7 +74,7 @@ public final class NettyServer {
 
             p.addLast(new ControllerDispatcher());
 
-            p.addLast(new ResponseConsumer());
+            p.addLast(new ResponseWriter());
 
         }
     }
