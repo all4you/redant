@@ -30,6 +30,7 @@
         <mysql-connector.version>5.1.38</mysql-connector.version>
         <mybatis.version>3.4.4</mybatis.version>
         <pagehelper.version>5.1.2</pagehelper.version>
+        <exec.mainClass>com.redant.main.ServerBootstrap</exec.mainClass>
     </properties>
 
 
@@ -142,6 +143,20 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>${java.encoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${exec.mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
