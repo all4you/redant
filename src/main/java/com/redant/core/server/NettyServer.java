@@ -4,6 +4,7 @@ import com.redant.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
 import com.redant.core.handler.DataStorer;
 import com.redant.core.handler.ResponseWriter;
+import com.redant.core.interceptor.InterceptorUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -70,10 +71,25 @@ public final class NettyServer {
 
             p.addLast(new ChunkedWriteHandler());
 
+            // 临时保存请求数据
             p.addLast(new DataStorer());
 
+            // 前置拦截器
+            ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();
+            if(preInterceptors.length>0) {
+                p.addLast(preInterceptors);
+            }
+
+            // 路由分发器
             p.addLast(new ControllerDispatcher());
 
+            // 后置拦截器
+            ChannelHandler[] afterInterceptors = InterceptorUtil.getAfterInterceptors();
+            if(afterInterceptors.length>0) {
+                p.addLast(afterInterceptors);
+            }
+
+            // 请求结果响应
             p.addLast(new ResponseWriter());
 
         }
