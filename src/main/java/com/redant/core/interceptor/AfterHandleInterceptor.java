@@ -1,5 +1,6 @@
 package com.redant.core.interceptor;
 
+import com.redant.core.DataHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ public abstract class AfterHandleInterceptor extends ChannelInboundHandlerAdapte
 
         // 当拦截的方法返回false直接返回，否则进入下一个handler
         if(!afterHandle(ctx, msg)){
+            // 释放ThreadLocal对象
+            DataHolder.removeAll();
             return;
         }
 

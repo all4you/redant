@@ -71,14 +71,14 @@ public final class NettyServer {
 
             p.addLast(new ChunkedWriteHandler());
 
-            // 临时保存请求数据
-            p.addLast(new DataStorer());
-
             // 前置拦截器
             ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();
             if(preInterceptors.length>0) {
                 p.addLast(preInterceptors);
             }
+
+            // 临时保存请求数据
+            p.addLast(new DataStorer());
 
             // 路由分发器
             p.addLast(new ControllerDispatcher());
