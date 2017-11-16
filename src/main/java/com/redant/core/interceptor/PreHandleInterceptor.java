@@ -1,7 +1,14 @@
 package com.redant.core.interceptor;
 
+import com.redant.common.util.HttpRenderUtil;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +26,11 @@ public abstract class PreHandleInterceptor extends ChannelInboundHandlerAdapter 
 
         // 当拦截的方法返回false直接返回，否则进入下一个handler
         if(!preHandle(ctx, msg)){
+            HttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
+            // 从该channel直接返回
+            ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             return;
         }
-
         /**
          * 提交给下一个ChannelHandler去处理
          * 并且不需要调用ReferenceCountUtil.release(msg);来释放引用计数

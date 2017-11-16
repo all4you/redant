@@ -21,14 +21,14 @@ public class HttpRenderUtil {
 	private final static Logger logger = LoggerFactory.getLogger(HttpRenderUtil.class);
 
 	private static final String EMPTY_CONTENT = "";
-	
-	private static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
-	
-	private static final String CONTENT_TYPE_TEXT = "text/plain;charset=UTF-8";
-	
-	private static final String CONTENT_TYPE_XML = "text/xml;charset=UTF-8";
-	
-	private static final String CONTENT_TYPE_HTML = "text/html;charset=UTF-8";
+
+	public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
+
+	public static final String CONTENT_TYPE_TEXT = "text/plain;charset=UTF-8";
+
+	public static final String CONTENT_TYPE_XML = "text/xml;charset=UTF-8";
+
+	public static final String CONTENT_TYPE_HTML = "text/html;charset=UTF-8";
 
 	
 	/**
@@ -105,7 +105,9 @@ public class HttpRenderUtil {
 		}
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, byteBuf);
-		response.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
+		if(contentType!=null && contentType.trim().length()>0) {
+			response.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
+		}
 		response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(byteBuf.readableBytes()));
 		return response;
 	}

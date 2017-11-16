@@ -8,6 +8,7 @@ import com.redant.common.enums.ContentType;
 import com.redant.common.exception.InvocationException;
 import com.redant.common.exception.ValidationException;
 import com.redant.common.util.GenericsUtil;
+import com.redant.common.util.HttpRequestUtil;
 import com.redant.common.util.ValidateUtil;
 import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveConverter;
@@ -71,7 +72,7 @@ public class ProxyInvocation {
 			Annotation[][] annotationArray = method.getParameterAnnotations();
 
 			//获取参数列表
-			Map<String, List<String>> paramMap = getParameterMap();
+			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap((HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST));
 
 			//构造调用所需要的参数数组
 			for (int i = 0; i < parameterTypes.length; i++) {
@@ -180,97 +181,6 @@ public class ProxyInvocation {
 			return value;
 		}
 
-
-		/**
-		 * 获取请求参数 Map
-		 */
-		private  Map<String, List<String>> getParameterMap(){
-			Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
-
-			Object msg = DataHolder.get(DataHolder.HolderType.REQUEST);
-			HttpRequest request = (HttpRequest) msg;
-			HttpMethod method = request.method();
-			if(HttpMethod.GET.equals(method)){
-				String uri = request.uri();
-				QueryStringDecoder queryDecoder = new QueryStringDecoder(uri, CharsetUtil.UTF_8);
-				paramMap = queryDecoder.parameters();
-
-			}else if(HttpMethod.POST.equals(method)){
-				FullHttpRequest fullRequest = (FullHttpRequest) msg;
-				paramMap = getPostParamMap(fullRequest);
-			}
-
-			return paramMap;
-		}
-
-		//目前支持最常用的 application/json 、application/x-www-form-urlencoded 几种 POST Content-type，可自行扩展！！！
-		@SuppressWarnings("unchecked")
-		private Map<String, List<String>> getPostParamMap(FullHttpRequest fullRequest) {
-			Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
-			HttpHeaders headers = fullRequest.headers();
-			String contentType = getContentType(headers);
-			if(ContentType.APPLICATION_JSON.toString().equals(contentType)){
-				String jsonStr = fullRequest.content().toString(CharsetUtil.UTF_8);
-				JSONObject obj = JSON.parseObject(jsonStr);
-				for(Map.Entry<String, Object> item : obj.entrySet()){
-					String key = item.getKey();
-					Object value = item.getValue();
-					Class<?> valueType = value.getClass();
-
-					List<String> valueList;
-					if(paramMap.containsKey(key)){
-						valueList = paramMap.get(key);
-					}else{
-						valueList = new ArrayList<String>();
-					}
-
-					if(PrimitiveTypeUtil.isPriType(valueType)){
-						valueList.add(value.toString());
-						paramMap.put(key, valueList);
-
-					}else if(valueType.isArray()){
-						int length = Array.getLength(value);
-						for(int i=0; i<length; i++){
-							String arrayItem = String.valueOf(Array.get(value, i));
-							valueList.add(arrayItem);
-						}
-						paramMap.put(key, valueList);
-
-					}else if(List.class.isAssignableFrom(valueType)){
-						if(valueType.equals(JSONArray.class)){
-							JSONArray jArray = JSONArray.parseArray(value.toString());
-							for(int i=0; i<jArray.size(); i++){
-								valueList.add(jArray.getString(i));
-							}
-						}else{
-							valueList = (ArrayList<String>) value;
-						}
-						paramMap.put(key, valueList);
-
-					}else if(Map.class.isAssignableFrom(valueType)){
-						Map<String, String> tempMap = (Map<String, String>) value;
-						for(Map.Entry<String, String> entry : tempMap.entrySet()){
-							List<String> tempList = new ArrayList<String>();
-							tempList.add(entry.getValue());
-							paramMap.put(entry.getKey(), tempList);
-						}
-					}
-				}
-
-			}else if(ContentType.APPLICATION_FORM_URLENCODED.toString().equals(contentType)){
-				String jsonStr = fullRequest.content().toString(CharsetUtil.UTF_8);
-				QueryStringDecoder queryDecoder = new QueryStringDecoder(jsonStr, false);
-				paramMap = queryDecoder.parameters();
-			}
-
-			return paramMap;
-		}
-
-		private String getContentType(HttpHeaders headers){
-			String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE).toString();
-			String[] list = contentType.split(";");
-			return list[0];
-		}
 
 		private InvocationException getInvokeException(String msg, Throwable cause){
 			return new InvocationException(msg,cause);
