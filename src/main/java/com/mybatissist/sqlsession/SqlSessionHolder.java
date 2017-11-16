@@ -45,7 +45,7 @@ public final class SqlSessionHolder {
 	/**
 	 * SqlSession缓存
 	 */
-	private static SqlSessionCache sqlSessionCache;
+	private SqlSessionCache sqlSessionCache;
 
 	/**
 	 * 私有构造方法

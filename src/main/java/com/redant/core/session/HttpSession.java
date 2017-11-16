@@ -128,8 +128,8 @@ public class HttpSession {
      * 获取key的值
      * @param key
      */
-    public void getAttribute(String key){
-        sessionMap.get(key);
+    public Object getAttribute(String key){
+        return sessionMap.get(key);
     }
 
     /**
