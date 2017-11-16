@@ -23,7 +23,6 @@ public abstract class PreHandleInterceptor extends ChannelInboundHandlerAdapter 
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
         // 当拦截的方法返回false直接返回，否则进入下一个handler
         if(!preHandle(ctx, msg)){
             HttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);

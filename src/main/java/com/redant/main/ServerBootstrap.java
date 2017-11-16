@@ -1,10 +1,9 @@
 package com.redant.main;
 
-import com.mybatissist.config.MybatissistConfig;
-import com.redant.core.bean.BeanContext;
-import com.redant.core.server.NettyServer;
-import com.redant.core.router.RouterContext;
 import com.mybatissist.sqlsession.SqlSessionContext;
+import com.redant.core.bean.BeanContext;
+import com.redant.core.router.RouterContext;
+import com.redant.core.server.NettyServer;
 
 /**
  * 服务端启动入口
@@ -17,7 +16,6 @@ public final class ServerBootstrap {
 
         BeanContext.initBeans();
         RouterContext.initRouters();
-        MybatissistConfig.instance().printSql(true);
         SqlSessionContext.buildFactory();
 
         NettyServer nettyServer = new NettyServer();

@@ -1,6 +1,7 @@
 package com.mybatissist.mapper;
 
 import com.mybatissist.constant.ProviderConstants;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
