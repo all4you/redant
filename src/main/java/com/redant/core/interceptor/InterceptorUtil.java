@@ -1,11 +1,10 @@
 package com.redant.core.interceptor;
 
+import com.redant.common.constants.CommonConstants;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import io.netty.channel.ChannelHandler;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +15,7 @@ public class InterceptorUtil {
 
 
     private static ChannelHandler[] getInterceptors(Class interceptorClass){
-        Set<Class<?>> classSet = ClassScaner.scanPackageBySuper("",interceptorClass);
+        Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.INTERCEPTOR_SCAN_PACKAGE,interceptorClass);
         if(CollectionUtils.isEmpty(classSet)){
             return new ChannelHandler[]{};
         }

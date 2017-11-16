@@ -1,10 +1,10 @@
 package com.redant.core.bean;
 
 
-import com.redant.core.bean.annotation.Autowired;
-import com.redant.core.bean.annotation.Bean;
 import com.redant.common.constants.CommonConstants;
 import com.redant.common.util.ThreadUtil;
+import com.redant.core.bean.annotation.Autowired;
+import com.redant.core.bean.annotation.Bean;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

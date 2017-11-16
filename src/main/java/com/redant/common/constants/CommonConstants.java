@@ -31,6 +31,12 @@ public class CommonConstants {
 
 
     /**
+     * 扫描interceptor的包路径
+     */
+    public static final String INTERCEPTOR_SCAN_PACKAGE = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("interceptor.scan.package");
+
+
+    /**
      * 视图文件根路径
      */
     public static final String BASE_VIEW_PATH = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("base.view.path");
