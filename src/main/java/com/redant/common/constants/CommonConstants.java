@@ -19,6 +19,24 @@ public class CommonConstants {
 
 
     /**
+     * BossGroup Size
+     * 先从启动参数中获取：-Dnetty.server.bossGroup.size=2
+     * 如果获取不到从配置文件中获取
+     * 如果再获取不到则取默认值
+     */
+    public static final int BOSS_GROUP_SIZE = null!=Integer.getInteger("netty.server.bossGroup.size")?Integer.getInteger("netty.server.bossGroup.size"):PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getInt("netty.server.bossGroup.size",2);
+
+
+    /**
+     * WorkerGroup Size
+     * 先从启动参数中获取：-Dnetty.server.workerGroup.size=4
+     * 如果获取不到从配置文件中获取
+     * 如果再获取不到则取默认值
+     */
+    public static final int WORKER_GROUP_SIZE = null!=Integer.getInteger("netty.server.workerGroup.size")?Integer.getInteger("netty.server.workerGroup.size"):PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getInt("netty.server.workerGroup.size",4);
+
+
+    /**
      * 能处理的最大数据的字节数
      */
     public static final int MAX_CONTENT_LENGTH = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getInt("netty.maxContentLength",10485760);
