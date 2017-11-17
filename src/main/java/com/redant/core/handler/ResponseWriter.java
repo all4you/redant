@@ -60,7 +60,7 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
      */
     private void writeResponse(){
         boolean close = isClose();
-        if(!close && !forceClose){
+        if(!close && !forceClose && !response.headers().contains(HttpHeaderNames.CONTENT_LENGTH)){
             response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         }
         ChannelFuture future = channel.write(response);

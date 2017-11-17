@@ -1,14 +1,14 @@
 package com.redant.core.router;
 
-import com.redant.core.bean.BeanContext;
-import com.redant.core.bean.annotation.Bean;
 import com.redant.common.constants.CommonConstants;
 import com.redant.common.enums.RequestMethod;
+import com.redant.common.util.ThreadUtil;
+import com.redant.core.bean.BeanContext;
+import com.redant.core.bean.annotation.Bean;
 import com.redant.core.invocation.ControllerProxy;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
-import com.redant.common.util.ThreadUtil;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.commons.collections.CollectionUtils;
@@ -160,9 +160,10 @@ public class RouterHolder {
      */
     public RouteResult<RenderType> getRouteResult(HttpMethod method, String uri){
         if(routerLoaded()){
-            routerLogger.debug("getRouteResult with method={},uri={}",method,uri);
             RouteResult<RenderType> routeResult = router.route(method, uri);
-            routerLogger.debug("routeResult={}",routeResult);
+            if(routerLogger.isDebugEnabled()) {
+                routerLogger.debug("getRouteResult with method={},uri={},routeResult={}", method, uri, routeResult);
+            }
             return routeResult;
         }
         return null;
@@ -176,7 +177,9 @@ public class RouterHolder {
     public ControllerProxy getControllerProxy(RouteResult<?> routeResult){
         if(routerLoaded()) {
             ControllerProxy controllerProxy = proxyMap.get(routeResult.decodedPath());
-            routerLogger.debug("\n=========================  getControllerProxy =========================\nrouteResult={}\ncontrollerProxy={}\n=========================  getControllerProxy =========================", routeResult, controllerProxy);
+            if(routerLogger.isDebugEnabled()) {
+                routerLogger.debug("\n=========================  getControllerProxy =========================\nrouteResult={}\ncontrollerProxy={}\n=========================  getControllerProxy =========================", routeResult, controllerProxy);
+            }
             return controllerProxy;
         }
         return null;
