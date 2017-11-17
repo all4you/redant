@@ -56,6 +56,13 @@ public final class NettyServer {
 
     private static class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
+        /**
+         * 业务线程池
+         * 用以单独处理业务handler，避免造成IO线程的阻塞
+         * TODO 是否需要使用业务线程池，线程池的数量该怎么确定
+         * private static final EventExecutorGroup EVENT_EXECUTOR = new DefaultEventExecutorGroup(50);
+         */
+
         @Override
         public void initChannel(SocketChannel ch) {
             ChannelPipeline p = ch.pipeline();

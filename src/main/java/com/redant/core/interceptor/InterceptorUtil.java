@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandler;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author gris.wang
@@ -13,6 +15,13 @@ import java.util.Set;
  **/
 public class InterceptorUtil {
 
+    private static ChannelHandler[] preInterceptors;
+
+    private static ChannelHandler[] afterInterceptors;
+
+    private static Lock preLock = new ReentrantLock();
+
+    private static Lock afterLock = new ReentrantLock();
 
     private static ChannelHandler[] getInterceptors(Class interceptorClass){
         Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.INTERCEPTOR_SCAN_PACKAGE,interceptorClass);
@@ -35,12 +44,28 @@ public class InterceptorUtil {
 
 
     public static ChannelHandler[] getPreInterceptors(){
-        return getInterceptors(PreHandleInterceptor.class);
+        preLock.lock();
+        try {
+            if(preInterceptors==null){
+                preInterceptors = getInterceptors(PreHandleInterceptor.class);
+            }
+        }finally {
+            preLock.unlock();
+        }
+        return preInterceptors;
     }
 
 
     public static ChannelHandler[] getAfterInterceptors(){
-        return getInterceptors(AfterHandleInterceptor.class);
+        afterLock.lock();
+        try {
+            if(afterInterceptors==null){
+                afterInterceptors = getInterceptors(AfterHandleInterceptor.class);
+            }
+        }finally {
+            afterLock.unlock();
+        }
+        return afterInterceptors;
     }
 
 
