@@ -3,7 +3,7 @@ package com.redant.core;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
+import io.netty.util.concurrent.FastThreadLocal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +14,12 @@ import java.util.Map;
  * @since 2017-10-20
  */
 public class DataHolder {
-	
-	private static final ThreadLocal<Map<String,Object>> LOCAL_DATA = new ThreadLocal<Map<String,Object>>();
+
+	/**
+	 * 使用FastThreadLocal替代JDK自带的ThreadLocal以提升并发性能
+	 * private static final ThreadLocal<Map<String,Object>> LOCAL_DATA = new ThreadLocal<Map<String,Object>>();
+	 */
+	private static final FastThreadLocal<Map<String,Object>> LOCAL_DATA = new FastThreadLocal<Map<String,Object>>();
 
 
 	public enum HolderType{
