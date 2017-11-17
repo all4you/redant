@@ -1,6 +1,6 @@
-package com.redant.mappers;
+package com.redant.demo.mappers;
 
-import com.redant.mvc.user.UserBean;
+import com.redant.demo.mvc.user.UserBean;
 import com.mybatissist.mapper.Mapper;
 
 /**

@@ -1,4 +1,4 @@
-package com.redant.mvc;
+package com.redant.demo.mvc;
 
 
 import com.redant.common.constants.CommonConstants;

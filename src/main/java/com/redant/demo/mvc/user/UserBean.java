@@ -1,4 +1,4 @@
-package com.redant.mvc.user;
+package com.redant.demo.mvc.user;
 
 import com.redant.core.bean.BaseBean;
 import com.mybatissist.annotation.Table;

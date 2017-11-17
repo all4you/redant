@@ -1,8 +1,7 @@
-package com.redant;
+package com.redant.demo.mappers;
 
 import com.mybatissist.sqlsession.SqlSessionContext;
-import com.redant.mappers.UserMapper;
-import com.redant.mvc.user.UserBean;
+import com.redant.demo.mvc.user.UserBean;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.After;
 import org.junit.Before;

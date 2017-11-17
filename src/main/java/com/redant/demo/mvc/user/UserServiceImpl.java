@@ -1,8 +1,8 @@
-package com.redant.mvc.user;
+package com.redant.demo.mvc.user;
 
 import com.mybatissist.util.MapperUtil;
 import com.redant.core.bean.annotation.Bean;
-import com.redant.mappers.UserMapper;
+import com.redant.demo.mappers.UserMapper;
 
 @Bean(name="userService")
 public class UserServiceImpl implements IUserService{
