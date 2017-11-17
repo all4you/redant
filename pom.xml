@@ -147,6 +147,7 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <archive>
@@ -166,12 +167,6 @@
                 <includes>
                     <include>**/*.vm</include>
                 </includes>
-            </resource>
-            <resource>
-                <directory>src/test/java</directory>
-            </resource>
-            <resource>
-                <directory>src/test/resources</directory>
             </resource>
         </resources>
     </build>
