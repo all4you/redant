@@ -43,6 +43,24 @@ public class CommonConstants {
 
 
     /**
+     * 是否开启ssl
+     */
+    public static final boolean USE_SSL = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getBoolean("netty.server.use.ssl");
+
+
+    /**
+     * KeyStore path
+     */
+    public static final String KEY_STORE_PATH = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("ssl.keyStore.path");
+
+
+    /**
+     * KeyStore password
+     */
+    public static final String KEY_STORE_PASSWORD = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("ssl.keyStore.password");
+
+
+    /**
      * 扫描bean的包路径
      */
     public static final String BEAN_SCAN_PACKAGE = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("bean.scan.package");

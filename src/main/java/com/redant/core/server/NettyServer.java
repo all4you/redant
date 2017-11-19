@@ -4,6 +4,7 @@ import com.redant.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
 import com.redant.core.handler.DataStorer;
 import com.redant.core.handler.ResponseWriter;
+import com.redant.core.handler.ssl.SslContextHelper;
 import com.redant.core.interceptor.InterceptorUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -15,10 +16,14 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLEngine;
 
 
 /**
@@ -56,6 +61,8 @@ public final class NettyServer {
 
     private static class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
+        static final Logger logger = LoggerFactory.getLogger(ServerInitializer.class);
+
         /**
          * 业务线程池
          * 用以单独处理业务handler，避免造成IO线程的阻塞
@@ -66,6 +73,17 @@ public final class NettyServer {
         @Override
         public void initChannel(SocketChannel ch) {
             ChannelPipeline p = ch.pipeline();
+
+            if(CommonConstants.USE_SSL){
+                SslContext context = SslContextHelper.getSslContext(CommonConstants.KEY_STORE_PATH,CommonConstants.KEY_STORE_PASSWORD);
+                if(context!=null) {
+                    SSLEngine engine = context.newEngine(ch.alloc());
+                    engine.setUseClientMode(false);
+                    p.addLast(new SslHandler(engine));
+                }else{
+                    logger.warn("SslContext is null with keyPath={}",CommonConstants.KEY_STORE_PATH);
+                }
+            }
 
             // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
             // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
