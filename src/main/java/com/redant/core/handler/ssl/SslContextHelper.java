@@ -1,5 +1,6 @@
 package com.redant.core.handler.ssl;
 
+import com.xiaoleilu.hutool.crypto.SecureUtil;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 
@@ -13,6 +14,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author gris.wang
@@ -23,6 +26,16 @@ public class SslContextHelper {
     private static final String KEY_STORE_JKS = "JKS";
 
     private static final String ALGORITHM = "SunX509";
+
+    private static Map<String,SslContext> contents = new ConcurrentHashMap<String,SslContext>();
+
+    private static String getKey(String keyPath,String keyPassword){
+        if(keyPath==null || keyPath.trim().length()==0 || keyPassword==null || keyPassword.trim().length()==0){
+            return null;
+        }
+        String keyStr = keyPath+"&"+keyPassword;
+        return SecureUtil.md5(keyStr);
+    }
 
     /**
      * 获取SslContext
@@ -36,11 +49,22 @@ public class SslContextHelper {
         }
         SslContext sslContext = null;
         try {
+            String key = getKey(keyPath,keyPassword);
+            sslContext = contents.get(key);
+            if(sslContext!=null){
+                return sslContext;
+            }
+
             KeyStore keyStore = KeyStore.getInstance(KEY_STORE_JKS);
             keyStore.load(new FileInputStream(keyPath), keyPassword.toCharArray());
+
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(ALGORITHM);
             keyManagerFactory.init(keyStore,keyPassword.toCharArray());
+
             sslContext = SslContextBuilder.forServer(keyManagerFactory).build();
+            if(sslContext!=null){
+                contents.put(key,sslContext);
+            }
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (CertificateException e) {
