@@ -26,12 +26,12 @@ public class ZkServer {
 	/**
 	 * ZK服务端集群的连接字符串
 	 */
-	public static final String ZK_CLUSTER_ADDRESS = FileUtil.readUtf8String(ZkServer.class.getResource("/zk_cluster_address.cfg").getPath());
+	public static final String ZK_CLUSTER_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_cluster_address.cfg").getPath()));
 
 	/**
 	 * ZK服务端单机的连接字符串
 	 */
-	public static final String ZK_SDANDALONE_ADDRESS = FileUtil.readUtf8String(ZkServer.class.getResource("/zk_address.cfg").getPath());
+	public static final String ZK_SDANDALONE_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_address.cfg").getPath()));
 
 
 	/**
