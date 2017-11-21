@@ -1,15 +1,13 @@
 package com.redant.cluster.master;
 
 import com.redant.cluster.slave.SlaveNode;
-import com.redant.common.codec.ProtostuffDecoder;
-import com.redant.common.codec.ProtostuffEncoder;
+import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +63,13 @@ public class MasterClient extends SimpleChannelInboundHandler<HttpResponse> {
                 @Override
                 public void initChannel(SocketChannel channel) throws Exception {
                     ChannelPipeline pipeline = channel.pipeline();
-                    pipeline.addLast(new ProtostuffEncoder(HttpRequest.class));
-                    pipeline.addLast(new ProtostuffDecoder(HttpResponse.class));
-                    pipeline.addLast(this);
+                    // 客户端接收到的是httpResponse响应，所以要使用HttpResponseDecoder进行解码
+                    pipeline.addLast(new HttpResponseDecoder());
+                    pipeline.addLast(new HttpContentDecompressor());
+                    pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
+                    // 客户端发送的是httprequest，所以要使用HttpRequestEncoder进行编码
+                    pipeline.addLast(new HttpRequestEncoder());
+                    pipeline.addLast(MasterClient.this);
                 }
             });
             bootstrap.option(ChannelOption.TCP_NODELAY, true);

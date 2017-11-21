@@ -9,6 +9,11 @@ import com.redant.cluster.slave.SlaveNode;
 public interface ServiceDiscovery {
 
     /**
+     * 监听Slave节点
+     */
+    void watchSlave();
+
+    /**
      * 发现可用的Slave节点
      * @return
      */

@@ -1,7 +1,5 @@
 package com.redant.cluster.slave;
 
-import com.redant.common.codec.ProtostuffDecoder;
-import com.redant.common.codec.ProtostuffEncoder;
 import com.redant.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
 import com.redant.core.handler.DataStorer;
@@ -14,8 +12,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -73,17 +71,14 @@ public final class SlaveServer {
         public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
 
-            // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
-            pipeline.addLast(new ProtostuffDecoder(HttpRequest.class));
-            pipeline.addLast(new ProtostuffEncoder(HttpResponse.class));
-
-            // add gizp compressor for http response content
+            // 服务端发送的是httpResponse，所以要使用HttpResponseEncoder进行编码
+            pipeline.addLast(new HttpResponseEncoder());
             pipeline.addLast(new HttpContentCompressor());
-
             // 指定最大的content_length
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
-
             pipeline.addLast(new ChunkedWriteHandler());
+            // 服务端接收到的是httpRequest，所以要使用HttpRequestDecoder进行解码
+            pipeline.addLast(new HttpRequestDecoder());
 
             // 前置拦截器
             ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();

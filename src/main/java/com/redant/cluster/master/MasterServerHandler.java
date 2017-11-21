@@ -35,8 +35,13 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
             }
             channel = ctx.channel();
 
-            MasterClient client = new MasterClient(Discovery.nextSlave());
-            FullHttpResponse response = (FullHttpResponse)client.sendRequest(request);
+            FullHttpResponse response = null;
+            try {
+                MasterClient client = new MasterClient(Discovery.nextSlave());
+                response = (FullHttpResponse)client.sendRequest(request);
+            }catch(Exception e){
+                logger.error("MasterServerHandler error,cause:",e);
+            }
             if(response==null){
                 logger.warn("response is null");
                 response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);

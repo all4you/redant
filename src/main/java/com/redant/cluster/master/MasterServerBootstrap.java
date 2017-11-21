@@ -1,5 +1,9 @@
 package com.redant.cluster.master;
 
+import com.redant.cluster.service.discover.Discovery;
+import com.redant.cluster.zk.ZkBootstrap;
+import com.redant.cluster.zk.ZkConfig;
+
 /**
  * MasterServerBootstrap
  * @author gris.wang
@@ -8,11 +12,20 @@ package com.redant.cluster.master;
 public class MasterServerBootstrap {
 
     public static void main(String[] args) {
-        // 注册MasterServer到ZK
+
+        // 启动ZK
+        if(ZkConfig.instance().useCluster()) {
+            ZkBootstrap.startCluster(null);
+        }else{
+            ZkBootstrap.startStandalone(null);
+        }
+
+        // 监听SlaveNode的变化
+        Discovery.watchSlave();
 
         // 启动MasterServer
-        MasterServer server = new MasterServer();
-        server.start();
+        MasterServer masterServer = new MasterServer();
+        masterServer.start();
 
     }
 }

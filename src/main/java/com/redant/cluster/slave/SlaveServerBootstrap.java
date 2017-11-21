@@ -1,5 +1,6 @@
 package com.redant.cluster.slave;
 
+import com.redant.cluster.service.register.Registery;
 import com.redant.core.ServerInitUtil;
 
 /**
@@ -12,6 +13,7 @@ public class SlaveServerBootstrap {
     public static void main(String[] args) {
 
         // 注册Slave到ZK
+        Registery.register(SlaveNode.DEFAULT_PORT_NODE);
 
         // 各种初始化工作
         ServerInitUtil.init();
