@@ -24,20 +24,20 @@ public class ZkServer {
     private static final Logger logger = LoggerFactory.getLogger(ZkServer.class);
 
 	/**
-	 * ZK服务端集群的连接字符串
+	 * ZK服务端集群模式的连接字符串
 	 */
 	public static final String ZK_CLUSTER_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_cluster_address.cfg").getPath()));
 
 	/**
-	 * ZK服务端单机的连接字符串
+	 * ZK服务端单机模式的连接字符串
 	 */
-	public static final String ZK_SDANDALONE_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_address.cfg").getPath()));
+	public static final String ZK_STANDALONE_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_address.cfg").getPath()));
 
 
 	/**
 	 * ZK服务端地址
 	 */
-	public static final String ZK_SERVER_ADDRESS = ZkConfig.instance().useCluster()?ZkServer.ZK_CLUSTER_ADDRESS:ZkServer.ZK_SDANDALONE_ADDRESS;
+	public static final String ZK_SERVER_ADDRESS = ZkConfig.instance().useCluster()?ZkServer.ZK_CLUSTER_ADDRESS:ZkServer.ZK_STANDALONE_ADDRESS;
 
 
 	/**

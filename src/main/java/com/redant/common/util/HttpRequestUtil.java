@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.redant.common.enums.ContentType;
-import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveTypeUtil;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
@@ -29,8 +28,6 @@ public class HttpRequestUtil {
     public static Map<String, List<String>> getParameterMap(HttpRequest request){
         Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
 
-//        Object msg = DataHolder.get(DataHolder.HolderType.REQUEST);
-//        HttpRequest request = (HttpRequest) msg;
         HttpMethod method = request.method();
         if(HttpMethod.GET.equals(method)){
             String uri = request.uri();

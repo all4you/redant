@@ -4,6 +4,7 @@
 *.class
 *.project
 *.classpath
+*.log
 web/target/
 web/.settings/
 dal/target/

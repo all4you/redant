@@ -1,10 +1,6 @@
 package com.redant.cluster.slave;
 
 import com.redant.common.constants.CommonConstants;
-import com.redant.core.handler.ControllerDispatcher;
-import com.redant.core.handler.DataStorer;
-import com.redant.core.handler.ResponseWriter;
-import com.redant.core.interceptor.InterceptorUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -60,13 +56,6 @@ public final class SlaveServer {
 
     private static class SlaveServerInitializer extends ChannelInitializer<SocketChannel> {
 
-        /**
-         * 业务线程池
-         * 用以单独处理业务handler，避免造成IO线程的阻塞
-         * TODO 是否需要使用业务线程池，线程池的数量该怎么确定
-         * private static final EventExecutorGroup EVENT_EXECUTOR = new DefaultEventExecutorGroup(50);
-         */
-
         @Override
         public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
@@ -80,27 +69,7 @@ public final class SlaveServer {
             // 服务端接收到的是httpRequest，所以要使用HttpRequestDecoder进行解码
             pipeline.addLast(new HttpRequestDecoder());
 
-            // 前置拦截器
-            ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();
-            if(preInterceptors.length>0) {
-                pipeline.addLast(preInterceptors);
-            }
-
-            // 临时保存请求数据
-            pipeline.addLast(new DataStorer());
-
-            // 路由分发器
-            pipeline.addLast(new ControllerDispatcher());
-
-            // 后置拦截器
-            ChannelHandler[] afterInterceptors = InterceptorUtil.getAfterInterceptors();
-            if(afterInterceptors.length>0) {
-                pipeline.addLast(afterInterceptors);
-            }
-
-            // 请求结果响应
-            pipeline.addLast(new ResponseWriter());
-
+            pipeline.addLast(new SlaveServerHandler());
         }
     }
 

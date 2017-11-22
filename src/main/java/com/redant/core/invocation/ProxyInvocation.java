@@ -66,7 +66,7 @@ public class ProxyInvocation {
 			Annotation[][] annotationArray = method.getParameterAnnotations();
 
 			//获取参数列表
-			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap((HttpRequest)DataHolder.get(DataHolder.HolderType.REQUEST));
+			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(DataHolder.getHttpRequest());
 
 			//构造调用所需要的参数数组
 			for (int i = 0; i < parameterTypes.length; i++) {
