@@ -35,7 +35,7 @@ public final class MasterServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new ServerInitializer());
+             .childHandler(new MasterServerInitializer());
 
             ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
             logger.info("MasterServer Startup at port:{}",CommonConstants.SERVER_PORT);
@@ -50,7 +50,7 @@ public final class MasterServer {
         }
     }
 
-    private static class ServerInitializer extends ChannelInitializer<SocketChannel> {
+    private static class MasterServerInitializer extends ChannelInitializer<SocketChannel> {
 
         @Override
         public void initChannel(SocketChannel ch) {

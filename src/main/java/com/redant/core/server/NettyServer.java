@@ -92,7 +92,7 @@ public final class NettyServer {
             // add gizp compressor for http response content
             p.addLast(new HttpContentCompressor());
 
-            // 指定最大的content_length
+            // 将多个HttpRequest组合成一个FullHttpRequest
             p.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
 
             p.addLast(new ChunkedWriteHandler());

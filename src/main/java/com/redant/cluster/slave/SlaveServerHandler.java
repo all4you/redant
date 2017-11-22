@@ -28,7 +28,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
-        FullHttpResponse response = HttpRenderUtil.getNotFoundResponse();
+        FullHttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
             DataHolder.store(DataHolder.HolderType.REQUEST,request);

@@ -1,6 +1,7 @@
 package com.redant.cluster.master;
 
 import com.redant.cluster.slave.SlaveNode;
+import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -34,8 +35,8 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext,FullHttpResponse httpResponse) throws Exception {
-        this.httpResponse = httpResponse;
+    public void channelRead0(ChannelHandlerContext ctx,FullHttpResponse response) throws Exception {
+        this.httpResponse = response;
     }
 
     @Override
@@ -44,6 +45,10 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
         ctx.close();
     }
 
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
 
     /**
      * 发送http请求到slave
@@ -51,7 +56,7 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
      * @return
      * @throws Exception
      */
-    public HttpResponse sendRequest(HttpRequest request) {
+    public FullHttpResponse sendRequest(HttpRequest request) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             // 创建并初始化 Netty 客户端 Bootstrap 对象
@@ -66,6 +71,7 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
                     pipeline.addLast(new HttpRequestEncoder());
                     // 客户端接收到的是httpResponse响应，所以要使用HttpResponseDecoder进行解码
                     pipeline.addLast(new HttpResponseDecoder());
+                    pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
                     pipeline.addLast(MasterClient.this);
                 }
             });

@@ -38,7 +38,7 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
             FullHttpResponse response = null;
             try {
                 MasterClient client = new MasterClient(Discovery.nextSlave());
-                response = (FullHttpResponse)client.sendRequest(request);
+                response = client.sendRequest(request);
             }catch(Exception e){
                 logger.error("MasterServerHandler error,cause:",e);
             }
@@ -58,7 +58,7 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("ctx close,cause:",cause);
+        logger.error("MasterServerHandler ctx close,cause:",cause);
     }
 
 
@@ -70,7 +70,7 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
         if(!close && !response.headers().contains(HttpHeaderNames.CONTENT_LENGTH)){
             response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         }
-        ChannelFuture future = channel.write(response);
+        ChannelFuture future = channel.writeAndFlush(response);
         if(close){
             future.addListener(ChannelFutureListener.CLOSE);
         }
