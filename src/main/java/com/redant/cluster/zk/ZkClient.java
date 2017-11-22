@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class ZkClient {
 
-    private static final int DEFAULT_SESSION_TIMEOUT_MS = 30000;
+    private static final int DEFAULT_SESSION_TIMEOUT_MS = 60000;
 
     private static final int DEFAULT_CONNECTION_TIMEOUT_MS = 15000;
 
