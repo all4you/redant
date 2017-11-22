@@ -20,7 +20,9 @@ public class HttpRenderUtil {
 
 	private final static Logger logger = LoggerFactory.getLogger(HttpRenderUtil.class);
 
-	private static final String EMPTY_CONTENT = "";
+	public static final String EMPTY_CONTENT = "";
+
+	public static final String NO_RESPONSE = "No Response";
 
 	public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
 

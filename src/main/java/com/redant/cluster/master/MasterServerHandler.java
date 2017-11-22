@@ -44,7 +44,7 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
             }
             if(response==null){
                 logger.warn("response is null");
-                response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
+                response = HttpRenderUtil.render(HttpRenderUtil.getBytes(HttpRenderUtil.NO_RESPONSE),HttpRenderUtil.CONTENT_TYPE_TEXT);
             }
             writeResponse(response);
         }
