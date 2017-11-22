@@ -56,20 +56,11 @@ public final class MasterServer {
         public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
 
-            // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
-            // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
             pipeline.addLast(new HttpServerCodec());
-
-            // add gizp compressor for http response content
             pipeline.addLast(new HttpContentCompressor());
-
-            // 指定最大的content_length
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
-
             pipeline.addLast(new ChunkedWriteHandler());
-
             pipeline.addLast(new MasterServerHandler());
-
         }
     }
 

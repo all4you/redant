@@ -1,7 +1,6 @@
 package com.redant.cluster.master;
 
 import com.redant.cluster.slave.SlaveNode;
-import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @since 2017/11/20
  **/
-public class MasterClient extends SimpleChannelInboundHandler<HttpResponse> {
+public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> {
 
     private final static Logger logger = LoggerFactory.getLogger(MasterClient.class);
 
@@ -24,7 +23,7 @@ public class MasterClient extends SimpleChannelInboundHandler<HttpResponse> {
 
     private final int PORT;
 
-    private HttpResponse httpResponse;
+    private FullHttpResponse httpResponse;
 
     public MasterClient(SlaveNode slaveNode){
         if(slaveNode==null){
@@ -35,7 +34,7 @@ public class MasterClient extends SimpleChannelInboundHandler<HttpResponse> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, HttpResponse httpResponse) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext,FullHttpResponse httpResponse) throws Exception {
         this.httpResponse = httpResponse;
     }
 
@@ -63,12 +62,10 @@ public class MasterClient extends SimpleChannelInboundHandler<HttpResponse> {
                 @Override
                 public void initChannel(SocketChannel channel) throws Exception {
                     ChannelPipeline pipeline = channel.pipeline();
+                    // 客户端发送的是httpRequest，所以要使用HttpRequestEncoder进行编码
+                    pipeline.addLast(new HttpRequestEncoder());
                     // 客户端接收到的是httpResponse响应，所以要使用HttpResponseDecoder进行解码
                     pipeline.addLast(new HttpResponseDecoder());
-                    pipeline.addLast(new HttpContentDecompressor());
-                    pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
-                    // 客户端发送的是httprequest，所以要使用HttpRequestEncoder进行编码
-                    pipeline.addLast(new HttpRequestEncoder());
                     pipeline.addLast(MasterClient.this);
                 }
             });

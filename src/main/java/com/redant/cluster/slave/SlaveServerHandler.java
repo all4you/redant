@@ -12,8 +12,8 @@ import com.redant.core.router.RouterContext;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
-        HttpResponse response = HttpRenderUtil.getNotFoundResponse();
+        FullHttpResponse response = HttpRenderUtil.getNotFoundResponse();
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
             DataHolder.store(DataHolder.HolderType.REQUEST,request);
@@ -65,7 +65,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("ctx close,cause:",cause);
+        logger.error("SlaveServerHandler ctx close,cause:",cause);
     }
 
 

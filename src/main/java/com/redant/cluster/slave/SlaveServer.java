@@ -6,10 +6,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -60,15 +57,10 @@ public final class SlaveServer {
         public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
 
-            // 服务端发送的是httpResponse，所以要使用HttpResponseEncoder进行编码
-            pipeline.addLast(new HttpResponseEncoder());
+            pipeline.addLast(new HttpServerCodec());
             pipeline.addLast(new HttpContentCompressor());
-            // 指定最大的content_length
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
             pipeline.addLast(new ChunkedWriteHandler());
-            // 服务端接收到的是httpRequest，所以要使用HttpRequestDecoder进行解码
-            pipeline.addLast(new HttpRequestDecoder());
-
             pipeline.addLast(new SlaveServerHandler());
         }
     }
