@@ -1,7 +1,7 @@
 # RedAnt Project
 
 
-**RedAnt** is a lightweight distributed web server which based on Netty
+**RedAnt** is a lightweight distributed web container which based on Netty
 
  **Features:**
  
@@ -13,7 +13,7 @@
 - **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
 - **Result Render**  : a render interface which support html,xml,plain,json
 - **Mybatissist**  : a general CRUD method helper which based on mybatis
-- **Distributed**  : Support distributed cluster mode
+- **Distributed Mode**  : support distributed cluster mode
 
 -------------------
 
@@ -21,7 +21,8 @@
 
 ### 1.Standalone mode
 
-> Redant is a web server based on Netty,tomcat or weblogic is no longer required to publish a web application,the only thing you should do is start it with java. The main Class is : **com.redant.main.ServerBootstrap**
+> Redant is a web container based on Netty,tomcat or weblogic is no longer required to publish a web application,the only thing you should do is start it with java. The main Class is : **com.redant.main.ServerBootstrap**
+> 
 > >1 : Use IDEA or eclipse to run the Main Class。
 > >
 > >2 : Use Maven to build Redant into an executable jar, and run with : **java -jar redant-jar-with-dependencies.jar**
@@ -41,15 +42,17 @@
 
 ### 2.Cluster mode
 > The Cluster mode is made by a Master and several Slaves.Master will accept http request,and send them to slave to handle.Each slave can run as a standalone server.
->
->The Main Class to start Master : **com.redant.cluster.master.MasterServerBootstrap**,the start process:
+
+> The Main Class to start ZooKeeperServer : **com.redant.cluster.zk.ZkBootstrap**
+
+> The Main Class to start Master : **com.redant.cluster.master.MasterServerBootstrap**,the start process:
 >>1 : Start a ZooKeeperServer(you can set to use Standalone or Cluster mode in zkConfig.properties default mode is Standalone)
 >>
 >>2 : Start a SlaveNode Watcher to watch the state of all Slave
 >>
 >>3 : Start a Master Server
 
->The Main Class to start Slave : **com.redant.cluster.slave.SlaveServerBootstrap**,the start process:
+> The Main Class to start Slave : **com.redant.cluster.slave.SlaveServerBootstrap**,the start process:
 >>1：Register the current Server into ZooKeeper
 >>
 >>2：Start a Slave Server
@@ -82,7 +85,7 @@
 
 ## Cookie Manager
 
-> A Cookie Manager is included to handle custom cookies,is is important to note that`cookies should be set or remove before a render is returned`。
+> A Cookie Manager is included to handle custom cookies,is is important to note that`cookies should be set or remove before a render is returned`
 > 
 > **Tips：** More information please see wiki: [Cookie][4]
 
@@ -102,4 +105,5 @@
   [3]: https://github.com/all4you/redant/wiki/3:Session
   [4]: https://github.com/all4you/redant/wiki/4:Cookie
   [5]: https://github.com/all4you/redant/wiki/5:Mybatissist
+
 
