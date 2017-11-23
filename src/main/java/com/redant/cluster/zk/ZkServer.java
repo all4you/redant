@@ -110,9 +110,7 @@ public class ZkServer {
 	public void startStandalone(ServerConfig config) throws IOException, InterruptedException, ConfigException {  
 		ZooKeeperServer zkServer = new ZooKeeperServer();  
 		
-		zkServer.setTxnLogFactory(new FileTxnSnapLog(
-				new File(config.getDataLogDir()),
-				new File(config.getDataDir())));  
+		zkServer.setTxnLogFactory(new FileTxnSnapLog(config.getDataLogDir(),config.getDataDir()));
 		zkServer.setTickTime(config.getTickTime()); 
 		zkServer.setMinSessionTimeout(config.getMinSessionTimeout());
 		zkServer.setMaxSessionTimeout(config.getMaxSessionTimeout());
@@ -165,12 +163,9 @@ public class ZkServer {
 		ServerCnxnFactory cnxnFactory = new NIOServerCnxnFactory();  
 		cnxnFactory.configure(config.getClientPortAddress(), config.getMaxClientCnxns());  
 		
-		QuorumPeer quorumPeer = new QuorumPeer();
-		quorumPeer.setClientPortAddress(config.getClientPortAddress());
-		quorumPeer.setTxnFactory(new FileTxnSnapLog(
-				new File(config.getDataLogDir()),
-				new File(config.getDataDir())));
-		quorumPeer.setQuorumPeers(config.getServers());
+		QuorumPeer quorumPeer = new QuorumPeer(config.getServers(), config.getDataDir(), config.getDataLogDir(), config.getElectionAlg(),config.getServerId(),config.getTickTime(),config.getInitLimit(),config.getSyncLimit(),config.getQuorumListenOnAllIPs(),cnxnFactory, config.getQuorumVerifier());
+		quorumPeer.setClientAddress(config.getClientPortAddress());
+		quorumPeer.setTxnFactory(new FileTxnSnapLog(config.getDataLogDir(),config.getDataDir()));
 		quorumPeer.setElectionType(config.getElectionAlg());
 		quorumPeer.setMyid(config.getServerId());
 		quorumPeer.setTickTime(config.getTickTime());
@@ -178,7 +173,7 @@ public class ZkServer {
 		quorumPeer.setMaxSessionTimeout(config.getMaxSessionTimeout());
 		quorumPeer.setInitLimit(config.getInitLimit());
 		quorumPeer.setSyncLimit(config.getSyncLimit());
-		quorumPeer.setQuorumVerifier(config.getQuorumVerifier());
+		quorumPeer.setQuorumVerifier(config.getQuorumVerifier(),true);
 		quorumPeer.setCnxnFactory(cnxnFactory);
 		quorumPeer.setZKDatabase(new ZKDatabase(quorumPeer.getTxnFactory()));
 		quorumPeer.setLearnerType(config.getPeerType());

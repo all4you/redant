@@ -30,7 +30,7 @@
         <mysql-connector.version>5.1.38</mysql-connector.version>
         <mybatis.version>3.4.4</mybatis.version>
         <pagehelper.version>5.1.2</pagehelper.version>
-        <cruator-recipes-version>2.11.1</cruator-recipes-version>
+        <cruator-recipes-version>3.2.1</cruator-recipes-version>
         <exec.mainClass>com.redant.main.ServerBootstrap</exec.mainClass>
     </properties>
 

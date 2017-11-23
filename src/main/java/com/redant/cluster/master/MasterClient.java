@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @since 2017/11/20
  **/
-public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> {
+public class MasterClient extends ChannelInboundHandlerAdapter {
 
     private final static Logger logger = LoggerFactory.getLogger(MasterClient.class);
 
@@ -34,9 +34,12 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
         this.PORT = slaveNode.getPort();
     }
 
+
     @Override
-    public void channelRead0(ChannelHandlerContext ctx,FullHttpResponse response) throws Exception {
-        this.httpResponse = response;
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(msg instanceof FullHttpResponse) {
+            this.httpResponse = (FullHttpResponse)msg;
+        }
     }
 
     @Override
@@ -49,6 +52,7 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
+
 
     /**
      * 发送http请求到slave
@@ -83,7 +87,7 @@ public class MasterClient extends SimpleChannelInboundHandler<FullHttpResponse> 
             channel.writeAndFlush(request).sync();
             channel.closeFuture().sync();
             // 返回 Slave 响应对象
-            return httpResponse;
+            return this.httpResponse;
         } catch (InterruptedException e) {
             logger.error("sendRequest error,cause:",e);
         } finally {

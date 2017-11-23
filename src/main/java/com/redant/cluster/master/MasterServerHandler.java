@@ -16,7 +16,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author gris.wang
  * @since 2017/11/20
  */
-public class MasterServerHandler extends SimpleChannelInboundHandler {
+public class MasterServerHandler extends ChannelInboundHandlerAdapter {
 
     private final static Logger logger = LoggerFactory.getLogger(MasterServerHandler.class);
 
@@ -24,7 +24,7 @@ public class MasterServerHandler extends SimpleChannelInboundHandler {
     private Channel channel;
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if(msg instanceof HttpRequest){
             request = (HttpRequest)msg;
             if(request.uri().equals(CommonConstants.FAVICON_ICO)){
