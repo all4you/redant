@@ -26,6 +26,16 @@ public class ZkBootstrap {
     private static final String DEFAULT_ZK_CLUSTER_CFG = ZkBootstrap.class.getResource("/zk_cluster.cfg").getPath();
 
 
+    public static void main(String[] args) {
+        // 启动ZK
+        if(ZkConfig.instance().useCluster()) {
+            ZkBootstrap.startCluster(null);
+        }else{
+            ZkBootstrap.startStandalone(null);
+        }
+    }
+
+
     /**
      * 解析出配置项
      * @param server
