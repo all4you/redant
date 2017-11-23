@@ -55,11 +55,10 @@ public class ZkClient {
                 client.start();
                 clients.put(zkServerAddress,client);
             }
-
+            return client;
         }finally {
             getLock.unlock();
         }
-        return client;
     }
 
 }

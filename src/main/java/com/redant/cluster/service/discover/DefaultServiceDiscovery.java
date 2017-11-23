@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 服务发现
@@ -30,6 +32,8 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     private Map<String,SlaveNode> slaveNodeMap;
 
+    private Lock lock;
+
     /**
      * 使用轮询法标记当前可用的SlaveNode
      */
@@ -38,6 +42,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
     public DefaultServiceDiscovery(String zkServerAddress){
         client = ZkClient.getClient(zkServerAddress);
         slaveNodeMap = new ConcurrentHashMap<String,SlaveNode>();
+        lock = new ReentrantLock();
     }
 
     @Override
@@ -52,7 +57,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
                     true
             );
             watcher.getListenable().addListener(new SlaveNodeWatcher());
-            watcher.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
+            watcher.start(PathChildrenCache.StartMode.NORMAL);
         }catch(Exception e){
             logger.error("watchSlave error cause:",e);
         }
@@ -62,7 +67,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
         @Override
         public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
             ChildData data = event.getData();
-            if(data==null){
+            if(data==null || data.getData()==null){
                 return;
             }
             SlaveNode slaveNode = SlaveNode.parse(JSON.parseObject(data.getData(),JSONObject.class));
@@ -90,24 +95,27 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
     }
 
 
-
     @Override
     public SlaveNode discover() {
-        if(client==null){
-            throw new IllegalArgumentException(String.format("param illegal with client={%s}",client==null?null:client.toString()));
+        lock.lock();
+        try {
+            if(client==null){
+                throw new IllegalArgumentException(String.format("param illegal with client={%s}", client == null ? null : client.toString()));
+            }
+            if(slaveNodeMap.size()==0){
+                logger.error("No available SlaveNode!");
+                return null;
+            }
+            SlaveNode[] nodes = new SlaveNode[]{};
+            nodes = slaveNodeMap.values().toArray(nodes);
+            if(slaveIndex.get()>=nodes.length){
+                slaveIndex.set(0);
+            }
+            SlaveNode slaveNode = nodes[slaveIndex.getAndIncrement()];
+            return slaveNode;
+        }finally {
+            lock.unlock();
         }
-        if(slaveNodeMap.size()==0){
-            logger.error("No available SlaveNode!");
-            return null;
-        }
-        SlaveNode[] nodes = new SlaveNode[]{};
-        nodes = slaveNodeMap.values().toArray(nodes);
-
-        if(slaveIndex.incrementAndGet()>=nodes.length){
-            slaveIndex.set(0);
-        }
-        SlaveNode slaveNode = nodes[slaveIndex.get()];
-        return slaveNode;
     }
 
 
