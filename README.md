@@ -60,7 +60,7 @@
 
 > All objects can be managed by using Bean annotation,and object can be injected automatically by using Autowired annotation.It's very easy to use them like you are doing it with spring
 > 
-> **Tips：**More information please see **wiki: **[Bean][1]
+> **Tips：** More information please see wiki: [Bean][1]
 
 
 
@@ -68,7 +68,7 @@
 
 > Use RouterController to customize a Controller. RouterMapping will specify the exact method,RouterController+RouterMapping can only match a http request. RouterParam is used to mark the parameters in the method.POJO will be converted automatically while PrimitiveType should be marked with a RouterParam annotation
 > 
-> **Tips：**More information please see **wiki: **[Router][2]
+> **Tips：** More information please see wiki: [Router][2]
 
 
 
@@ -76,7 +76,7 @@
 
 > A Session Manager is included to store custom sessions. A session is a Netty ChannelHandlerContext,and the channelId is used as a sessionId. Each session hold a map to store the properties
 > 
-> **Tips：**More information please see **wiki: **[Session][3]
+> **Tips：** More information please see wiki: [Session][3]
 
 
 
@@ -84,7 +84,7 @@
 
 > A Cookie Manager is included to handle custom cookies,is is important to note that`cookies should be set or remove before a render is returned`。
 > 
-> **Tips：**More information please see **wiki: **[Cookie][4]
+> **Tips：** More information please see wiki: [Cookie][4]
 
 
 
@@ -93,7 +93,7 @@
 
 > Mybatissist is a general CRUD method helper which based on mybatis.  You should only care the mapping between a datasource table and a POJO class, the detail operations to deal with the DataBase has been done by Mybatissist. You just need to Specify the POJO and xxxMapper interface and make sure that your xxxMapper extends  the general Mapper interface. Then you can use all the CRUD methods provided by general Mapper
 > 
-> **Tips：**More information please see **wiki: **[Mybatissist][5]
+> **Tips：** More information please see wiki: [Mybatissist][5]
 
 
 
