@@ -1,27 +1,32 @@
-# 欢迎使用RedAnt
+# RedAnt Project
 
 
-**RedAnt**是一款基于netty、支持http协议的web框架。拥有如下特点：
+**RedAnt** is a lightweight distributed web server which based on Netty
+
+ **Features:**
  
-- **对象管理** ：通过Bean注解，实现对象的全局、统一管理；
-- **自动注入** ：通过Autowired注解，实现Bean对象的自动注入；
-- **自由路由** ：使用RouterController、RouterMapping、RouterParam注解实现路由的自定义；
-- **参数转换** ：通过TypeConverter接口，实现http请求的参数转换（目前支持：基础类型、Map、List、JavaBean）；
-- **Session** ：实现了自定义的Session管理，一个session就是一个ChannelHandlerContext；
-- **Cookie** ：实现了自定义的Cookie管理，cookie需要在writeResponse之前写入response的header中；
-- **结果渲染** ：通过自定义的Render接口，对返回结果进行渲染，目前支持渲染html、xml、plain、json等数据；
-- **数据助手** ：内置Mybatissist持久层CRUD通用方法操作助手，使用PageHelper插件处理分页。
+- **Bean Manager** : all objects can be managed by using Bean annotation 
+- **Object Autowired** : object can be injected automatically by using Autowired annotation
+- **Customized Route**  : user can self customize their routes with RouterController,RouterMapping,RouterParam annotation
+- **Param Convert**  : with TypeConverter interface http parameters can be converted into Object (support PrimitiveType,Map,List,JavaBean)
+- **Session Manager**  : include a session manager,a session is a Netty ChannelHandlerContext
+- **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
+- **Result Render**  : a render interface which support html,xml,plain,json
+- **Mybatissist**  : a general CRUD method helper which based on mybatis
+- **Distributed**  : Support distributed cluster mode
 
 -------------------
 
-## 如何运行
+## How to Run
 
-> 该web框架是基于netty，内部使用TCP协议，向上支持了http协议，不需要使用tomcat或者weblogic等中间件，直接使用Java运行即可，服务端的入口是：com.redant.main.ServerBootstrap。
-> >1：可以将代码下载后导入IDEA或者eclipse，然后通过IDE工具运行。
+### 1.Standalone mode
+
+> Redant is a web server based on Netty,tomcat or weblogic is no longer required to publish a web application,the only thing you should do is start it with java. The main Class is : **com.redant.main.ServerBootstrap**
+> >1 : Use IDEA or eclipse to run the Main Class。
 > >
-> >2：可以将代码下载后用maven打成jar包，使用java命令运行。
+> >2 : Use Maven to build Redant into an executable jar, and run with : **java -jar redant-jar-with-dependencies.jar**
 
-> 启动后直接在浏览器中访问 http://127.0.0.1:8888 (默认端口可以在redant.properties文件中修改)，如果可以正常返回 “Welcome to redant!”即说明项目启动成功。目前项目中内置了四个Router，服务器启动时会将所有的Router打印出来：
+> After startup the Server, visit  http://127.0.0.1:8888 (the default port can be modified in redant.properties) in a browser.If you get  "Welcome to redant!" returned then the server is started successfully. There are four default Routers included:
 
 > GET  /                               HTML
 >
@@ -34,58 +39,67 @@
 > \*    \*                             HTML
 
 
+### 2.Cluster mode
+> The Cluster mode is made by a Master and several Slaves.Master will accept http request,and send them to slave to handle.Each slave can run as a standalone server.
+>
+>The Main Class to start Master : **com.redant.cluster.master.MasterServerBootstrap**,the start process:
+>>1 : Start a ZooKeeperServer(you can set to use Standalone or Cluster mode in zkConfig.properties default mode is Standalone)
+>>
+>>2 : Start a SlaveNode Watcher to watch the state of all Slave
+>>
+>>3 : Start a Master Server
 
-## 对象管理
+>The Main Class to start Slave : **com.redant.cluster.slave.SlaveServerBootstrap**,the start process:
+>>1：Register the current Server into ZooKeeper
+>>
+>>2：Start a Slave Server
 
-> 对象可以通过Bean注解进行管理，并可以通过Autowired注解实现对象的自动注入，避免了重复创建对象的烦恼，使用上和Spring保持一致，学习成本非常低。
+
+
+## Bean Manager
+
+> All objects can be managed by using Bean annotation,and object can be injected automatically by using Autowired annotation.It's very easy to use them like you are doing it with spring
 > 
-> **提示：**想了解更多，请查看**wiki文档：**[Bean][1]
+> **Tips：**More information please see **wiki: **[Bean][1]
 
 
 
-## 路由管理
+## Customized Route
 
-> 使用RouterController来定义一个路由Controller类，RouterMapping用以指定Controller中每个具体的方法，RouterController+RouterMapping唯一匹配一个http请求的路由，RouterParam用以标识方法的参数，用以实现http请求参数的转换，基础类型的参数必须使用RouterParam注解进行标识，POJO对象可以不使用RouterParam标识。
+> Use RouterController to customize a Controller. RouterMapping will specify the exact method,RouterController+RouterMapping can only match a http request. RouterParam is used to mark the parameters in the method.POJO will be converted automatically while PrimitiveType should be marked with a RouterParam annotation
 > 
-> **提示：**想了解更多，请查看**wiki文档：**[Router][2]
+> **Tips：**More information please see **wiki: **[Router][2]
 
 
 
-## 参数转换
+## Session Manager
 
-> 通过TypeConverter接口，实现http请求的参数转换，目前支持将parameter参数转换为：基础类型、Map、List、JavaBean。
-
-
-
-## Session管理
-
-> 实现了自定义的Session管理，Session是基于Netty的ChannelHandlerContext（以下简称context）实现的，使用context中通道的channelId作为sessionId。每个session使用一个map来存储需要保存的属性值。
+> A Session Manager is included to store custom sessions. A session is a Netty ChannelHandlerContext,and the channelId is used as a sessionId. Each session hold a map to store the properties
 > 
-> **提示：**想了解更多，请查看**wiki文档：**[Session][3]
+> **Tips：**More information please see **wiki: **[Session][3]
 
 
 
-## Cookie管理
+## Cookie Manager
 
-> 实现了自定义的Cookie管理，需要注意的是`cookie需要在writeResponse之前写入response的header中`。
+> A Cookie Manager is included to handle custom cookies,is is important to note that`cookies should be set or remove before a render is returned`。
 > 
-> **提示：**想了解更多，请查看**wiki文档：**[Cookie][4]
+> **Tips：**More information please see **wiki: **[Cookie][4]
 
 
 
 
-## Mybatissist--通用CRUD工具
+## Mybatissist
 
-> Mybatissist 是一个基于Mybatis注解的通用CRUD工具，使用Mybatissist可以仅仅关注数据库表和实体类的映射，而不必关系具体的操作过程，也不需要编写额外的Mapper.xml来指定SQL语句，只需要定义好实体类和xxxMapper接口，且保证该xxxMapper接口继承自通用的Mapper接口，既能使用通用接口中的所有CRUD方法。
+> Mybatissist is a general CRUD method helper which based on mybatis.  You should only care the mapping between a datasource table and a POJO class, the detail operations to deal with the DataBase has been done by Mybatissist. You just need to Specify the POJO and xxxMapper interface and make sure that your xxxMapper extends  the general Mapper interface. Then you can use all the CRUD methods provided by general Mapper
 > 
-> **提示：**想了解更多，请查看**wiki文档：**[Mybatissist][5]
+> **Tips：**More information please see **wiki: **[Mybatissist][5]
 
 
 
+  [1]: https://github.com/all4you/redant/wiki/1:Bean
+  [2]: https://github.com/all4you/redant/wiki/2:Router
+  [3]: https://github.com/all4you/redant/wiki/3:Session
+  [4]: https://github.com/all4you/redant/wiki/4:Cookie
+  [5]: https://github.com/all4you/redant/wiki/5:Mybatissist
 
-
-[1]: https://github.com/all4you/redant/wiki/1:Bean
-[2]: https://github.com/all4you/redant/wiki/2:Router
-[3]: https://github.com/all4you/redant/wiki/3:Session
-[4]: https://github.com/all4you/redant/wiki/4:Cookie
-[5]: https://github.com/all4you/redant/wiki/5:Mybatissist
