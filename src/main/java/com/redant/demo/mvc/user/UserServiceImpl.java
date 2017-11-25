@@ -16,10 +16,7 @@ public class UserServiceImpl implements IUserService{
     }
 
     @Override
-    public int selectCount(UserBean bean) {
-        if(bean==null){
-            bean = new UserBean();
-        }
+    public int selectCount() {
         return RandomUtil.randomInt(10);
     }
 
