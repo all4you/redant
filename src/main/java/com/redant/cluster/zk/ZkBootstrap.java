@@ -37,7 +37,7 @@ public class ZkBootstrap {
 
 
     /**
-     * 解析出配置项
+     * 解析出配置项并创建相关目录和文件
      * @param server
      * @return
      */
@@ -114,9 +114,10 @@ public class ZkBootstrap {
             JSONArray servers = obj.getJSONArray("servers");
             for(int i=0,size=servers.size();i<size;i++){
                 JSONObject server = servers.getJSONObject(i);
-                Properties properties = parse(server);
                 ZkServer zkServer = new ZkServer();
-                zkServer.startCluster(properties);
+                parse(server);
+                String configPath = server.getString("configPath");
+                zkServer.startCluster(ZkBootstrap.class.getResource(configPath).getPath());
             }
         }catch (Exception e) {
             logger.error("startCluster error,cause:",e);
