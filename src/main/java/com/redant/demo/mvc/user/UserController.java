@@ -13,13 +13,13 @@ import com.redant.core.router.annotation.RouterParam;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 
 @Bean()  // 如果需要使用Autowired，则该类自身需要使用Bean注解标注
-@RouterController(path="/UserController")
+@RouterController(path="/user")
 public class UserController {
 
     @Autowired(name="userService")
     private IUserService userService;
 
-    @RouterMapping(path="/getUserInfo",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
+    @RouterMapping(path="/info",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
     public CookieRender getUserInfo(UserBean userBean, @RouterParam(key="pid") Integer pid){
         JSONObject object = new JSONObject();
         object.put("user",userService.selectUserInfo(userBean.getId()));
@@ -30,7 +30,7 @@ public class UserController {
         return render;
     }
 
-    @RouterMapping(path="/getUserList",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
+    @RouterMapping(path="/list",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
     public CookieRender getUserList(){
         JSONArray array = new JSONArray();
         JSONObject object = new JSONObject();
@@ -45,7 +45,7 @@ public class UserController {
         return render;
     }
 
-    @RouterMapping(path="/getUserCount",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
+    @RouterMapping(path="/count",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
     public Render getUserCount(UserBean userBean){
         JSONObject object = new JSONObject();
         int count = userService.selectCount(userBean);
