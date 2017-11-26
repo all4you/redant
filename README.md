@@ -29,15 +29,15 @@
 
 > After startup the Server, visit  http://127.0.0.1:8888 (the default port can be modified in redant.properties) in a browser.If you get  "Welcome to redant!" returned then the server is started successfully. There are four default Routers included:
 
-> GET  /                               HTML
+> GET  /              HTML
 >
-> GET  /UserController/getUserCount    JSON
+> GET  /user/count    JSON
 >
-> GET  /UserController/getUserList     JSON
+> GET  /user/list     JSON
 >
-> GET  /UserController/getUserInfo     JSON
+> GET  /user/info     JSON
 >
-> \*    \*                             HTML
+> \*    \*            HTML
 
 
 ### 2.Cluster mode
