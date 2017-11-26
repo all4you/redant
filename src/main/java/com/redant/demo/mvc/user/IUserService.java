@@ -9,5 +9,9 @@ public interface IUserService {
      */
     UserBean selectUserInfo(Integer id);
 
-    int selectCount(UserBean bean);
+    /**
+     * 获取用户个数
+     * @return
+     */
+    int selectCount();
 }

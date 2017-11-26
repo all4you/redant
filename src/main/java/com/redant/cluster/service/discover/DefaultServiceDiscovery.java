@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.redant.cluster.slave.SlaveNode;
 import com.redant.cluster.zk.ZkClient;
 import com.redant.cluster.zk.ZkNode;
+import io.netty.util.CharsetUtil;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
@@ -77,15 +78,15 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
                 switch (event.getType()) {
                     case CHILD_ADDED:
                         slaveNodeMap.put(slaveNode.getId(), slaveNode);
-                        logger.info("CHILD_ADDED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData()),slaveNodeMap.size());
+                        logger.info("CHILD_ADDED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_REMOVED:
                         slaveNodeMap.remove(slaveNode.getId());
-                        logger.info("CHILD_REMOVED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData()),slaveNodeMap.size());
+                        logger.info("CHILD_REMOVED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_UPDATED:
                         slaveNodeMap.replace(slaveNode.getId(), slaveNode);
-                        logger.info("CHILD_UPDATED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData()),slaveNodeMap.size());
+                        logger.info("CHILD_UPDATED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     default:
                         break;

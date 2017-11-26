@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @RouterMapping(path="/list",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public CookieRender getUserList(){
+    public Render getUserList(){
         JSONArray array = new JSONArray();
         JSONObject object = new JSONObject();
         UserBean user = new UserBean();
@@ -39,16 +39,14 @@ public class UserController {
         user.setUserName("wang");
         object.put("user",user);
         array.add(object);
-        CookieRender render = new DefaultCookieRender(RenderType.JSON,array);
-        // 设置Cookie
-        render.setCookie(new DefaultCookie("ak","47"));
+        Render render = new DefaultRender(RenderType.JSON,array);
         return render;
     }
 
     @RouterMapping(path="/count",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
     public Render getUserCount(UserBean userBean){
         JSONObject object = new JSONObject();
-        int count = userService.selectCount(userBean);
+        int count = userService.selectCount();
         object.put("count",count);
         return new DefaultRender(RenderType.JSON,object);
     }

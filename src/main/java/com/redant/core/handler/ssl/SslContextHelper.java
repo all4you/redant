@@ -9,6 +9,7 @@ import javax.net.ssl.SSLException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -48,6 +49,7 @@ public class SslContextHelper {
             return null;
         }
         SslContext sslContext = null;
+        InputStream is = null;
         try {
             String key = getKey(keyPath,keyPassword);
             sslContext = contents.get(key);
@@ -56,7 +58,8 @@ public class SslContextHelper {
             }
 
             KeyStore keyStore = KeyStore.getInstance(KEY_STORE_JKS);
-            keyStore.load(new FileInputStream(keyPath), keyPassword.toCharArray());
+            is = new FileInputStream(keyPath);
+            keyStore.load(is, keyPassword.toCharArray());
 
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(ALGORITHM);
             keyManagerFactory.init(keyStore,keyPassword.toCharArray());
@@ -79,6 +82,14 @@ public class SslContextHelper {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(is!=null){
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return sslContext;
     }

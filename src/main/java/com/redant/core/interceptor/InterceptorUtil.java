@@ -2,6 +2,7 @@ package com.redant.core.interceptor;
 
 import com.redant.common.constants.CommonConstants;
 import com.xiaoleilu.hutool.lang.ClassScaner;
+import com.xiaoleilu.hutool.util.ArrayUtil;
 import io.netty.channel.ChannelHandler;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -52,7 +53,7 @@ public class InterceptorUtil {
         }finally {
             preLock.unlock();
         }
-        return preInterceptors;
+        return ArrayUtil.clone(preInterceptors);
     }
 
 
@@ -65,7 +66,7 @@ public class InterceptorUtil {
         }finally {
             afterLock.unlock();
         }
-        return afterInterceptors;
+        return ArrayUtil.clone(afterInterceptors);
     }
 
 
