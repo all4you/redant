@@ -58,7 +58,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
                     true
             );
             watcher.getListenable().addListener(new SlaveNodeWatcher());
-            watcher.start(PathChildrenCache.StartMode.NORMAL);
+            watcher.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         }catch(Exception e){
             logger.error("watchSlave error cause:",e);
         }

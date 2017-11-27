@@ -16,7 +16,11 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class ZkClient {
 
-    private static final int DEFAULT_SESSION_TIMEOUT_MS = 60000;
+    /**
+     * 节点的session超时时间，当Slave服务停掉后，
+     * curator客户端需要等待该节点超时后才会触发CHILD_REMOVED事件
+     */
+    private static final int DEFAULT_SESSION_TIMEOUT_MS = 5000;
 
     private static final int DEFAULT_CONNECTION_TIMEOUT_MS = 15000;
 
