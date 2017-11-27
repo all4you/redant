@@ -1,3 +1,4 @@
+*.gitignore
 .idea/
 .settings/
 *.iml
@@ -11,4 +12,3 @@ dal/target/
 dal/.settings
 target/
 logback/
-*.gitignore
