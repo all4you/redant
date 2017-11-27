@@ -33,7 +33,7 @@ public class ZkServer {
 	/**
 	 * ZK服务端单机模式的连接字符串
 	 */
-	public static final String ZK_STANDALONE_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_address.cfg").getPath()));
+	public static final String ZK_STANDALONE_ADDRESS = FileUtil.readUtf8String(new File(ZkServer.class.getResource("/zk_standalone_address.cfg").getPath()));
 
 
 	/**
@@ -135,15 +135,15 @@ public class ZkServer {
 
 	/**
 	 * 启动集群模式
-	 * @param zkConfigPath
+	 * @param zkPropertiesPath
 	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws ConfigException
 	 */
-	public void startCluster(String zkConfigPath) throws IOException, ConfigException{
+	public void startCluster(String zkPropertiesPath) throws IOException, ConfigException{
 		QuorumPeerConfig config = new QuorumPeerConfig();
 		// 从配置文件读取配置
-		config.parse(zkConfigPath);
+		config.parse(zkPropertiesPath);
 		startFakeCluster(config);
 	}
 

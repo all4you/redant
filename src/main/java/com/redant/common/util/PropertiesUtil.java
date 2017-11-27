@@ -29,7 +29,7 @@ public class PropertiesUtil {
     }
 
 	/**
-	 * bean是否加载完毕
+	 * 是否加载完毕
 	 * @return
 	 */
 	private boolean propertiesLoaded(){
@@ -48,6 +48,33 @@ public class PropertiesUtil {
 	}
 
 
+	/**
+	 * 根据Resource获取properties
+	 * @param propertiesPath
+	 * @return
+	 */
+	public static Properties getPropertiesByResource(String propertiesPath){
+		InputStream inputStream = null;
+		Properties properties = null;
+		try{
+			inputStream = PropertiesUtil.class.getResourceAsStream(propertiesPath);
+			if(inputStream!=null){
+				properties = new Properties();
+				properties.load(inputStream);
+			}
+		} catch (Exception e) {
+			logger.error("getInstance occur error,cause:",e);
+		} finally{
+			try {
+				if(inputStream!=null){
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return properties;
+	}
 
     /**
      * 获取实例
