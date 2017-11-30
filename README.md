@@ -12,7 +12,6 @@
 - **Session Manager**  : include a session manager,a session is a Netty ChannelHandlerContext
 - **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
 - **Result Render**  : a render interface which support html,xml,plain,json
-- **Mybatissist**  : a general CRUD method helper which based on mybatis
 - **Distributed Mode**  : support distributed cluster mode
 
 -------------------
@@ -92,18 +91,9 @@
 
 
 
-## Mybatissist
-
-> Mybatissist is a general CRUD method helper which based on mybatis.  You should only care the mapping between a datasource table and a POJO class, the detail operations to deal with the DataBase has been done by Mybatissist. You just need to Specify the POJO and xxxMapper interface and make sure that your xxxMapper extends  the general Mapper interface. Then you can use all the CRUD methods provided by general Mapper
-> 
-> **Tips：** More information please see wiki: [Mybatissist][5]
-
-
-
   [1]: https://github.com/all4you/redant/wiki/1:Bean
   [2]: https://github.com/all4you/redant/wiki/2:Router
   [3]: https://github.com/all4you/redant/wiki/3:Session
   [4]: https://github.com/all4you/redant/wiki/4:Cookie
-  [5]: https://github.com/all4you/redant/wiki/5:Mybatissist
 
 
