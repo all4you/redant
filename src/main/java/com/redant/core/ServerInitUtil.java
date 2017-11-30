@@ -1,6 +1,5 @@
 package com.redant.core;
 
-import com.mybatissist.sqlsession.SqlSessionContext;
 import com.redant.core.bean.BeanContext;
 import com.redant.core.router.RouterContext;
 
@@ -17,7 +16,6 @@ public class ServerInitUtil {
     public static void init(){
         BeanContext.initBeans();
         RouterContext.initRouters();
-        SqlSessionContext.buildFactory();
     }
 
 }

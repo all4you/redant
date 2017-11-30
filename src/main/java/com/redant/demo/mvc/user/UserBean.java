@@ -1,15 +1,12 @@
 package com.redant.demo.mvc.user;
 
-import com.redant.core.bean.BaseBean;
-import com.mybatissist.annotation.Table;
 
 /**
  * UserBean
  * @author gris.wang
  * @create 2017-10-20
  */
-@Table(name="user_bean",alias="u")
-public class UserBean extends BaseBean {
+public class UserBean {
 
     private Integer id;
 
@@ -39,5 +36,14 @@ public class UserBean extends BaseBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuffer().append("{")
+                                 .append("\"id\":\"").append(this.id)
+                                 .append("\",\"userName\":\"").append(this.userName)
+                                 .append("\",\"password\":\"").append(this.password)
+                                 .append("}").toString();
     }
 }
