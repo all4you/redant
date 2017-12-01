@@ -10,9 +10,9 @@ import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
 import com.xiaoleilu.hutool.lang.ClassScaner;
+import com.xiaoleilu.hutool.util.StrUtil;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +118,7 @@ public class RouterHolder {
                                     Bean bean = cls.getAnnotation(Bean.class);
                                     if (bean != null) {
                                         // 如果该controller设置了bean的名字则以该名称从BeanHolder中获取bean，否则以
-                                        String beanName = StringUtils.isNotBlank(bean.name()) ? bean.name() : cls.getName();
+                                        String beanName = StrUtil.isNotBlank(bean.name()) ? bean.name() : cls.getName();
                                         controller = BeanContext.getBean(beanName);
                                     } else {
                                         controller = cls.newInstance();

@@ -1,24 +1,25 @@
 package com.redant.common.util;
 
-import com.redant.common.constants.CommonConstants;
+import com.redant.common.html.DefaultHtmlMaker;
+import com.redant.common.html.HtmlMakerEnum;
+import com.redant.common.html.HtmlMakerFactory;
+import com.redant.view.Page404;
+import com.redant.view.Page500;
+import com.redant.view.PageError;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * HttpRenderUtil
  * @author gris.wang
  * @create 2017-10-20
  */
 public class HttpRenderUtil {
-
-	private final static Logger logger = LoggerFactory.getLogger(HttpRenderUtil.class);
 
 	public static final String EMPTY_CONTENT = "";
 
@@ -32,7 +33,11 @@ public class HttpRenderUtil {
 
 	public static final String CONTENT_TYPE_HTML = "text/html;charset=UTF-8";
 
-	
+
+	private HttpRenderUtil(){
+
+	}
+
 	/**
 	 * 输出纯Json字符串
 	 */
@@ -61,32 +66,43 @@ public class HttpRenderUtil {
 		return render(html, CONTENT_TYPE_HTML);
 	}
 
+
+	/**
+	 * 404NotFoundResponse
+	 * @return
+	 */
 	public static FullHttpResponse getNotFoundResponse(){
-		String content = getPageContent(CommonConstants.BASE_VIEW_PATH+"404.vm",null);
+		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page404.HTML,null);
 		return render(getBytes(content), CONTENT_TYPE_HTML);
 	}
 
+	/**
+	 * ServerErrorResponse
+	 * @return
+	 */
 	public static FullHttpResponse getServerErrorResponse(){
-		String content = getPageContent(CommonConstants.BASE_VIEW_PATH+"500.vm",null);
+		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page500.HTML,null);
 		return render(getBytes(content), CONTENT_TYPE_HTML);
 	}
 
+	/**
+	 * ErrorResponse
+	 * @param errorMessage
+	 * @return
+	 */
 	public static FullHttpResponse getErrorResponse(String errorMessage){
 		Map<String,Object> contentMap = new HashMap<String,Object>(1);
 		contentMap.put("errorMessage",errorMessage);
-		String content = getPageContent(CommonConstants.BASE_VIEW_PATH+"error.vm",contentMap);
+		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),PageError.HTML,contentMap);
 		return render(getBytes(content), CONTENT_TYPE_HTML);
 	}
 
-	public static String getPageContent(String templateName,Map<String, Object> contentMap){
-		try {
-			return VelocityUtil.parse(templateName,contentMap);
-		} catch (Exception e) {
-			logger.error("getPageContent Error,cause:",e);
-		}
-		return CommonConstants.SERVER_INTERNAL_ERROR_DESC;
-	}
 
+	/**
+	 * 转换byte
+	 * @param content
+	 * @return
+	 */
 	public static byte[] getBytes(Object content){
 		if(content==null){
 			return EMPTY_CONTENT.getBytes(CharsetUtil.UTF_8);

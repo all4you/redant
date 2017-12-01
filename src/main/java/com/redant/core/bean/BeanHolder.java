@@ -6,8 +6,8 @@ import com.redant.common.util.ThreadUtil;
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
 import com.xiaoleilu.hutool.lang.ClassScaner;
+import com.xiaoleilu.hutool.util.StrUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class BeanHolder {
                     Autowired resource = setter.getAnnotation(Autowired.class);
                     String name;
                     Object value = null;
-                    if(StringUtils.isNotBlank(resource.name())){
+                    if(StrUtil.isNotBlank(resource.name())){
                         //获取注解的name属性的内容
                         name = resource.name();
                         value = beanHolderMap.get(name);
@@ -105,7 +105,7 @@ public class BeanHolder {
                     Autowired resource = field.getAnnotation(Autowired.class);
                     String name;
                     Object value = null;
-                    if(StringUtils.isNotBlank(resource.name())){
+                    if(StrUtil.isNotBlank(resource.name())){
                         name = resource.name();
                         value = beanHolderMap.get(name);
                     }else{
@@ -185,7 +185,7 @@ public class BeanHolder {
                         for (Class<?> cls : classSet) {
                             Bean bean = cls.getAnnotation(Bean.class);
                             if (bean != null) {
-                                String beanName = StringUtils.isNotBlank(bean.name())?bean.name():cls.getName();
+                                String beanName = StrUtil.isNotBlank(bean.name())?bean.name():cls.getName();
                                 if(beanHolderMap.containsKey(beanName)){
                                     logger.warn("Duplicate bean with name={}",beanName);
                                     continue;

@@ -3,13 +3,16 @@ package com.redant.demo.mvc;
 
 import com.redant.common.constants.CommonConstants;
 import com.redant.common.enums.RequestMethod;
+import com.redant.common.html.DefaultHtmlMaker;
+import com.redant.common.html.HtmlMakerEnum;
+import com.redant.common.html.HtmlMakerFactory;
+import com.redant.common.util.HtmlContentUtil;
 import com.redant.core.render.DefaultRender;
+import com.redant.core.render.Render;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
-import com.redant.common.util.HttpRenderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.redant.view.PageIndex;
 
 
 /**
@@ -20,13 +23,10 @@ import org.slf4j.LoggerFactory;
 @RouterController(path="/")
 public class BaseController {
 
-    private final static Logger logger = LoggerFactory.getLogger(BaseController.class);
-
-
     @RouterMapping(requestMethod=RequestMethod.GET,renderType=RenderType.HTML)
-    public DefaultRender index(){
-        String content = HttpRenderUtil.getPageContent(CommonConstants.BASE_VIEW_PATH+"index.vm",null);
-        return new DefaultRender(RenderType.HTML,content);
+    public Render index(){
+        String html = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),PageIndex.HTML,null);
+        return new DefaultRender(RenderType.HTML,html);
     }
 
 

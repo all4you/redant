@@ -73,12 +73,6 @@ public class CommonConstants {
 
 
     /**
-     * 视图文件根路径
-     */
-    public static final String BASE_VIEW_PATH = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("base.view.path");
-
-
-    /**
      * 服务端出错时的错误描述
      */
     public static final String SERVER_INTERNAL_ERROR_DESC = PropertiesUtil.getInstance(REDANT_PROPERTIES_PATH).getString("server.internal.error.desc");

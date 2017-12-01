@@ -5,13 +5,11 @@ import com.redant.common.exception.InvocationException;
 import com.redant.common.exception.ValidationException;
 import com.redant.common.util.GenericsUtil;
 import com.redant.common.util.HttpRequestUtil;
-import com.redant.common.util.ValidateUtil;
 import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveConverter;
 import com.redant.core.converter.PrimitiveTypeUtil;
 import com.redant.core.render.Render;
 import com.redant.core.router.annotation.RouterParam;
-import io.netty.handler.codec.http.HttpRequest;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 import org.apache.commons.beanutils.BeanUtils;
@@ -90,7 +88,7 @@ public class ProxyInvocation {
 						//生成当前的调用参数
 						parameter = parseParameter(paramMap, type, param, method, i);
 						if(param.checkNull()){
-							ValidateUtil.checkNull(param.key(), parameter);
+							GenericsUtil.checkNull(param.key(), parameter);
 						}
 						parameters[i] = parameter;
 					}catch(Exception e){
