@@ -14,8 +14,8 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,7 +42,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     public DefaultServiceDiscovery(String zkServerAddress){
         client = ZkClient.getClient(zkServerAddress);
-        slaveNodeMap = new ConcurrentHashMap<String,SlaveNode>();
+        slaveNodeMap = new HashMap<String,SlaveNode>();
         lock = new ReentrantLock();
     }
 
@@ -112,8 +112,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
             if(slaveIndex.get()>=nodes.length){
                 slaveIndex.set(0);
             }
-            SlaveNode slaveNode = nodes[slaveIndex.getAndIncrement()];
-            return slaveNode;
+            return nodes[slaveIndex.getAndIncrement()];
         }finally {
             lock.unlock();
         }
