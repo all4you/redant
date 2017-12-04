@@ -26,12 +26,14 @@ public class HtmlMakerFactory {
      * @return
      */
     public static HtmlMakerFactory instance(){
-        synchronized(HtmlMakerFactory.class){
-            if(factory==null) {
-                factory = new HtmlMakerFactory();
+        if(factory==null){
+            synchronized (HtmlMakerFactory.class) {
+                if (factory==null) {
+                    factory = new HtmlMakerFactory();
+                }
             }
-            return factory;
         }
+        return factory;
     }
 
     /**

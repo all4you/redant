@@ -1,7 +1,10 @@
 package com.redant.core.bean;
 
+import com.redant.common.util.TagUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Bean上下文
@@ -43,21 +46,31 @@ public class BeanContext {
     public static void main(String[] args) {
         int loopTimes = 200;
 
+        final CountDownLatch latch = new CountDownLatch(loopTimes);
+
         class Runner implements Runnable{
 
             private Logger logger = LoggerFactory.getLogger(Runner.class);
 
             @Override
             public void run() {
-                Object bean = BeanContext.getBean("jsonSerializer");
+                Object bean = BeanContext.getBean("userService");
                 logger.info("beanName={},currentThread={}",(bean!=null?bean.getClass().getName():"null"),Thread.currentThread().getName());
+                latch.countDown();
             }
         }
 
+        TagUtil.addTag("start");
         for(int i=0;i<loopTimes;i++){
             new Thread(new Runner()).start();
         }
-
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        TagUtil.addTag("end");
+        TagUtil.showCost("start","end");
 
     }
 }

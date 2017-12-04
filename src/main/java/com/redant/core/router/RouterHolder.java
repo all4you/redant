@@ -80,12 +80,14 @@ public class RouterHolder {
      * @return
      */
     public static RouterHolder create(){
-        synchronized (RouterHolder.class){
-            if(holder==null){
-                holder = new RouterHolder();
+        if(holder==null) {
+            synchronized (RouterHolder.class) {
+                if (holder==null) {
+                    holder = new RouterHolder();
+                }
             }
-            return holder;
         }
+        return holder;
     }
 
     /**

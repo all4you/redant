@@ -155,12 +155,14 @@ public class BeanHolder {
      * @return
      */
     public static BeanHolder create(){
-        synchronized (BeanHolder.class){
-            if(holder==null){
-                holder = new BeanHolder();
+        if(holder==null) {
+            synchronized (BeanHolder.class) {
+                if (holder==null) {
+                    holder = new BeanHolder();
+                }
             }
-            return holder;
         }
+        return holder;
     }
 
 

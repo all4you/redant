@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 使用单例模式，获取配置文件中的信息
@@ -27,6 +28,15 @@ public class PropertiesUtil {
     private PropertiesUtil(){
     	
     }
+
+    static{
+		if(null==propertiesUtilsHolder){
+			propertiesUtilsHolder = new HashMap<String,PropertiesUtil>();
+		}
+		if(null==propertiesMap){
+			propertiesMap = new HashMap<PropertiesUtil,Properties>();
+		}
+	}
 
 	/**
 	 * 是否加载完毕
@@ -83,12 +93,6 @@ public class PropertiesUtil {
      * @throws Exception
      */
     public static synchronized PropertiesUtil getInstance(String propertiesPath){
-    	if(null==propertiesUtilsHolder){
-    		propertiesUtilsHolder = new HashMap<String,PropertiesUtil>();
-    	}
-    	if(null==propertiesMap){
-    		propertiesMap = new HashMap<PropertiesUtil,Properties>();
-    	}
     	PropertiesUtil propertiesUtil = propertiesUtilsHolder.get(propertiesPath);
     	if(null==propertiesUtil){
     		logger.info("PropertiesUtil instance is null with propertiesPath={},will new a instance directly.",propertiesPath);
@@ -179,20 +183,31 @@ public class PropertiesUtil {
 	public static void main(String[] args) {
 		int loopTimes = 200;
 
+		final CountDownLatch latch = new CountDownLatch(loopTimes);
+
 		class Runner implements Runnable{
 
 			private Logger logger = LoggerFactory.getLogger(Runner.class);
 
 			@Override
 			public void run() {
-				String property = PropertiesUtil.getInstance("/redant.properties").getString("base.view.path");
+				String property = PropertiesUtil.getInstance("/redant.properties").getString("bean.scan.package");
 				logger.info("property={},currentThread={}",property,Thread.currentThread().getName());
+				latch.countDown();
 			}
 		}
 
+		TagUtil.addTag("start");
 		for(int i=0;i<loopTimes;i++){
 			new Thread(new Runner()).start();
 		}
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		TagUtil.addTag("end");
+		TagUtil.showCost("start","end");
 
 
 	}
