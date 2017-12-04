@@ -1,4 +1,4 @@
-package com.redant.demo.mvc.user;
+package com.redant.defaultcontroller.user;
 
 public interface IUserService {
 

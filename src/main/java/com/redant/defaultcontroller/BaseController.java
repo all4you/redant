@@ -1,4 +1,4 @@
-package com.redant.demo.mvc;
+package com.redant.defaultcontroller;
 
 
 import com.redant.common.constants.CommonConstants;
