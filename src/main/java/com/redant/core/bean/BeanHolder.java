@@ -41,7 +41,7 @@ public class BeanHolder {
     /**
      * BeanHolder的实例(单例)
      */
-    private static BeanHolder holder;
+    private volatile static BeanHolder holder;
 
     private BeanHolder(){
 

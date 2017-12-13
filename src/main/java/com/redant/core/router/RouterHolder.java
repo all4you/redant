@@ -48,7 +48,7 @@ public class RouterHolder {
     /**
      * RouterHolder的实例(单例)
      */
-    private static RouterHolder holder;
+    private volatile static RouterHolder holder;
 
 
     private RouterHolder(){

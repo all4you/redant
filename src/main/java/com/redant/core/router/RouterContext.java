@@ -51,7 +51,7 @@ public class RouterContext {
 
             @Override
             public void run() {
-                RouteResult<RenderType> result = RouterContext.getRouteResult(HttpMethod.GET,"/UserController/getUserInfo");
+                RouteResult<RenderType> result = RouterContext.getRouteResult(HttpMethod.GET,"/user/info");
                 logger.info("routeResult={},currentThread={}",result,Thread.currentThread().getName());
             }
         }
