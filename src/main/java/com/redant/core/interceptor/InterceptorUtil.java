@@ -3,8 +3,8 @@ package com.redant.core.interceptor;
 import com.redant.common.constants.CommonConstants;
 import com.xiaoleilu.hutool.lang.ClassScaner;
 import com.xiaoleilu.hutool.util.ArrayUtil;
+import com.xiaoleilu.hutool.util.CollectionUtil;
 import io.netty.channel.ChannelHandler;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -26,7 +26,7 @@ public class InterceptorUtil {
 
     private static ChannelHandler[] getInterceptors(Class interceptorClass){
         Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.INTERCEPTOR_SCAN_PACKAGE,interceptorClass);
-        if(CollectionUtils.isEmpty(classSet)){
+        if(CollectionUtil.isEmpty(classSet)){
             return new ChannelHandler[]{};
         }
         ChannelHandler[] interceptors = new ChannelHandler[classSet.size()];

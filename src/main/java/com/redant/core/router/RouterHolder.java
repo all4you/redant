@@ -10,9 +10,9 @@ import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
 import com.xiaoleilu.hutool.lang.ClassScaner;
+import com.xiaoleilu.hutool.util.CollectionUtil;
 import com.xiaoleilu.hutool.util.StrUtil;
 import io.netty.handler.codec.http.HttpMethod;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class RouterHolder {
                     proxyMap = new HashMap<String, ControllerProxy>(classSet.size());
                     router = new Router<RenderType>();
 
-                    if (CollectionUtils.isNotEmpty(classSet)) {
+                    if (CollectionUtil.isNotEmpty(classSet)) {
                         for (Class<?> cls : classSet) {
                             RouterController routerController = cls.getAnnotation(RouterController.class);
                             // 获取Controller中所有的方法

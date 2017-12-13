@@ -6,8 +6,8 @@ import com.redant.common.util.ThreadUtil;
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
 import com.xiaoleilu.hutool.lang.ClassScaner;
+import com.xiaoleilu.hutool.util.CollectionUtil;
 import com.xiaoleilu.hutool.util.StrUtil;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +180,7 @@ public class BeanHolder {
                      */
                     Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(CommonConstants.BEAN_SCAN_PACKAGE,Bean.class);
                     beanHolderMap = new LinkedHashMap<String,Object>(classSet.size());
-                    if (CollectionUtils.isNotEmpty(classSet)) {
+                    if (CollectionUtil.isNotEmpty(classSet)) {
                         /**
                          * 遍历所有类，找出有beanClass注解的类，并封装到linkedHashMap里
                          */
