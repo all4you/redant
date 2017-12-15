@@ -29,7 +29,7 @@ MAIN_CLASS="com.redant.cluster.zk.ZkBootstrap"
 APP_BASE_NAME=`basename "$0"`
 
 # Add default JVM options here. You can also use JAVA_OPTS and REDANT_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS="-Xms512m -Xmx1024m -XX:-UseGCOverheadLimit -XX:+UseConcMarkSweepGC"
+DEFAULT_JVM_OPTS="-Xms512m -Xmx1024m"
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"
@@ -178,4 +178,4 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi
 
-exec "$JAVACMD" "$@"
+exec "$JAVACMD" "$@" &
