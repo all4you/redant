@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 服务发现
@@ -33,8 +31,6 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     private Map<String,SlaveNode> slaveNodeMap;
 
-    private Lock lock;
-
     /**
      * 使用轮询法标记当前可用的SlaveNode
      */
@@ -43,7 +39,6 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
     public DefaultServiceDiscovery(String zkServerAddress){
         client = ZkClient.getClient(zkServerAddress);
         slaveNodeMap = new HashMap<String,SlaveNode>();
-        lock = new ReentrantLock();
     }
 
     @Override
@@ -98,24 +93,19 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     @Override
     public SlaveNode discover() {
-        lock.lock();
-        try {
-            if(client==null){
-                throw new IllegalArgumentException(String.format("param illegal with client={%s}", client == null ? null : client.toString()));
-            }
-            if(slaveNodeMap.size()==0){
-                logger.error("No available SlaveNode!");
-                return null;
-            }
-            SlaveNode[] nodes = new SlaveNode[]{};
-            nodes = slaveNodeMap.values().toArray(nodes);
-            if(slaveIndex.get()>=nodes.length){
-                slaveIndex.set(0);
-            }
-            return nodes[slaveIndex.getAndIncrement()];
-        }finally {
-            lock.unlock();
+        if(client==null){
+            throw new IllegalArgumentException(String.format("param illegal with client={%s}", client == null ? null : client.toString()));
         }
+        if(slaveNodeMap.size()==0){
+            logger.error("No available SlaveNode!");
+            return null;
+        }
+        SlaveNode[] nodes = new SlaveNode[]{};
+        nodes = slaveNodeMap.values().toArray(nodes);
+        // 通过CAS循环获取下一个可用服务，不需要加锁即能保证线程安全
+        // 如果当前获取到最后一个服务了，则将指针更新为0
+        slaveIndex.compareAndSet(nodes.length,0);
+        return nodes[slaveIndex.getAndIncrement()];
     }
 
 

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 并发的服务发现
@@ -46,33 +44,24 @@ public class ConcurrentServiceDiscoverTest {
          */
         private AtomicInteger slaveIndex = new AtomicInteger(0);
 
-        private Lock lock;
-
         public Discovery(){
             slaveNodeMap = new HashMap<String,SlaveNode>();
             SlaveNode slaveNode1 = new SlaveNode("127.0.0.1",8081);
             SlaveNode slaveNode2 = new SlaveNode("127.0.0.1",8082);
             slaveNodeMap.put(slaveNode1.getId(),slaveNode1);
             slaveNodeMap.put(slaveNode2.getId(),slaveNode2);
-            lock = new ReentrantLock();
         }
 
         public SlaveNode discover() {
-            lock.lock();
-            try {
-                if(slaveNodeMap.size()==0){
-                    System.err.println("No available SlaveNode!");
-                    return null;
-                }
-                SlaveNode[] nodes = new SlaveNode[]{};
-                nodes = slaveNodeMap.values().toArray(nodes);
-                if(slaveIndex.get()>=nodes.length){
-                    slaveIndex.set(0);
-                }
-                return nodes[slaveIndex.getAndIncrement()];
-            }finally {
-                lock.unlock();
+            if(slaveNodeMap.size()==0){
+                System.err.println("No available SlaveNode!");
+                return null;
             }
+            SlaveNode[] nodes = new SlaveNode[]{};
+            nodes = slaveNodeMap.values().toArray(nodes);
+            // 通过CAS循环获取下一个可用服务
+            slaveIndex.compareAndSet(nodes.length,0);
+            return nodes[slaveIndex.getAndIncrement()];
         }
 
     }
@@ -81,7 +70,7 @@ public class ConcurrentServiceDiscoverTest {
 
     @Test
     public void testConcurrentDiscover(){
-        int loopTimes = 200;
+        int loopTimes = 240;
 
         latch = new CountDownLatch(loopTimes);
 
