@@ -25,7 +25,7 @@ APP_HOME="`pwd -P`"
 cd "$SAVED" >/dev/null
 
 APP_NAME="redant_zk"
-MAIN_CLASS="ZkBootstrap"
+MAIN_CLASS="com.redant.zk.ZkBootstrap"
 APP_BASE_NAME=`basename "$0"`
 
 # Add default JVM options here. You can also use JAVA_OPTS and REDANT_OPTS to pass JVM options to this script.
@@ -72,8 +72,6 @@ for JAR in $JARS
 do
     CLASSPATH=$CLASSPATH:$JAR
 done
-
-#CLASSPATH=$APP_HOME/lib/redant-1.0.0.jar:$APP_HOME/lib/commons-beanutils-1.9.2.jar:$APP_HOME/lib/logback-classic-1.1.7.jar:$APP_HOME/lib/curator-recipes-3.2.1.jar:$APP_HOME/lib/curator-framework-3.2.1.jar:$APP_HOME/lib/curator-client-3.2.1.jar:$APP_HOME/lib/zookeeper-3.5.1-alpha.jar:$APP_HOME/lib/slf4j-log4j12-1.7.5.jar:$APP_HOME/lib/slf4j-api-1.7.25.jar:$APP_HOME/lib/jcl-over-slf4j-1.7.25.jar:$APP_HOME/lib/netty-all-4.1.9.Final.jar:$APP_HOME/lib/cglib-3.2.4.jar:$APP_HOME/lib/jetty-6.1.26.jar:$APP_HOME/lib/fastjson-1.2.31.jar:$APP_HOME/lib/hutool-all-3.1.0.jar:$APP_HOME/lib/logback-core-1.1.7.jar:$APP_HOME/lib/asm-5.1.jar:$APP_HOME/lib/ant-1.9.6.jar:$APP_HOME/lib/jetty-util-6.1.26.jar:$APP_HOME/lib/servlet-api-2.5-20081211.jar:$APP_HOME/lib/commons-cli-1.2.jar:$APP_HOME/lib/log4j-1.2.17.jar:$APP_HOME/lib/netty-3.7.0.Final.jar:$APP_HOME/lib/javacc-5.0.jar:$APP_HOME/lib/ant-launcher-1.9.6.jar:$APP_HOME/lib/guava-16.0.1.jar
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
