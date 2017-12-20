@@ -1,4 +1,4 @@
-package com.redant.cluster.zk;
+package com.redant.zk;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

@@ -1,8 +1,8 @@
 package com.redant.cluster.service.register;
 
 import com.redant.cluster.slave.SlaveNode;
-import com.redant.cluster.zk.ZkClient;
-import com.redant.cluster.zk.ZkNode;
+import com.redant.zk.ZkClient;
+import com.redant.zk.ZkNode;
 import com.xiaoleilu.hutool.util.StrUtil;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;

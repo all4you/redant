@@ -42,7 +42,7 @@
 ### 2.Cluster mode
 > The Cluster mode is made by a Master and several Slaves.Master will accept http request,and send them to slave to handle.Each slave can run as a standalone server.
 
-> The Main Class to start ZooKeeperServer : **com.redant.cluster.zk.ZkBootstrap**
+> The Main Class to start ZooKeeperServer : **ZkBootstrap**
 
 > The Main Class to start Master : **com.redant.cluster.master.MasterServerBootstrap**,the start process:
 >>1 : Start a ZooKeeperServer(you can set to use Standalone or Cluster mode in zkConfig.properties default mode is Standalone)

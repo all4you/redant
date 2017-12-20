@@ -1,4 +1,4 @@
-package com.redant.cluster.zk;
+package com.redant.zk;
 
 /**
  * @author gris.wang

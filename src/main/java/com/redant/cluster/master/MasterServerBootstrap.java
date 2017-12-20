@@ -1,6 +1,10 @@
 package com.redant.cluster.master;
 
 import com.redant.cluster.service.discover.Discovery;
+import com.redant.zk.ZkServer;
+import com.xiaoleilu.hutool.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MasterServerBootstrap
@@ -9,10 +13,22 @@ import com.redant.cluster.service.discover.Discovery;
  **/
 public class MasterServerBootstrap {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServerBootstrap.class);
+
     public static void main(String[] args) {
 
+        String zkServerAddress = ZkServer.getZkServerAddress();
+        if(args.length>0 && StrUtil.isNotBlank(args[0])){
+            LOGGER.info("zkServerAddress is read from args");
+            zkServerAddress = args[0];
+        }
+        if(StrUtil.isBlank(zkServerAddress)){
+            LOGGER.error("zkServerAddress is blank please check file={}",ZkServer.ZOOKEEPER_ADDRESS_CFG);
+            System.exit(1);
+        }
+
         // 监听SlaveNode的变化
-        Discovery.watchSlave();
+        Discovery.watchSlave(zkServerAddress);
 
         // 启动MasterServer
         MasterServer masterServer = new MasterServer();

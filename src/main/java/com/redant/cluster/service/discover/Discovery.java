@@ -1,7 +1,6 @@
 package com.redant.cluster.service.discover;
 
 import com.redant.cluster.slave.SlaveNode;
-import com.redant.cluster.zk.ZkServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,19 +17,16 @@ public class Discovery {
 
     private Discovery(){}
 
-    static{
-        discovery = new DefaultServiceDiscovery(ZkServer.ZK_SERVER_ADDRESS);
-    }
 
     /**
      * 监听SlaveNode的变化
+     * @param zkServerAddress ZooKeeper服务端地址
      */
-    public static void watchSlave(){
-        if(discovery!=null) {
-            discovery.watchSlave();
-        }else{
-            logger.error("discovery is null");
+    public static void watchSlave(String zkServerAddress){
+        if(discovery==null) {
+            discovery = new DefaultServiceDiscovery(zkServerAddress);
         }
+        discovery.watchSlave();
     }
 
     /**
