@@ -15,7 +15,7 @@ public class HtmlMakerFactory {
 
     private Map<HtmlMakerEnum,HtmlMaker> htmlMakerMap;
 
-    private static HtmlMakerFactory factory;
+    private volatile static HtmlMakerFactory factory;
 
     private HtmlMakerFactory(){
         htmlMakerMap = new ConcurrentHashMap<>();

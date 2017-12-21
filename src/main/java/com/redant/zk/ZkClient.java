@@ -29,11 +29,11 @@ public class ZkClient {
      */
     private static Map<String,CuratorFramework> clients;
 
-    private static Lock getLock;
+    private static Lock lock;
 
     static{
         clients = new ConcurrentHashMap<String,CuratorFramework>();
-        getLock = new ReentrantLock();
+        lock = new ReentrantLock();
     }
 
     /**
@@ -42,27 +42,31 @@ public class ZkClient {
      * @return
      */
     public static CuratorFramework getClient(String zkServerAddress){
-        getLock.lock();
-        CuratorFramework client;
-        try {
-            if(zkServerAddress == null || zkServerAddress.trim().length() == 0){
-                return null;
-            }
-            client = clients.get(zkServerAddress);
-            if(client==null){
-                client = CuratorFrameworkFactory.newClient(
-                        zkServerAddress,
-                        DEFAULT_SESSION_TIMEOUT_MS,
-                        DEFAULT_CONNECTION_TIMEOUT_MS,
-                        new RetryNTimes(10, 5000)
-                );
-                client.start();
-                clients.put(zkServerAddress,client);
-            }
-            return client;
-        }finally {
-            getLock.unlock();
+        if(zkServerAddress == null || zkServerAddress.trim().length() == 0){
+            return null;
         }
+        CuratorFramework client = clients.get(zkServerAddress);
+        if(client==null){
+            lock.lock();
+            try {
+                if(!clients.containsKey(zkServerAddress)) {
+                    client = CuratorFrameworkFactory.newClient(
+                            zkServerAddress,
+                            DEFAULT_SESSION_TIMEOUT_MS,
+                            DEFAULT_CONNECTION_TIMEOUT_MS,
+                            new RetryNTimes(10, 5000)
+                    );
+                    client.start();
+                    clients.putIfAbsent(zkServerAddress,client);
+                }else{
+                    client = clients.get(zkServerAddress);
+                }
+            }finally {
+                lock.unlock();
+            }
+        }
+        return client;
+
     }
 
 }
