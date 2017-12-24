@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author gris.wang
@@ -17,8 +19,11 @@ public class HtmlMakerFactory {
 
     private volatile static HtmlMakerFactory factory;
 
+    private static Lock lock;
+
     private HtmlMakerFactory(){
         htmlMakerMap = new ConcurrentHashMap<>();
+        lock = new ReentrantLock();
     }
 
     /**
@@ -48,8 +53,17 @@ public class HtmlMakerFactory {
         }else{
             HtmlMaker htmlMaker = htmlMakerMap.get(type);
             if(htmlMaker==null){
-                htmlMaker = ClassUtil.newInstance(clazz);
-                htmlMakerMap.put(type,htmlMaker);
+                lock.lock();
+                try {
+                    if(!htmlMakerMap.containsKey(type)) {
+                        htmlMaker = ClassUtil.newInstance(clazz);
+                        htmlMakerMap.putIfAbsent(type,htmlMaker);
+                    }else{
+                        htmlMaker = htmlMakerMap.get(type);
+                    }
+                }finally {
+                    lock.unlock();
+                }
             }
             return htmlMaker;
         }
