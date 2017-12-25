@@ -13,13 +13,13 @@ public class HtmlKeyHolder {
     /**
      * 未转义
      */
-    public static String START_NO_ESCAPE = "#[";
+    public static final String START_NO_ESCAPE = "#[";
 
     /**
      * 对[转义
      */
-    public static String START_ESCAPE = "#\\[";
+    public static final String START_ESCAPE = "#\\[";
 
-    public static String END = "]";
+    public static final String END = "]";
 
 }

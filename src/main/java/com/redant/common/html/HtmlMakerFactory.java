@@ -15,11 +15,11 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class HtmlMakerFactory {
 
-    private Map<HtmlMakerEnum,HtmlMaker> htmlMakerMap;
-
     private volatile static HtmlMakerFactory factory;
 
-    private static Lock lock;
+    private Map<HtmlMakerEnum,HtmlMaker> htmlMakerMap;
+
+    private Lock lock;
 
     private HtmlMakerFactory(){
         htmlMakerMap = new ConcurrentHashMap<>();

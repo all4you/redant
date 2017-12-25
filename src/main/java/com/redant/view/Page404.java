@@ -12,7 +12,7 @@ public class Page404 {
 
     }
 
-    public static String HTML;
+    public static final String HTML;
 
     static{
         StringBuffer sb = new StringBuffer();
