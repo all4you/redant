@@ -34,26 +34,6 @@ public class MasterClient extends ChannelInboundHandlerAdapter {
         this.PORT = slaveNode.getPort();
     }
 
-
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if(msg instanceof FullHttpResponse) {
-            this.httpResponse = (FullHttpResponse)msg;
-        }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("MasterClient caught exception", cause);
-        ctx.close();
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
-        ctx.flush();
-    }
-
-
     /**
      * 发送http请求到slave
      * @param request
@@ -95,5 +75,24 @@ public class MasterClient extends ChannelInboundHandlerAdapter {
         }
         return null;
     }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(msg instanceof FullHttpResponse) {
+            this.httpResponse = (FullHttpResponse)msg;
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error("MasterClient caught exception", cause);
+        ctx.close();
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
 
 }

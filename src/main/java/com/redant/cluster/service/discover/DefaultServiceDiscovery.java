@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public class DefaultServiceDiscovery implements ServiceDiscovery {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceDiscovery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceDiscovery.class);
 
     private CuratorFramework client;
 
@@ -38,15 +39,16 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     public DefaultServiceDiscovery(String zkServerAddress){
         client = ZkClient.getClient(zkServerAddress);
-        slaveNodeMap = new HashMap<String,SlaveNode>();
+        slaveNodeMap = new HashMap<>();
     }
 
     @Override
     public void watchSlave() {
         if(client==null){
-            throw new IllegalArgumentException(String.format("param illegal with client={%s}",client==null?null:client.toString()));
+            throw new IllegalArgumentException("param illegal with client={null}");
         }
         try {
+            initSlaveNode();
             PathChildrenCache watcher = new PathChildrenCache(
                     client,
                     ZkNode.ROOT_NODE_PATH,
@@ -55,7 +57,27 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
             watcher.getListenable().addListener(new SlaveNodeWatcher());
             watcher.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         }catch(Exception e){
-            logger.error("watchSlave error cause:",e);
+            LOGGER.error("watchSlave error cause:",e);
+        }
+    }
+
+
+    private void initSlaveNode(){
+        try {
+            if(client.checkExists().forPath(ZkNode.ROOT_NODE_PATH)!=null){
+                List<String> children = client.getChildren().forPath(ZkNode.ROOT_NODE_PATH);
+                for(String child : children){
+                    String childPath = ZkNode.ROOT_NODE_PATH+"/"+child;
+                    byte[] data = client.getData().forPath(childPath);
+                    SlaveNode slaveNode = SlaveNode.parse(JSON.parseObject(data,JSONObject.class));
+                    if(slaveNode!=null){
+                        LOGGER.info("add slaveNode={} to slaveNodeMap when init",slaveNode);
+                        slaveNodeMap.put(slaveNode.getId(), slaveNode);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("initSlaveNode error cause:",e);
         }
     }
 
@@ -68,20 +90,20 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
             }
             SlaveNode slaveNode = SlaveNode.parse(JSON.parseObject(data.getData(),JSONObject.class));
             if(slaveNode==null){
-                logger.error("get a null slaveNode with eventType={},path={},data={}",event.getType(),data.getPath(),data.getData());
+                LOGGER.error("get a null slaveNode with eventType={},path={},data={}",event.getType(),data.getPath(),data.getData());
             }else {
                 switch (event.getType()) {
                     case CHILD_ADDED:
                         slaveNodeMap.put(slaveNode.getId(), slaveNode);
-                        logger.info("CHILD_ADDED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        LOGGER.info("CHILD_ADDED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_REMOVED:
                         slaveNodeMap.remove(slaveNode.getId());
-                        logger.info("CHILD_REMOVED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        LOGGER.info("CHILD_REMOVED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_UPDATED:
                         slaveNodeMap.replace(slaveNode.getId(), slaveNode);
-                        logger.info("CHILD_UPDATED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        LOGGER.info("CHILD_UPDATED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     default:
                         break;
@@ -94,10 +116,10 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
     @Override
     public SlaveNode discover() {
         if(client==null){
-            throw new IllegalArgumentException(String.format("param illegal with client={%s}", client == null ? null : client.toString()));
+            throw new IllegalArgumentException("param illegal with client={null}");
         }
         if(slaveNodeMap.size()==0){
-            logger.error("No available SlaveNode!");
+            LOGGER.error("No available SlaveNode!");
             return null;
         }
         SlaveNode[] nodes = new SlaveNode[]{};

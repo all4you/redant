@@ -1,6 +1,6 @@
 package com.redant.cluster.slave;
 
-import com.redant.cluster.service.register.Registery;
+import com.redant.cluster.service.register.RegisteryWrapper;
 import com.redant.core.ServerInitUtil;
 import com.redant.zk.ZkServer;
 import com.xiaoleilu.hutool.util.NumberUtil;
@@ -38,7 +38,7 @@ public class SlaveServerBootstrap {
         }
 
         // 注册Slave到ZK
-        Registery.register(zkServerAddress,slaveNode);
+        RegisteryWrapper.register(zkServerAddress,slaveNode);
 
         // 各种初始化工作
         ServerInitUtil.init();

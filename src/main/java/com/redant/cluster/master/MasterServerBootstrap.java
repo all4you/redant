@@ -1,6 +1,6 @@
 package com.redant.cluster.master;
 
-import com.redant.cluster.service.discover.Discovery;
+import com.redant.cluster.service.discover.DiscoveryWrapper;
 import com.redant.zk.ZkServer;
 import com.xiaoleilu.hutool.util.StrUtil;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class MasterServerBootstrap {
         }
 
         // 监听SlaveNode的变化
-        Discovery.watchSlave(zkServerAddress);
+        DiscoveryWrapper.watchSlave(zkServerAddress);
 
         // 启动MasterServer
         MasterServer masterServer = new MasterServer();

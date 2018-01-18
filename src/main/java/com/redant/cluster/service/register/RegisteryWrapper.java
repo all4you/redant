@@ -7,11 +7,11 @@ import com.redant.cluster.slave.SlaveNode;
  * @author gris.wang
  * @since 2017/11/20
  **/
-public class Registery {
+public class RegisteryWrapper {
 
     private static ServiceRegistery registery;
 
-    private Registery(){}
+    private RegisteryWrapper(){}
 
 
     /**

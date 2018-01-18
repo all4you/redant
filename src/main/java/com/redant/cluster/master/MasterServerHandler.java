@@ -1,6 +1,6 @@
 package com.redant.cluster.master;
 
-import com.redant.cluster.service.discover.Discovery;
+import com.redant.cluster.service.discover.DiscoveryWrapper;
 import com.redant.common.constants.CommonConstants;
 import com.redant.common.util.HttpRenderUtil;
 import io.netty.channel.*;
@@ -18,36 +18,51 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class MasterServerHandler extends ChannelInboundHandlerAdapter {
 
-    private final static Logger logger = LoggerFactory.getLogger(MasterServerHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MasterServerHandler.class);
 
     private HttpRequest request;
     private Channel channel;
 
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if(msg instanceof HttpRequest){
-            request = (HttpRequest)msg;
-            if(request.uri().equals(CommonConstants.FAVICON_ICO)){
-                return;
-            }
-            if (HttpUtil.is100ContinueExpected(request)) {
-                ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
-            }
-            channel = ctx.channel();
+        handleByClient(ctx, msg);
+    }
 
-            FullHttpResponse response = null;
-            try {
-                MasterClient client = new MasterClient(Discovery.nextSlave());
-                response = client.sendRequest(request);
-            }catch(Exception e){
-                logger.error("MasterServerHandler error,cause:",e);
-            }
-            if(response==null){
-                logger.warn("response is null");
-                response = HttpRenderUtil.render(HttpRenderUtil.getBytes(HttpRenderUtil.NO_RESPONSE),HttpRenderUtil.CONTENT_TYPE_TEXT);
-            }
+    private void handleByClient(ChannelHandlerContext ctx, Object msg){
+        if(msg instanceof HttpRequest){
+            preHandle(ctx, msg);
+
+            FullHttpResponse response = getResponseByClient();
+
             writeResponse(response);
         }
+    }
+
+    private void preHandle(ChannelHandlerContext ctx, Object msg){
+        request = (HttpRequest)msg;
+        if(request.uri().equals(CommonConstants.FAVICON_ICO)){
+            return;
+        }
+        if (HttpUtil.is100ContinueExpected(request)) {
+            ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
+        }
+        channel = ctx.channel();
+    }
+
+    private FullHttpResponse getResponseByClient() {
+        FullHttpResponse response = null;
+        try {
+            MasterClient client = new MasterClient(DiscoveryWrapper.nextSlave());
+            response = client.sendRequest(request);
+        }catch(Exception e){
+            LOGGER.error("MasterServerHandler error,cause:",e);
+        }
+        if(response==null){
+            LOGGER.warn("response is null");
+            response = HttpRenderUtil.render(HttpRenderUtil.getBytes(HttpRenderUtil.NO_RESPONSE),HttpRenderUtil.CONTENT_TYPE_TEXT);
+        }
+        return response;
     }
 
     @Override
@@ -58,9 +73,8 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("MasterServerHandler ctx close,cause:",cause);
+        LOGGER.error("MasterServerHandler ctx close,cause:",cause);
     }
-
 
     /**
      * 响应消息

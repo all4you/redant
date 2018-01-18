@@ -9,13 +9,13 @@ import org.slf4j.LoggerFactory;
  * @author gris.wang
  * @since 2017/11/20
  **/
-public class Discovery {
+public class DiscoveryWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(Discovery.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiscoveryWrapper.class);
 
     private static ServiceDiscovery discovery;
 
-    private Discovery(){}
+    private DiscoveryWrapper(){}
 
 
     /**
