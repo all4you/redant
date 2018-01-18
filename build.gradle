@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     // transitive:false means do not auto dependencies
-    compile group: 'commons-beanutils', name: 'commons-beanutils', version:'1.9.2',transitive:false
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version:'1.9.2'
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25',transitive:false
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.7.25',transitive:false
     compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.1.7'
@@ -36,7 +36,7 @@ dependencies {
     compile group: 'org.apache.curator', name: 'curator-recipes', version:'3.2.1'
     compile group: 'com.alibaba', name: 'fastjson', version:'1.2.31',transitive:false
     compile group: 'com.xiaoleilu', name: 'hutool-all', version:'3.1.0',transitive:false
-    testCompile group: 'junit', name: 'junit', version:'4.12',transitive:false
+    testCompile group: 'junit', name: 'junit', version:'4.12'
 //    testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 }
 
