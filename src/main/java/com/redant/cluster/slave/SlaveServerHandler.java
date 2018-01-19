@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(SlaveServerHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(SlaveServerHandler.class);
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
@@ -45,7 +45,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
                     response = render.response();
                 }
             }catch(Exception e){
-                logger.error("Slave Server Internal Error,cause:",e);
+                LOGGER.error("Slave Server channelRead0 error,cause:",e);
                 if(e instanceof IllegalArgumentException || e instanceof InvocationException){
                     response = HttpRenderUtil.getErrorResponse(e.getMessage());
                 }else{
@@ -64,8 +64,8 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        LOGGER.error("SlaveServerHandler exceptionCaught,cause:",cause);
         ctx.close();
-        logger.error("SlaveServerHandler ctx close,cause:",cause);
     }
 
 

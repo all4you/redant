@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class SlaveServer {
 
-    private final Logger logger = LoggerFactory.getLogger(SlaveServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlaveServer.class);
 
     public void start(SlaveNode slaveNode) {
         if(slaveNode==null){
@@ -39,12 +39,12 @@ public final class SlaveServer {
              .childHandler(new SlaveServerInitializer());
 
             ChannelFuture future = b.bind(slaveNode.getPort()).sync();
-            logger.info("SlaveServer Startup at port:{}",slaveNode.getPort());
+            LOGGER.info("SlaveServer Startup at port:{}",slaveNode.getPort());
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            logger.error("InterruptedException:",e);
+            LOGGER.error("InterruptedException:",e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

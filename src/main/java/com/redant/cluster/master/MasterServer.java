@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class MasterServer {
 
-    private final Logger logger = LoggerFactory.getLogger(MasterServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServer.class);
 
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(CommonConstants.BOSS_GROUP_SIZE, new DefaultThreadFactory("boss", true));
@@ -38,12 +38,12 @@ public final class MasterServer {
              .childHandler(new MasterServerInitializer());
 
             ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
-            logger.info("MasterServer Startup at port:{}",CommonConstants.SERVER_PORT);
+            LOGGER.info("MasterServer Startup at port:{}",CommonConstants.SERVER_PORT);
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            logger.error("InterruptedException:",e);
+            LOGGER.error("InterruptedException:",e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -60,7 +60,7 @@ public final class MasterServer {
             pipeline.addLast(new HttpContentCompressor());
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new MasterServerHandler());
+            pipeline.addLast(new MasterProxyHandler());
         }
     }
 
