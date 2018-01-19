@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 并发的服务发现
@@ -39,10 +41,9 @@ public class ConcurrentServiceDiscoverTest {
 
         private Map<String,SlaveNode> slaveNodeMap;
 
-        /**
-         * 使用轮询法标记当前可用的SlaveNode
-         */
-        private AtomicInteger slaveIndex = new AtomicInteger(0);
+        private Lock lock;
+
+        private int slaveIndex = 0;
 
         public Discovery(){
             slaveNodeMap = new HashMap<String,SlaveNode>();
@@ -50,18 +51,27 @@ public class ConcurrentServiceDiscoverTest {
             SlaveNode slaveNode2 = new SlaveNode("127.0.0.1",8082);
             slaveNodeMap.put(slaveNode1.getId(),slaveNode1);
             slaveNodeMap.put(slaveNode2.getId(),slaveNode2);
+            lock = new ReentrantLock();
         }
 
         public SlaveNode discover() {
-            if(slaveNodeMap.size()==0){
-                System.err.println("No available SlaveNode!");
-                return null;
+            lock.lock();
+            try {
+                if (slaveNodeMap.size() == 0) {
+                    System.err.println("No available SlaveNode!");
+                    return null;
+                }
+                SlaveNode[] nodes = new SlaveNode[]{};
+                nodes = slaveNodeMap.values().toArray(nodes);
+                // 通过CAS循环获取下一个可用服务
+                if (slaveIndex>=nodes.length) {
+                    slaveIndex = 0;
+                }
+                System.out.println("currentIndex=" + slaveIndex + ",currentThread=" + Thread.currentThread().getName());
+                return nodes[slaveIndex++];
+            }finally {
+                lock.unlock();
             }
-            SlaveNode[] nodes = new SlaveNode[]{};
-            nodes = slaveNodeMap.values().toArray(nodes);
-            // 通过CAS循环获取下一个可用服务
-            slaveIndex.compareAndSet(nodes.length,0);
-            return nodes[slaveIndex.getAndIncrement()];
         }
 
     }
@@ -70,7 +80,7 @@ public class ConcurrentServiceDiscoverTest {
 
     @Test
     public void testConcurrentDiscover(){
-        int loopTimes = 240;
+        int loopTimes = 300;
 
         latch = new CountDownLatch(loopTimes);
 

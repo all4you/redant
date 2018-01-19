@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 服务发现
@@ -32,14 +33,14 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     private Map<String,SlaveNode> slaveNodeMap;
 
-    /**
-     * 使用轮询法标记当前可用的SlaveNode
-     */
-    private AtomicInteger slaveIndex = new AtomicInteger(0);
+    private Lock lock;
+
+    private int slaveIndex = 0;
 
     public DefaultServiceDiscovery(String zkServerAddress){
         client = ZkClient.getClient(zkServerAddress);
         slaveNodeMap = new HashMap<>();
+        lock = new ReentrantLock();
     }
 
     @Override
@@ -118,16 +119,22 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
         if(client==null){
             throw new IllegalArgumentException("param illegal with client={null}");
         }
-        if(slaveNodeMap.size()==0){
-            LOGGER.error("No available SlaveNode!");
-            return null;
+        lock.lock();
+        try {
+            if (slaveNodeMap.size() == 0) {
+                LOGGER.error("No available SlaveNode!");
+                return null;
+            }
+            SlaveNode[] nodes = new SlaveNode[]{};
+            nodes = slaveNodeMap.values().toArray(nodes);
+            // 通过CAS循环获取下一个可用服务
+            if (slaveIndex>=nodes.length) {
+                slaveIndex = 0;
+            }
+            return nodes[slaveIndex++];
+        }finally {
+            lock.unlock();
         }
-        SlaveNode[] nodes = new SlaveNode[]{};
-        nodes = slaveNodeMap.values().toArray(nodes);
-        // 通过CAS循环获取下一个可用服务，不需要加锁即能保证线程安全
-        // 如果当前获取到最后一个服务了，则将指针更新为0
-        slaveIndex.compareAndSet(nodes.length,0);
-        return nodes[slaveIndex.getAndIncrement()];
     }
 
 
