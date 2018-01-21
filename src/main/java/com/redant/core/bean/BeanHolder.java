@@ -175,13 +175,13 @@ public class BeanHolder {
             if(null==beanHolderMap) {
                 logger.info("Start init bean classes...currentThread={}", ThreadUtil.currentThreadName());
                 try {
-                    /**
+                    /*
                      * 扫描指定package下指定的类，并返回set
                      */
                     Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(CommonConstants.BEAN_SCAN_PACKAGE,Bean.class);
                     beanHolderMap = new LinkedHashMap<String,Object>(classSet.size());
                     if (CollectionUtil.isNotEmpty(classSet)) {
-                        /**
+                        /*
                          * 遍历所有类，找出有beanClass注解的类，并封装到linkedHashMap里
                          */
                         for (Class<?> cls : classSet) {

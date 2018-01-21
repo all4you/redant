@@ -30,7 +30,7 @@ public abstract class AfterHandleInterceptor extends ChannelInboundHandlerAdapte
             ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             return;
         }
-        /**
+        /*
          * 提交给下一个ChannelHandler去处理
          * 并且不需要调用ReferenceCountUtil.release(msg);来释放引用计数
          */
