@@ -12,7 +12,7 @@
 - **Session Manager**  : include a session manager,a session is a Netty ChannelHandlerContext
 - **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
 - **Result Render**  : a render interface which support html,xml,plain,json
-- **Distributed Mode**  : support distributed cluster mode
+- **Proxy Mode**  : support muti slaves and one master mode,which master is used as a proxy
 
 -------------------
 
