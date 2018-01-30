@@ -12,7 +12,8 @@
 - **Session Manager**  : include a session manager,a session is a Netty ChannelHandlerContext
 - **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
 - **Result Render**  : a render interface which support html,xml,plain,json
-- **Proxy Mode**  : support muti slaves and one master mode,which master is used as a proxy
+- **Standalone Mode**  : support single node mode
+- **Multi nodes Mode**  : support multi slaves and one master mode,which master is used as a proxy
 
 -------------------
 
@@ -39,8 +40,10 @@
 > \*    \*            HTML
 
 
-### 2.Cluster mode
-> The Cluster mode is made by a Master and several Slaves.Master will accept http request,and send them to slave to handle.Each slave can run as a standalone server.
+### 2.Multi nodes mode
+> The Multi nodes mode is made up by a Master and several Slaves.
+>
+> Master will accept http request,and send them to slave to handle
 >
 > The Main Class to start ZooKeeperServer : **com.redant.zk.ZkBootstrap**
 >
