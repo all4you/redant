@@ -1,4 +1,4 @@
-package com.redant.cluster.slave;
+package com.redant.cluster.proxy;
 
 import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.ServerBootstrap;
@@ -6,7 +6,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -16,18 +18,15 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * SlaveServer
+ * ProxyServer
  * @author gris.wang
  * @since 2017/11/20
  */
-public final class SlaveServer {
+public final class ProxyServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SlaveServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxyServer.class);
 
-    public void start(SlaveNode slaveNode) {
-        if(slaveNode==null){
-            throw new IllegalArgumentException("slaveNode is null");
-        }
+    public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(CommonConstants.BOSS_GROUP_SIZE, new DefaultThreadFactory("boss", true));
         EventLoopGroup workerGroup = new NioEventLoopGroup(CommonConstants.WORKER_GROUP_SIZE, new DefaultThreadFactory("worker", true));
         try {
@@ -36,10 +35,10 @@ public final class SlaveServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new SlaveServerInitializer());
+             .childHandler(new MasterServerInitializer());
 
-            ChannelFuture future = b.bind(slaveNode.getPort()).sync();
-            LOGGER.info("SlaveServer Startup at port:{}",slaveNode.getPort());
+            ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
+            LOGGER.info("ProxyServer Startup at port:{}",CommonConstants.SERVER_PORT);
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
@@ -51,7 +50,7 @@ public final class SlaveServer {
         }
     }
 
-    private static class SlaveServerInitializer extends ChannelInitializer<SocketChannel> {
+    private static class MasterServerInitializer extends ChannelInitializer<SocketChannel> {
 
         @Override
         public void initChannel(SocketChannel ch) {
@@ -61,7 +60,7 @@ public final class SlaveServer {
             pipeline.addLast(new HttpContentCompressor());
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new SlaveServerHandler());
+            pipeline.addLast(new ProxyServerHandler());
         }
     }
 

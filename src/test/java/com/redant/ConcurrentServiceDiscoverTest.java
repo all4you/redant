@@ -1,6 +1,6 @@
 package com.redant;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -39,29 +38,29 @@ public class ConcurrentServiceDiscoverTest {
 
     private class Discovery{
 
-        private Map<String,SlaveNode> slaveNodeMap;
+        private Map<String,Node> slaveNodeMap;
 
         private Lock lock;
 
         private int slaveIndex = 0;
 
         public Discovery(){
-            slaveNodeMap = new HashMap<String,SlaveNode>();
-            SlaveNode slaveNode1 = new SlaveNode("127.0.0.1",8081);
-            SlaveNode slaveNode2 = new SlaveNode("127.0.0.1",8082);
-            slaveNodeMap.put(slaveNode1.getId(),slaveNode1);
-            slaveNodeMap.put(slaveNode2.getId(),slaveNode2);
+            slaveNodeMap = new HashMap<String,Node>();
+            Node node1 = new Node("127.0.0.1",8081);
+            Node node2 = new Node("127.0.0.1",8082);
+            slaveNodeMap.put(node1.getId(), node1);
+            slaveNodeMap.put(node2.getId(), node2);
             lock = new ReentrantLock();
         }
 
-        public SlaveNode discover() {
+        public Node discover() {
             lock.lock();
             try {
                 if (slaveNodeMap.size() == 0) {
-                    System.err.println("No available SlaveNode!");
+                    System.err.println("No available Node!");
                     return null;
                 }
-                SlaveNode[] nodes = new SlaveNode[]{};
+                Node[] nodes = new Node[]{};
                 nodes = slaveNodeMap.values().toArray(nodes);
                 // 通过CAS循环获取下一个可用服务
                 if (slaveIndex>=nodes.length) {

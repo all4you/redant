@@ -1,4 +1,4 @@
-package com.redant.cluster.master;
+package com.redant.cluster.node;
 
 import com.redant.common.constants.CommonConstants;
 import io.netty.bootstrap.ServerBootstrap;
@@ -6,9 +6,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -18,15 +16,18 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * MasterServer
+ * NodeServer
  * @author gris.wang
  * @since 2017/11/20
  */
-public final class MasterServer {
+public final class NodeServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeServer.class);
 
-    public void start() {
+    public void start(Node node) {
+        if(node ==null){
+            throw new IllegalArgumentException("node is null");
+        }
         EventLoopGroup bossGroup = new NioEventLoopGroup(CommonConstants.BOSS_GROUP_SIZE, new DefaultThreadFactory("boss", true));
         EventLoopGroup workerGroup = new NioEventLoopGroup(CommonConstants.WORKER_GROUP_SIZE, new DefaultThreadFactory("worker", true));
         try {
@@ -35,10 +36,10 @@ public final class MasterServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new MasterServerInitializer());
+             .childHandler(new SlaveServerInitializer());
 
-            ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
-            LOGGER.info("MasterServer Startup at port:{}",CommonConstants.SERVER_PORT);
+            ChannelFuture future = b.bind(node.getPort()).sync();
+            LOGGER.info("NodeServer Startup at port:{}", node.getPort());
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
@@ -50,7 +51,7 @@ public final class MasterServer {
         }
     }
 
-    private static class MasterServerInitializer extends ChannelInitializer<SocketChannel> {
+    private static class SlaveServerInitializer extends ChannelInitializer<SocketChannel> {
 
         @Override
         public void initChannel(SocketChannel ch) {
@@ -60,7 +61,7 @@ public final class MasterServer {
             pipeline.addLast(new HttpContentCompressor());
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new MasterProxyHandler());
+            pipeline.addLast(new NodeServerHandler());
         }
     }
 

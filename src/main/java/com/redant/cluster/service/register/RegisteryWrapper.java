@@ -1,6 +1,6 @@
 package com.redant.cluster.service.register;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 
 /**
  * 服务注册
@@ -17,13 +17,13 @@ public class RegisteryWrapper {
     /**
      * 注册服务到ZooKeeper中去
      * @param zkServerAddress
-     * @param slaveNode
+     * @param node
      */
-    public static void register(String zkServerAddress,SlaveNode slaveNode){
+    public static void register(String zkServerAddress,Node node){
         if(registery==null){
             registery = new DefaultServiceRegistery(zkServerAddress);
         }
-        registery.register(slaveNode);
+        registery.register(node);
     }
 
 }

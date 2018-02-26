@@ -45,7 +45,7 @@
 >
 > Master will accept http request,and send them to slave to handle
 >
-> The Main Class to start ZooKeeperServer : **com.redant.zk.ZkBootstrap**
+> The Main Class to start ZooKeeperServer : **com.redant.bootstrap.ZkBootstrap**
 >
 > The Main Class to start Master : **com.redant.cluster.master.MasterServerBootstrap**,the start process:
 >>1 : Start a ZooKeeperServer(you can set to use Standalone or Cluster mode in zkConfig.properties default mode is Standalone)

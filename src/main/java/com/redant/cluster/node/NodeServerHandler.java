@@ -1,4 +1,4 @@
-package com.redant.cluster.slave;
+package com.redant.cluster.node;
 
 import com.redant.common.exception.InvocationException;
 import com.redant.common.util.HttpRenderUtil;
@@ -18,13 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SlaveServerHandler
+ * NodeServerHandler
  * @author gris.wang
  * @since 2017/11/22
  */
-public class SlaveServerHandler extends SimpleChannelInboundHandler {
+public class NodeServerHandler extends SimpleChannelInboundHandler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SlaveServerHandler.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(NodeServerHandler.class);
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
@@ -64,7 +64,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error("SlaveServerHandler exceptionCaught,cause:",cause);
+        LOGGER.error("NodeServerHandler exceptionCaught,cause:",cause);
         ctx.close();
     }
 

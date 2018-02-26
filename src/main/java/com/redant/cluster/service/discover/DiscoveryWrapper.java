@@ -1,6 +1,6 @@
 package com.redant.cluster.service.discover;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class DiscoveryWrapper {
      * 获取下一个SlaveNode节点
      * @return
      */
-    public static SlaveNode nextSlave(){
+    public static Node nextSlave(){
         if(discovery!=null) {
             return discovery.discover();
         }else{

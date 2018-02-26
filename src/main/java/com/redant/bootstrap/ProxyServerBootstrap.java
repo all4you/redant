@@ -1,5 +1,6 @@
-package com.redant.cluster.master;
+package com.redant.bootstrap;
 
+import com.redant.cluster.proxy.ProxyServer;
 import com.redant.cluster.service.discover.DiscoveryWrapper;
 import com.redant.zk.ZkServer;
 import com.xiaoleilu.hutool.util.StrUtil;
@@ -7,13 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MasterServerBootstrap
+ * ProxyServerBootstrap
  * @author gris.wang
  * @since 2017/11/20
  **/
-public class MasterServerBootstrap {
+public class ProxyServerBootstrap {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServerBootstrap.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxyServerBootstrap.class);
 
     public static void main(String[] args) {
 
@@ -31,8 +32,8 @@ public class MasterServerBootstrap {
         DiscoveryWrapper.watchSlave(zkServerAddress);
 
         // 启动MasterServer
-        MasterServer masterServer = new MasterServer();
-        masterServer.start();
+        ProxyServer proxyServer = new ProxyServer();
+        proxyServer.start();
 
     }
 }

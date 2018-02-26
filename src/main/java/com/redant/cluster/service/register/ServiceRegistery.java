@@ -1,6 +1,6 @@
 package com.redant.cluster.service.register;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 
 /**
  * @author gris.wang
@@ -10,7 +10,7 @@ public interface ServiceRegistery {
 
     /**
      * 注册节点
-     * @param slaveNode
+     * @param node
      */
-    void register(SlaveNode slaveNode);
+    void register(Node node);
 }

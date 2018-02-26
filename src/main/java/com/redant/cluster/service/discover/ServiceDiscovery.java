@@ -1,6 +1,6 @@
 package com.redant.cluster.service.discover;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 
 /**
  * @author gris.wang
@@ -17,6 +17,6 @@ public interface ServiceDiscovery {
      * 发现可用的Slave节点
      * @return
      */
-    SlaveNode discover();
+    Node discover();
 
 }

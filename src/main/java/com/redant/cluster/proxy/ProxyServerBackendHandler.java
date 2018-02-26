@@ -1,4 +1,4 @@
-package com.redant.cluster.master;
+package com.redant.cluster.proxy;
 
 import io.netty.channel.*;
 
@@ -6,11 +6,11 @@ import io.netty.channel.*;
  * @author gris.wang
  * @since 2018/1/18
  **/
-public class MasterProxyBackendHandler extends ChannelInboundHandlerAdapter {
+public class ProxyServerBackendHandler extends ChannelInboundHandlerAdapter {
 
     private final Channel inboundChannel;
 
-    public MasterProxyBackendHandler(Channel inboundChannel){
+    public ProxyServerBackendHandler(Channel inboundChannel){
         this.inboundChannel = inboundChannel;
     }
 
@@ -35,13 +35,13 @@ public class MasterProxyBackendHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        MasterProxyHandler.closeOnFlush(inboundChannel);
+        ProxyServerHandler.closeOnFlush(inboundChannel);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
-        MasterProxyHandler.closeOnFlush(ctx.channel());
+        ProxyServerHandler.closeOnFlush(ctx.channel());
     }
 
 

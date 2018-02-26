@@ -2,7 +2,7 @@ package com.redant.cluster.service.discover;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 import com.redant.zk.ZkClient;
 import com.redant.zk.ZkNode;
 import io.netty.util.CharsetUtil;
@@ -31,7 +31,7 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
     private CuratorFramework client;
 
-    private Map<String,SlaveNode> slaveNodeMap;
+    private Map<String,Node> slaveNodeMap;
 
     private Lock lock;
 
@@ -70,10 +70,10 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
                 for(String child : children){
                     String childPath = ZkNode.ROOT_NODE_PATH+"/"+child;
                     byte[] data = client.getData().forPath(childPath);
-                    SlaveNode slaveNode = SlaveNode.parse(JSON.parseObject(data,JSONObject.class));
-                    if(slaveNode!=null){
-                        LOGGER.info("add slaveNode={} to slaveNodeMap when init",slaveNode);
-                        slaveNodeMap.put(slaveNode.getId(), slaveNode);
+                    Node node = Node.parse(JSON.parseObject(data,JSONObject.class));
+                    if(node !=null){
+                        LOGGER.info("add node={} to slaveNodeMap when init", node);
+                        slaveNodeMap.put(node.getId(), node);
                     }
                 }
             }
@@ -89,22 +89,22 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
             if(data==null || data.getData()==null){
                 return;
             }
-            SlaveNode slaveNode = SlaveNode.parse(JSON.parseObject(data.getData(),JSONObject.class));
-            if(slaveNode==null){
-                LOGGER.error("get a null slaveNode with eventType={},path={},data={}",event.getType(),data.getPath(),data.getData());
+            Node node = Node.parse(JSON.parseObject(data.getData(),JSONObject.class));
+            if(node ==null){
+                LOGGER.error("get a null node with eventType={},path={},data={}",event.getType(),data.getPath(),data.getData());
             }else {
                 switch (event.getType()) {
                     case CHILD_ADDED:
-                        slaveNodeMap.put(slaveNode.getId(), slaveNode);
-                        LOGGER.info("CHILD_ADDED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        slaveNodeMap.put(node.getId(), node);
+                        LOGGER.info("CHILD_ADDED with path={},data={},current node size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_REMOVED:
-                        slaveNodeMap.remove(slaveNode.getId());
-                        LOGGER.info("CHILD_REMOVED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        slaveNodeMap.remove(node.getId());
+                        LOGGER.info("CHILD_REMOVED with path={},data={},current node size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     case CHILD_UPDATED:
-                        slaveNodeMap.replace(slaveNode.getId(), slaveNode);
-                        LOGGER.info("CHILD_UPDATED with path={},data={},current slaveNode size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
+                        slaveNodeMap.replace(node.getId(), node);
+                        LOGGER.info("CHILD_UPDATED with path={},data={},current node size={}", data.getPath(), new String(data.getData(),CharsetUtil.UTF_8),slaveNodeMap.size());
                         break;
                     default:
                         break;
@@ -115,17 +115,17 @@ public class DefaultServiceDiscovery implements ServiceDiscovery {
 
 
     @Override
-    public SlaveNode discover() {
+    public Node discover() {
         if(client==null){
             throw new IllegalArgumentException("param illegal with client={null}");
         }
         lock.lock();
         try {
             if (slaveNodeMap.size() == 0) {
-                LOGGER.error("No available SlaveNode!");
+                LOGGER.error("No available Node!");
                 return null;
             }
-            SlaveNode[] nodes = new SlaveNode[]{};
+            Node[] nodes = new Node[]{};
             nodes = slaveNodeMap.values().toArray(nodes);
             // 通过CAS循环获取下一个可用服务
             if (slaveIndex>=nodes.length) {

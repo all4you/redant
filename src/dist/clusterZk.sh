@@ -25,7 +25,7 @@ APP_HOME="`pwd -P`"
 cd "$SAVED" >/dev/null
 
 APP_NAME="redant_zk"
-MAIN_CLASS="com.redant.zk.ZkBootstrap"
+MAIN_CLASS="com.redant.bootstrap.ZkBootstrap"
 APP_BASE_NAME=`basename "$0"`
 
 # Add default JVM options here. You can also use JAVA_OPTS and REDANT_OPTS to pass JVM options to this script.

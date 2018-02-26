@@ -1,6 +1,6 @@
 package com.redant.cluster.service.register;
 
-import com.redant.cluster.slave.SlaveNode;
+import com.redant.cluster.node.Node;
 import com.redant.zk.ZkClient;
 import com.redant.zk.ZkNode;
 import com.xiaoleilu.hutool.util.StrUtil;
@@ -26,9 +26,9 @@ public class DefaultServiceRegistery implements ServiceRegistery {
 
 
     @Override
-    public void register(SlaveNode slaveNode) {
-        if(client==null || slaveNode==null){
-            throw new IllegalArgumentException(String.format("param illegal with client={%s},slaveNode={%s}",client==null?null:client.toString(),slaveNode==null?null:slaveNode.toString()));
+    public void register(Node node) {
+        if(client==null || node ==null){
+            throw new IllegalArgumentException(String.format("param illegal with client={%s},node={%s}",client==null?null:client.toString(), node ==null?null: node.toString()));
         }
         try {
             if(client.checkExists().forPath(ZkNode.SLAVE_NODE_PATH)==null) {
@@ -36,10 +36,10 @@ public class DefaultServiceRegistery implements ServiceRegistery {
                 client.create()
                       .creatingParentsIfNeeded()
                       .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                      .forPath(ZkNode.SLAVE_NODE_PATH, StrUtil.utf8Bytes(slaveNode.toString()));
+                      .forPath(ZkNode.SLAVE_NODE_PATH, StrUtil.utf8Bytes(node.toString()));
             }
         } catch (Exception e) {
-            logger.error("register slaveNode error with slaveNode={},cause:",slaveNode,e);
+            logger.error("register node error with node={},cause:", node,e);
         }
     }
 
