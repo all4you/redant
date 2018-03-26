@@ -26,7 +26,7 @@ public class HttpRequestUtil {
      * @return
      */
     public static Map<String, List<String>> getParameterMap(HttpRequest request){
-        Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> paramMap = new HashMap<>();
 
         HttpMethod method = request.method();
         if(HttpMethod.GET.equals(method)){
@@ -48,7 +48,7 @@ public class HttpRequestUtil {
      * 获取post请求的参数map
      */
     public static Map<String, List<String>> getPostParamMap(FullHttpRequest fullRequest) {
-        Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> paramMap = new HashMap<>();
         HttpHeaders headers = fullRequest.headers();
         String contentType = getContentType(headers);
         if(ContentType.APPLICATION_JSON.toString().equals(contentType)){
@@ -115,7 +115,7 @@ public class HttpRequestUtil {
      * @return
      */
     public static String getContentType(HttpHeaders headers){
-        String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE).toString();
+        String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE);
         String[] list = contentType.split(";");
         return list[0];
     }
