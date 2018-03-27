@@ -11,7 +11,7 @@ public enum ContentType {
     APPLICATION_XML("application/xml")
     ;
 
-    String content;
+    private String content;
 
     ContentType(String content){
         this.content = content;
@@ -19,6 +19,6 @@ public enum ContentType {
     
     @Override
     public String toString() {
-        return content.toString();
+        return content;
     }
 }

@@ -42,11 +42,12 @@ public class HttpRequestUtil {
         return paramMap;
     }
 
-    //目前支持最常用的 application/json 、application/x-www-form-urlencoded 几种 POST Content-type，可自行扩展！！！
-    @SuppressWarnings("unchecked")
+
     /**
      * 获取post请求的参数map
+     * 目前支持最常用的 application/json 、application/x-www-form-urlencoded 几种 POST Content-type，可自行扩展！！！
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, List<String>> getPostParamMap(FullHttpRequest fullRequest) {
         Map<String, List<String>> paramMap = new HashMap<>();
         HttpHeaders headers = fullRequest.headers();
@@ -107,7 +108,6 @@ public class HttpRequestUtil {
 
         return paramMap;
     }
-
 
     /**
      * 获取contentType

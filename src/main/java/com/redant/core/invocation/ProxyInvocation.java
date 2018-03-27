@@ -116,7 +116,7 @@ public class ProxyInvocation {
 			Object value = null;
 			String key = param.key();
 			String defaultValue= param.defaultValue();
-			if(key != null && key.length() > 0){
+			if(key.length() > 0){
 				// 如果参数是map类型
 				if(Map.class.isAssignableFrom(type)){
 					if(index > 0){
@@ -164,7 +164,7 @@ public class ProxyInvocation {
 							value = list;
 						}
 					}else{
-						if(defaultValue != null && PrimitiveTypeUtil.isPriType(type)){
+						if(PrimitiveTypeUtil.isPriType(type)){
 							value = PrimitiveConverter.getInstance().convert(defaultValue, type);
 						}
 					}
