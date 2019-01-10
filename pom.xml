@@ -18,7 +18,7 @@
         <common-beans.version>1.9.2</common-beans.version>
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.1.7</logback.version>
-        <fastjson.version>1.2.13.sec01</fastjson.version>
+        <fastjson.version>1.2.54</fastjson.version>
         <netty.version>4.1.9.Final</netty.version>
         <cglib.version>3.2.4</cglib.version>
         <protostuff.version>1.0.8</protostuff.version>
