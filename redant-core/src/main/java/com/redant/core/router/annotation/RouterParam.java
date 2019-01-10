@@ -8,7 +8,7 @@ public @interface RouterParam {
 	
 	/**
 	 * 将使用什么样的键值读取对象，对于field，就是他名字 对于method的parameter，需要指明
-	 * @return the key itself
+	 * @return 参数的key
 	 */
 	String key() default "";
 	
@@ -20,7 +20,7 @@ public @interface RouterParam {
 	
 	/**
      * 是否校验参数为空
-     * @return
+     * @return true：校验参数 false：不校验参数
      */
     boolean checkNull() default false;
 

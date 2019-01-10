@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class PropertiesUtil {
 
-	private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
 
     private static Map<String,PropertiesUtil> propertiesUtilsHolder = null;
     
@@ -30,8 +30,8 @@ public class PropertiesUtil {
     }
 
     static{
-		propertiesUtilsHolder = new HashMap<String,PropertiesUtil>();
-		propertiesMap = new HashMap<PropertiesUtil,Properties>();
+		propertiesUtilsHolder = new HashMap<>();
+		propertiesMap = new HashMap<>();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class PropertiesUtil {
 				properties.load(inputStream);
 			}
 		} catch (Exception e) {
-			logger.error("getInstance occur error,cause:",e);
+			LOGGER.error("getInstance occur error,cause:",e);
 		} finally{
 			try {
 				if(inputStream!=null){
@@ -85,7 +85,7 @@ public class PropertiesUtil {
     public static synchronized PropertiesUtil getInstance(String propertiesPath){
     	PropertiesUtil propertiesUtil = propertiesUtilsHolder.get(propertiesPath);
     	if(null==propertiesUtil){
-    		logger.info("PropertiesUtil instance is null with propertiesPath={},will new a instance directly.",propertiesPath);
+    		LOGGER.info("[PropertiesUtil] instance is null with propertiesPath={},will create a new instance directly.",propertiesPath);
 			InputStream inputStream = null;
 			try{
 				propertiesUtil = new PropertiesUtil();
@@ -96,11 +96,11 @@ public class PropertiesUtil {
 					propertiesUtilsHolder.put(propertiesPath, propertiesUtil);
 					propertiesMap.put(propertiesUtil, properties);
 
-					logger.info("PropertiesUtil instance init success.");
+					LOGGER.info("[PropertiesUtil] instance init success.");
 					propertiesUtil.propertiesLoaded = true;
 				}
 			} catch (Exception e) {
-				logger.error("getInstance occur error,cause:",e);
+				LOGGER.error("[PropertiesUtil] getInstance error,cause:{}",e.getMessage(),e);
 			} finally{
 				try {
 					if(inputStream!=null){

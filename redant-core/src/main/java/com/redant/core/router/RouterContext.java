@@ -13,32 +13,27 @@ import org.slf4j.LoggerFactory;
  */
 public class RouterContext {
 
-    private static final RouterHolder routerHolder = RouterHolder.create();
+    private static final RouterHolder ROUTER_HOLDER = RouterHolder.create();
 
     /**
      * 初始化路由
      */
     public static void initRouters(){
-        routerHolder.initRouters();
+        ROUTER_HOLDER.initRouters();
     }
 
     /**
      * 获取路由结果
-     * @param method
-     * @param uri
-     * @return
      */
     public static RouteResult<RenderType> getRouteResult(HttpMethod method, String uri){
-        return routerHolder.getRouteResult(method, uri);
+        return ROUTER_HOLDER.getRouteResult(method, uri);
     }
 
     /**
      * 根据routeResult获取ControllerProxy
-     * @param routeResult
-     * @return
      */
     public static ControllerProxy getControllerProxy(RouteResult<?> routeResult){
-        return routerHolder.getControllerProxy(routeResult);
+        return ROUTER_HOLDER.getControllerProxy(routeResult);
     }
 
 

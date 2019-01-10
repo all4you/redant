@@ -52,15 +52,17 @@ public final class SlaveServer implements Server {
         EventLoopGroup bossGroup = new NioEventLoopGroup(CommonConstants.BOSS_GROUP_SIZE, new DefaultThreadFactory("boss", true));
         EventLoopGroup workerGroup = new NioEventLoopGroup(CommonConstants.WORKER_GROUP_SIZE, new DefaultThreadFactory("worker", true));
         try {
+            long start = System.currentTimeMillis();
             ServerBootstrap b = new ServerBootstrap();
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .handler(new LoggingHandler(LogLevel.INFO))
+//             .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new SlaveServerInitializer());
 
             ChannelFuture future = b.bind(node.getPort()).sync();
-            LOGGER.info("SlaveServer Startup at port:{}", node.getPort());
+            long cost = System.currentTimeMillis()-start;
+            LOGGER.info("SlaveServer Startup at port:{} cost:{}[ms]", node.getPort(),cost);
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();

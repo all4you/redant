@@ -12,22 +12,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultRender implements Render {
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultRender.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRender.class);
 
 	public RenderType renderType;
 
-	private byte[] bytes;
+	private Object content;
 
 	protected FullHttpResponse response;
 
 	public DefaultRender(RenderType renderType, Object content){
 		this.renderType = renderType;
-		this.bytes = convertBytes(content);
-	}
-
-
-	public byte[] convertBytes(Object content){
-		return HttpRenderUtil.getBytes(content);
+		this.content = content;
 	}
 
 	@Override
@@ -35,20 +30,20 @@ public class DefaultRender implements Render {
 		if(response==null) {
 			switch (renderType) {
 				case JSON:
-					response = HttpRenderUtil.renderJSON(bytes);
+					response = HttpRenderUtil.renderJSON(content);
 					break;
 				case TEXT:
-					response = HttpRenderUtil.renderText(bytes);
+					response = HttpRenderUtil.renderText(content);
 					break;
 				case XML:
-					response = HttpRenderUtil.renderXML(bytes);
+					response = HttpRenderUtil.renderXML(content);
 					break;
 				case HTML:
-					response = HttpRenderUtil.renderHTML(bytes);
+					response = HttpRenderUtil.renderHTML(content);
 					break;
 				default:
 					response = HttpRenderUtil.getServerErrorResponse();
-					logger.error("unknown response type");
+					LOGGER.error("unknown response type");
 			}
 		}
 		return response;

@@ -12,8 +12,6 @@ import java.util.Map;
  **/
 public class DefaultHtmlMaker implements HtmlMaker {
 
-
-
     @Override
     public String make(String htmlTemplate, Map<String, Object> contentMap) {
         String html = htmlTemplate;
@@ -28,6 +26,5 @@ public class DefaultHtmlMaker implements HtmlMaker {
         }
         return html;
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.redant.core.common.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.redant.core.common.html.DefaultHtmlMaker;
 import com.redant.core.common.html.HtmlMakerEnum;
 import com.redant.core.common.html.HtmlMakerFactory;
@@ -41,86 +42,39 @@ public class HttpRenderUtil {
 	/**
 	 * 输出纯Json字符串
 	 */
-	public static FullHttpResponse renderJSON(byte[] json){
+	public static FullHttpResponse renderJSON(Object json){
 		return render(json, CONTENT_TYPE_JSON);
 	}
 	
 	/**
 	 * 输出纯字符串
 	 */
-	public static FullHttpResponse renderText(byte[] text) {
+	public static FullHttpResponse renderText(Object text) {
 		return render(text, CONTENT_TYPE_TEXT);
 	}
 	
 	/**
 	 * 输出纯XML
 	 */
-	public static FullHttpResponse renderXML(byte[] xml) {
+	public static FullHttpResponse renderXML(Object xml) {
 		return render(xml, CONTENT_TYPE_XML);
 	}
 	
 	/**
 	 * 输出纯HTML
 	 */
-	public static FullHttpResponse renderHTML(byte[] html) {
+	public static FullHttpResponse renderHTML(Object html) {
 		return render(html, CONTENT_TYPE_HTML);
-	}
-
-
-	/**
-	 * 404NotFoundResponse
-	 * @return
-	 */
-	public static FullHttpResponse getNotFoundResponse(){
-		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page404.HTML,null);
-		return render(getBytes(content), CONTENT_TYPE_HTML);
-	}
-
-	/**
-	 * ServerErrorResponse
-	 * @return
-	 */
-	public static FullHttpResponse getServerErrorResponse(){
-		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page500.HTML,null);
-		return render(getBytes(content), CONTENT_TYPE_HTML);
-	}
-
-	/**
-	 * ErrorResponse
-	 * @param errorMessage
-	 * @return
-	 */
-	public static FullHttpResponse getErrorResponse(String errorMessage){
-		Map<String,Object> contentMap = new HashMap<String,Object>(1);
-		contentMap.put("errorMessage",errorMessage);
-		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),PageError.HTML,contentMap);
-		return render(getBytes(content), CONTENT_TYPE_HTML);
-	}
-
-
-	/**
-	 * 转换byte
-	 * @param content
-	 * @return
-	 */
-	public static byte[] getBytes(Object content){
-		if(content==null){
-			return EMPTY_CONTENT.getBytes(CharsetUtil.UTF_8);
-		}
-		String data = content.toString();
-		data = (data==null || data.trim().length()==0)?EMPTY_CONTENT:data;
-		return data.getBytes(CharsetUtil.UTF_8);
 	}
 
 	/**
 	 * response输出
-	 * @param bytes
-	 * @param contentType
+	 * @param content 内容
+	 * @param contentType 返回类型
+	 * @return 响应对象
 	 */
-	public static FullHttpResponse render(byte[] bytes, String contentType){
-		if(bytes == null){
-			bytes = HttpRenderUtil.getBytes(EMPTY_CONTENT);
-		}
+	public static FullHttpResponse render(Object content, String contentType){
+		byte[] bytes = HttpRenderUtil.getBytes(content);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, byteBuf);
 		if(contentType!=null && contentType.trim().length()>0) {
@@ -128,6 +82,52 @@ public class HttpRenderUtil {
 		}
 		response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(byteBuf.readableBytes()));
 		return response;
+	}
+
+	/**
+	 * 404NotFoundResponse
+	 * @return 响应对象
+	 */
+	public static FullHttpResponse getNotFoundResponse(){
+		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page404.HTML,null);
+		return render(content, CONTENT_TYPE_HTML);
+	}
+
+	/**
+	 * ServerErrorResponse
+	 * @return 响应对象
+	 */
+	public static FullHttpResponse getServerErrorResponse(){
+		JSONObject object = new JSONObject();
+		object.put("code",500);
+		object.put("message","Server Internal Error!");
+		return render(object, CONTENT_TYPE_JSON);
+	}
+
+	/**
+	 * ErrorResponse
+	 * @param errorMessage 错误信息
+	 * @return 响应对象
+	 */
+	public static FullHttpResponse getErrorResponse(String errorMessage){
+		JSONObject object = new JSONObject();
+		object.put("code",300);
+		object.put("message",errorMessage);
+		return render(object, CONTENT_TYPE_JSON);
+	}
+
+	/**
+	 * 转换byte
+	 * @param content 内容
+	 * @return 响应对象
+	 */
+	private static byte[] getBytes(Object content){
+		if(content==null){
+			return EMPTY_CONTENT.getBytes(CharsetUtil.UTF_8);
+		}
+		String data = content.toString();
+		data = (data==null || data.trim().length()==0)?EMPTY_CONTENT:data;
+		return data.getBytes(CharsetUtil.UTF_8);
 	}
 
 }

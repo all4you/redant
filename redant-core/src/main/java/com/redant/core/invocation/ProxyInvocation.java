@@ -51,12 +51,12 @@ public class ProxyInvocation {
 
 		/**
 		 * 获得方法调用的参数
-		 * @param method
-		 * @param parameterTypes
-		 * @return
-		 * @throws Exception
+		 * @param method 方法
+		 * @param parameterTypes 方法参数类型
+		 * @return 参数
+		 * @throws Exception 参数异常
 		 */
-		private Object[] getParameters(Method method,Class<?>[] parameterTypes) throws Exception{
+		private Object[] getParameters(Method method,Class<?>[] parameterTypes) throws Exception {
 			//用于存放调用参数的对象数组
 			Object[] parameters = new Object[parameterTypes.length];
 
@@ -92,7 +92,7 @@ public class ProxyInvocation {
 						}
 						parameters[i] = parameter;
 					}catch(Exception e){
-						throw new IllegalArgumentException("参数" + param.key()+"不合法,类型应该为:"+type.toString(), e);
+						throw new IllegalArgumentException("参数"+param.key()+"不合法,类型应该为:"+type.toString(), e);
 					}
 				}
 			}
@@ -190,11 +190,11 @@ public class ProxyInvocation {
 
 		/**
 		 * 执行方法的调用
-		 * @param controller
-		 * @param method
-		 * @param methodName
-		 * @return
-		 * @throws Exception
+		 * @param controller 控制器
+		 * @param method 方法
+		 * @param methodName 方法名
+		 * @return 渲染结果
+		 * @throws Exception 异常
 		 */
 		public Render invoke(Object controller,Method method,String methodName) throws Exception {
 			if (method == null) {
@@ -203,10 +203,10 @@ public class ProxyInvocation {
 
 			Class<?> clazz = controller.getClass();
 			Class<?>[] parameterTypes = method.getParameterTypes();
-			Object[] parameters = getParameters(method,parameterTypes);
-
+			Object[] parameters = null;
 			Render result;
 			try {
+				parameters = getParameters(method,parameterTypes);
 				// 使用 CGLib 执行反射调用
 				FastClass fastClass = FastClass.create(clazz);
 				FastMethod fastMethod = fastClass.getMethod(methodName, parameterTypes);

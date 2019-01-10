@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  **/
 public class DiscoveryWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiscoveryWrapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryWrapper.class);
 
     private static ServiceDiscovery discovery;
 
@@ -31,13 +31,12 @@ public class DiscoveryWrapper {
 
     /**
      * 获取下一个SlaveNode节点
-     * @return
      */
     public static Node nextSlave(){
         if(discovery!=null) {
             return discovery.discover();
         }else{
-            logger.error("discovery is null");
+            LOGGER.error("discovery is null");
             return null;
         }
     }

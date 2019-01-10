@@ -14,19 +14,24 @@ import com.redant.example.service.user.IUserService;
 import com.redant.example.service.user.UserBean;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 
-// 如果需要使用Autowired，则该类自身需要使用Bean注解标注
-@Bean()
+/**
+ * @author gris.wang
+ * @date 2017/12/1
+ **/
+@Bean
 @RouterController(path="/user")
 public class UserController {
 
+    /**
+     * 如果需要使用Autowired，则该类自身需要使用Bean注解标注
+     */
     @Autowired(name="userService")
     private IUserService userService;
 
     @RouterMapping(path="/info",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public CookieRender getUserInfo(UserBean userBean, @RouterParam(key="pid") Integer pid){
+    public CookieRender getUserInfo(@RouterParam(key="id",checkNull=true) Integer id){
         JSONObject object = new JSONObject();
-        object.put("user",userService.selectUserInfo(userBean.getId()));
-        object.put("pid",pid);
+        object.put("user",userService.selectUserInfo(id));
         CookieRender render = new DefaultCookieRender(RenderType.JSON,object);
         // 设置Cookie
         render.setCookie(new DefaultCookie("ak","47"));
@@ -46,7 +51,7 @@ public class UserController {
     }
 
     @RouterMapping(path="/count",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public Render getUserCount(UserBean userBean){
+    public Render getUserCount(){
         JSONObject object = new JSONObject();
         int count = userService.selectCount();
         object.put("count",count);

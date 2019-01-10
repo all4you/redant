@@ -11,9 +11,9 @@ public interface HtmlMaker {
 
     /**
      * 根据html模板生成html内容
-     * @param htmlTemplate
-     * @param contentMap
-     * @return
+     * @param htmlTemplate html模板
+     * @param contentMap 参数
+     * @return html内容
      */
     String make(String htmlTemplate,Map<String, Object> contentMap);
 

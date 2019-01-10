@@ -35,7 +35,7 @@ import javax.net.ssl.SSLEngine;
  */
 public final class NettyServer implements Server {
 
-    private final Logger logger = LoggerFactory.getLogger(NettyServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NettyServer.class);
 
     @Override
     public void preStart() {
@@ -48,20 +48,22 @@ public final class NettyServer implements Server {
         EventLoopGroup bossGroup = new NioEventLoopGroup(CommonConstants.BOSS_GROUP_SIZE, new DefaultThreadFactory("boss", true));
         EventLoopGroup workerGroup = new NioEventLoopGroup(CommonConstants.WORKER_GROUP_SIZE, new DefaultThreadFactory("worker", true));
         try {
+            long start = System.currentTimeMillis();
             ServerBootstrap b = new ServerBootstrap();
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .handler(new LoggingHandler(LogLevel.INFO))
+//             .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new ServerInitializer());
 
             ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
-            logger.info("NettyServer Startup at port:{}",CommonConstants.SERVER_PORT);
+            long cost = System.currentTimeMillis()-start;
+            LOGGER.info("[NettyServer] Startup at port:{} cost:{}[ms]",CommonConstants.SERVER_PORT,cost);
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            logger.error("InterruptedException:",e);
+            LOGGER.error("[NettyServer] InterruptedException:",e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -81,14 +83,14 @@ public final class NettyServer implements Server {
 
         @Override
         public void initChannel(SocketChannel ch) {
-            ChannelPipeline p = ch.pipeline();
+            ChannelPipeline pipeline = ch.pipeline();
 
             if(CommonConstants.USE_SSL){
                 SslContext context = SslContextHelper.getSslContext(CommonConstants.KEY_STORE_PATH,CommonConstants.KEY_STORE_PASSWORD);
                 if(context!=null) {
                     SSLEngine engine = context.newEngine(ch.alloc());
                     engine.setUseClientMode(false);
-                    p.addLast(new SslHandler(engine));
+                    pipeline.addLast(new SslHandler(engine));
                 }else{
                     logger.warn("SslContext is null with keyPath={}",CommonConstants.KEY_STORE_PATH);
                 }
@@ -96,37 +98,28 @@ public final class NettyServer implements Server {
 
             // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
             // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
-            p.addLast(new HttpServerCodec());
-
+            pipeline.addLast(new HttpServerCodec());
             // add gizp compressor for http response content
-            p.addLast(new HttpContentCompressor());
-
+            pipeline.addLast(new HttpContentCompressor());
             // 将多个HttpRequest组合成一个FullHttpRequest
-            p.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
-
-            p.addLast(new ChunkedWriteHandler());
-
+            pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
+            pipeline.addLast(new ChunkedWriteHandler());
             // 前置拦截器
             ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();
             if(preInterceptors.length>0) {
-                p.addLast(preInterceptors);
+                pipeline.addLast(preInterceptors);
             }
-
             // 临时保存请求数据
-            p.addLast(new DataStorer());
-
+            pipeline.addLast(new DataStorer());
             // 路由分发器
-            p.addLast(new ControllerDispatcher());
-
+            pipeline.addLast(new ControllerDispatcher());
             // 后置拦截器
             ChannelHandler[] afterInterceptors = InterceptorUtil.getAfterInterceptors();
             if(afterInterceptors.length>0) {
-                p.addLast(afterInterceptors);
+                pipeline.addLast(afterInterceptors);
             }
-
             // 请求结果响应
-            p.addLast(new ResponseWriter());
-
+            pipeline.addLast(new ResponseWriter());
         }
     }
 

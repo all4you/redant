@@ -14,10 +14,10 @@ import java.util.Map;
  */
 public class TagUtil {
 	
-	private final static Logger logger = LoggerFactory.getLogger(TagUtil.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(TagUtil.class);
 
 	private static class GHandle{
-		public static Map<String,Long> tags = Collections.synchronizedMap(new HashMap<String,Long>());
+		public static Map<String,Long> tags = Collections.synchronizedMap(new HashMap<>());
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class TagUtil {
 			throw new RuntimeException("获取标签["+endTag+"]信息失败!");
 		}
 		long cost = end-start;
-		logger.info("from ["+startTag+"] to ["+endTag+"] cost ["+cost+"ms]");
+		LOGGER.info("from ["+startTag+"] to ["+endTag+"] cost ["+cost+"ms]");
 	}
 
 

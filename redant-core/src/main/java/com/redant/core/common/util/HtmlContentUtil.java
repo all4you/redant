@@ -1,7 +1,7 @@
 package com.redant.core.common.util;
 
-import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.common.html.HtmlMaker;
+import com.redant.core.common.constants.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

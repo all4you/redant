@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  **/
 public class DefaultServiceRegistery implements ServiceRegistery {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceRegistery.class);
 
     private CuratorFramework client;
 
@@ -39,7 +39,7 @@ public class DefaultServiceRegistery implements ServiceRegistery {
                       .forPath(ZkNode.SLAVE_NODE_PATH, StrUtil.utf8Bytes(node.toString()));
             }
         } catch (Exception e) {
-            logger.error("register slave error with slave={},cause:", node,e);
+            LOGGER.error("register slave error with slave={},cause:", node,e);
         }
     }
 

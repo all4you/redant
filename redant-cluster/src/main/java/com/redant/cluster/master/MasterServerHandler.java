@@ -23,17 +23,23 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MasterServerHandler.class);
 
-    private Node node;
+    private Node slave;
 
+    /**
+     * Client--->Master Channel
+     */
     private Channel inboundChannel;
 
+    /**
+     * Master--->Slave Channel
+     */
     private Channel outboundChannel;
 
-    private ChannelFuture connectFuture;
+    private ChannelFuture outboundConnectFuture;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        node = DiscoveryWrapper.nextSlave();
+        slave = DiscoveryWrapper.nextSlave();
         inboundChannel = ctx.channel();
 
         // Start the connection attempt.
@@ -51,15 +57,16 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                     }
                 });
         bootstrap.option(ChannelOption.AUTO_READ, false);
-        connectFuture = bootstrap.connect(node.getHost(), node.getPort());
+        // connect to slave
+        outboundConnectFuture = bootstrap.connect(slave.getHost(), slave.getPort());
         // get outboundChannel to remote server
-        outboundChannel = connectFuture.channel();
+        outboundChannel = outboundConnectFuture.channel();
 
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        connectFuture.addListener(new ChannelFutureListener() {
+        outboundConnectFuture.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) {
                 if (future.isSuccess()) {
@@ -78,7 +85,7 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                                         // was able to flush out data, start to read the next chunk
                                         ctx.channel().read();
                                     } else {
-                                        LOGGER.error("write to backend {}:{} error,cause:{}", node.getHost(), node.getPort(),future.cause());
+                                        LOGGER.error("write to backend {}:{} error,cause:{}", slave.getHost(), slave.getPort(),future.cause());
                                         future.channel().close();
                                     }
                                 }
@@ -88,7 +95,7 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                         }
                     }
                 } else {
-                    LOGGER.error("connect to backend {}:{} error,cause:{}", node.getHost(), node.getPort(),future.cause());
+                    LOGGER.error("connect to backend {}:{} error,cause:{}", slave.getHost(), slave.getPort(),future.cause());
                     // Close the connection if the connection attempt has failed.
                     inboundChannel.close();
                 }

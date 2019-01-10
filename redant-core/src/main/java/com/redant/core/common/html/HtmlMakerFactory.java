@@ -19,7 +19,7 @@ public class HtmlMakerFactory {
 
     private Map<HtmlMakerEnum,HtmlMaker> htmlMakerMap;
 
-    private Lock lock;
+    private final Lock lock;
 
     private HtmlMakerFactory(){
         htmlMakerMap = new ConcurrentHashMap<>();
@@ -28,7 +28,6 @@ public class HtmlMakerFactory {
 
     /**
      * 获取工厂实例
-     * @return
      */
     public static HtmlMakerFactory instance(){
         if(factory==null){
@@ -43,9 +42,6 @@ public class HtmlMakerFactory {
 
     /**
      * 创建HtmlMaker实例
-     * @param type
-     * @param clazz
-     * @return
      */
     public HtmlMaker build(HtmlMakerEnum type,Class<? extends HtmlMaker> clazz){
         if(type==null){

@@ -28,6 +28,4 @@ public class BaseController {
         return new DefaultRender(RenderType.HTML,html);
     }
 
-
-
 }
