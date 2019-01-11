@@ -22,9 +22,9 @@
 
 ### 1.Standalone mode
 
-Redant is a web container based on Netty,tomcat or weblogic is no longer required.
+Redant is a web container based on Netty,like Tomcat or WebLogic.
 
-The only thing you should do is start it with java. 
+The only thing you need to do is make it work by start it with java. 
 
 - 1 : Use IDEA or eclipse to run the Main Class:
 
@@ -88,7 +88,7 @@ After startup the Server, visit  http://127.0.0.1:8888 (the default port can be 
 
 If you get  "Welcome to redant!" which means the server is started successfully. 
 
-There are four default Routers included in `redant-example` module:
+There are several default Routers included in `redant-example` module:
 
 | Method Type       | URL                          | Response Type                 |
 | ----------------- | ---------------------------- | ----------------------------- |
@@ -103,7 +103,9 @@ There are four default Routers included in `redant-example` module:
 
 ## Bean Manager
 
-All objects can be managed by using Bean annotation,and object can be injected automatically by using Autowired annotation.It's very easy to use them like you are doing it with spring
+All objects can be managed by using Bean annotation,and object can be injected automatically by using Autowired annotation.
+
+It's very easy to use them like you are doing it with spring.
 
 **Tips：** More information please see wiki: [Bean][1]
 
@@ -111,7 +113,13 @@ All objects can be managed by using Bean annotation,and object can be injected a
 
 ## Customized Route
 
-Use RouterController to customize a Controller. RouterMapping will specify the exact method,RouterController+RouterMapping can only match a http request. RouterParam is used to mark the parameters in the method.POJO will be converted automatically while PrimitiveType should be marked with a RouterParam annotation
+Use RouterController to customize a Controller. 
+
+RouterMapping will specify the exact method,RouterController+RouterMapping can only match a http request. 
+
+RouterParam is used to mark the parameters in the method.
+
+POJO will be converted automatically while PrimitiveType should be marked with a RouterParam annotation.
 
 **Tips：** More information please see wiki: [Router][2]
 
@@ -119,7 +127,11 @@ Use RouterController to customize a Controller. RouterMapping will specify the e
 
 ## Session Manager
 
-A Session Manager is included to store custom sessions. A session is a Netty ChannelHandlerContext,and the channelId is used as a sessionId. Each session hold a map to store the properties
+A Session Manager is included to store custom sessions. 
+
+A session is a Netty ChannelHandlerContext,and the channelId is used as a sessionId. 
+
+Each session hold a map to store the properties.
 
 **Tips：** More information please see wiki: [Session][3]
 
@@ -127,7 +139,9 @@ A Session Manager is included to store custom sessions. A session is a Netty Cha
 
 ## Cookie Manager
 
-A Cookie Manager is included to handle custom cookies,is is important to note that`cookies should be set or remove before a render is returned`
+A Cookie Manager is included to handle custom cookies.
+
+It is important to note that`cookies should be set or remove before a render is returned`.
 
 **Tips：** More information please see wiki: [Cookie][4]
 

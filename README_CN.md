@@ -7,8 +7,8 @@
  
 - **对象管理** : 像 Spring 一样管理所有的对象，通过加 @Bean 注解
 - **对象注入** : 像 Spring 一样自动注入对象，通过加 @Autowired 注解
-- **自定义路由**  : 通过 @RouterController @@RouterMapping @RouterParam 注解可以自定义路由
-- **参数转换**  : 通过 TypeConverter 接口， http 参数会被转成对象(基本参数,Map,List,JavaBean)
+- **自定义路由**  : 通过 @RouterController @RouterMapping @RouterParam 注解可以自定义路由
+- **参数转换**  : 通过 TypeConverter 接口， http 参数会被转成对象(支持基本类型,Map,List,JavaBean)
 - **Session管理r**  : 内置一个 Session 管理器,通过 Netty 的 ChannelHandlerContext 作为一个Session
 - **Cookie管理**  : 内置一个 Cookie 管理器, **用户需要在返回 Render 之前处理 Cookies**
 - **结果渲染**  : 内置一个 Render 接口，支持 html,xml,plain,json
