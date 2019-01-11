@@ -6,13 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.redant.core.bean.annotation.Autowired;
 import com.redant.core.bean.annotation.Bean;
 import com.redant.core.common.enums.RequestMethod;
-import com.redant.core.render.*;
+import com.redant.core.render.RenderType;
 import com.redant.core.router.annotation.RouterController;
 import com.redant.core.router.annotation.RouterMapping;
 import com.redant.core.router.annotation.RouterParam;
 import com.redant.example.service.user.IUserService;
 import com.redant.example.service.user.UserBean;
-import io.netty.handler.codec.http.cookie.DefaultCookie;
 
 /**
  * @author gris.wang
@@ -29,17 +28,12 @@ public class UserController {
     private IUserService userService;
 
     @RouterMapping(path="/info",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public CookieRender getUserInfo(@RouterParam(key="id",checkNull=true) Integer id){
-        JSONObject object = new JSONObject();
-        object.put("user",userService.selectUserInfo(id));
-        CookieRender render = new DefaultCookieRender(RenderType.JSON,object);
-        // 设置Cookie
-        render.setCookie(new DefaultCookie("ak","47"));
-        return render;
+    public UserBean getUserInfo(@RouterParam(key="id",checkNull=true) Integer id){
+        return userService.selectUserInfo(id);
     }
 
     @RouterMapping(path="/list",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public Render getUserList(){
+    public JSONArray getUserList(){
         JSONArray array = new JSONArray();
         JSONObject object = new JSONObject();
         UserBean user = new UserBean();
@@ -47,15 +41,15 @@ public class UserController {
         user.setUserName("wang");
         object.put("user",user);
         array.add(object);
-        return new DefaultRender(RenderType.JSON,array);
+        return array;
     }
 
     @RouterMapping(path="/count",requestMethod=RequestMethod.GET,renderType=RenderType.JSON)
-    public Render getUserCount(){
+    public JSONObject getUserCount(){
         JSONObject object = new JSONObject();
         int count = userService.selectCount();
         object.put("count",count);
-        return new DefaultRender(RenderType.JSON,object);
+        return object;
     }
 
 }

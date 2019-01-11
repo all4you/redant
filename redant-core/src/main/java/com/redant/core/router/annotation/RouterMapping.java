@@ -14,19 +14,19 @@ public @interface RouterMapping {
 
     /**
      * 请求方法类型
-     * @return
+     * @return 方法类型
      */
     RequestMethod requestMethod() default RequestMethod.GET;
 
     /**
      * 请求的uri
-     * @return
+     * @return url
      */
     String path() default "";
 
     /**
      * 返回类型
-     * @return
+     * @return 返回类型
      */
     RenderType renderType() default RenderType.JSON;
 

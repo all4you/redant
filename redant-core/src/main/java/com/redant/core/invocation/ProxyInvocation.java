@@ -8,7 +8,6 @@ import com.redant.core.common.util.HttpRequestUtil;
 import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveConverter;
 import com.redant.core.converter.PrimitiveTypeUtil;
-import com.redant.core.render.Render;
 import com.redant.core.router.annotation.RouterParam;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
@@ -31,7 +30,7 @@ public class ProxyInvocation {
 
 	private static Invocation invocation = new Invocation();
 
-	public static Render invoke(ControllerProxy proxy) throws Exception{
+	public static Object invoke(ControllerProxy proxy) throws Exception{
 		Object controller = proxy.getController();
 		Method method = proxy.getMethod();
 		String methodName = proxy.getMethodName();
@@ -196,7 +195,7 @@ public class ProxyInvocation {
 		 * @return 渲染结果
 		 * @throws Exception 异常
 		 */
-		public Render invoke(Object controller,Method method,String methodName) throws Exception {
+		public Object invoke(Object controller,Method method,String methodName) throws Exception {
 			if (method == null) {
 				throw new NoSuchMethodException("Can not find specified method: " + methodName);
 			}
@@ -204,20 +203,17 @@ public class ProxyInvocation {
 			Class<?> clazz = controller.getClass();
 			Class<?>[] parameterTypes = method.getParameterTypes();
 			Object[] parameters = null;
-			Render result;
+			Object result;
 			try {
 				parameters = getParameters(method,parameterTypes);
 				// 使用 CGLib 执行反射调用
 				FastClass fastClass = FastClass.create(clazz);
 				FastMethod fastMethod = fastClass.getMethod(methodName, parameterTypes);
 				// 调用，并得到调用结果
-				result = (Render)fastMethod.invoke(controller, parameters);
+				result = fastMethod.invoke(controller, parameters);
 
 			} catch(InvocationTargetException e){
 				String msg = "调用出错,请求类["+controller.getClass().getName()+"],方法名[" + method.getName() + "],参数[" + Arrays.toString(parameters)+"]";
-				throw getInvokeException(msg, e);
-			} catch (ClassCastException e){
-				String msg = "返回类型应该为Render的实现类,请求类["+controller.getClass().getName()+"],方法名[" + method.getName()+"]";
 				throw getInvokeException(msg, e);
 			}
 			return result;

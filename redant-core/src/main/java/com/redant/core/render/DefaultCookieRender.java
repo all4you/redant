@@ -10,29 +10,26 @@ import io.netty.handler.codec.http.cookie.Cookie;
  * @author gris.wang
  * @date 2017/11/15
  **/
-public class DefaultCookieRender extends DefaultRender implements CookieRender {
+public class DefaultCookieRender implements CookieRender {
 
-
-    public DefaultCookieRender(RenderType renderType, Object content){
-        super(renderType,content);
-    }
 
     @Override
     public void setCookie(Cookie cookie) {
-        if(response==null){
-            response = response();
-        }
-        CookieHelper.setCookie(response,cookie);
+//        if(response==null){
+//            response = response();
+//        }
+//        CookieHelper.setCookie(response,cookie);
     }
 
 
     @Override
     public boolean deleteCookie(String name) {
-        if(response==null){
-            response = response();
-        }
-        HttpRequest request = DataHolder.getHttpRequest();
-        return CookieHelper.deleteCookie(request,response,name);
+//        if(response==null){
+//            response = response();
+//        }
+//        HttpRequest request = DataHolder.getHttpRequest();
+//        return CookieHelper.deleteCookie(request,response,name);
+        return true;
     }
 
 }

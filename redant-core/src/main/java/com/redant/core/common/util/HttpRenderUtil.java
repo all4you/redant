@@ -2,11 +2,13 @@ package com.redant.core.common.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.redant.core.common.html.DefaultHtmlMaker;
+import com.redant.core.common.html.HtmlMaker;
 import com.redant.core.common.html.HtmlMakerEnum;
 import com.redant.core.common.html.HtmlMakerFactory;
 import com.redant.core.common.view.Page404;
 import com.redant.core.common.view.Page500;
 import com.redant.core.common.view.PageError;
+import com.redant.core.render.RenderType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -24,62 +26,22 @@ public class HttpRenderUtil {
 
 	public static final String EMPTY_CONTENT = "";
 
-	public static final String NO_RESPONSE = "No Response";
-
-	public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
-
-	public static final String CONTENT_TYPE_TEXT = "text/plain;charset=UTF-8";
-
-	public static final String CONTENT_TYPE_XML = "text/xml;charset=UTF-8";
-
-	public static final String CONTENT_TYPE_HTML = "text/html;charset=UTF-8";
-
-
 	private HttpRenderUtil(){
 
 	}
 
 	/**
-	 * 输出纯Json字符串
-	 */
-	public static FullHttpResponse renderJSON(Object json){
-		return render(json, CONTENT_TYPE_JSON);
-	}
-	
-	/**
-	 * 输出纯字符串
-	 */
-	public static FullHttpResponse renderText(Object text) {
-		return render(text, CONTENT_TYPE_TEXT);
-	}
-	
-	/**
-	 * 输出纯XML
-	 */
-	public static FullHttpResponse renderXML(Object xml) {
-		return render(xml, CONTENT_TYPE_XML);
-	}
-	
-	/**
-	 * 输出纯HTML
-	 */
-	public static FullHttpResponse renderHTML(Object html) {
-		return render(html, CONTENT_TYPE_HTML);
-	}
-
-	/**
 	 * response输出
 	 * @param content 内容
-	 * @param contentType 返回类型
+	 * @param renderType 返回类型
 	 * @return 响应对象
 	 */
-	public static FullHttpResponse render(Object content, String contentType){
+	public static FullHttpResponse render(Object content, RenderType renderType){
 		byte[] bytes = HttpRenderUtil.getBytes(content);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, byteBuf);
-		if(contentType!=null && contentType.trim().length()>0) {
-			response.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
-		}
+		RenderType type = renderType!=null?renderType:RenderType.JSON;
+		response.headers().add(HttpHeaderNames.CONTENT_TYPE, type.getContentType());
 		response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(byteBuf.readableBytes()));
 		return response;
 	}
@@ -89,8 +51,10 @@ public class HttpRenderUtil {
 	 * @return 响应对象
 	 */
 	public static FullHttpResponse getNotFoundResponse(){
-		String content = HtmlContentUtil.getPageContent(HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class),Page404.HTML,null);
-		return render(content, CONTENT_TYPE_HTML);
+		HtmlMaker htmlMaker = HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class);
+		String htmlTpl = Page404.HTML;
+		String content = HtmlContentUtil.getPageContent(htmlMaker,htmlTpl,null);
+		return render(content, RenderType.HTML);
 	}
 
 	/**
@@ -101,7 +65,7 @@ public class HttpRenderUtil {
 		JSONObject object = new JSONObject();
 		object.put("code",500);
 		object.put("message","Server Internal Error!");
-		return render(object, CONTENT_TYPE_JSON);
+		return render(object, RenderType.JSON);
 	}
 
 	/**
@@ -113,7 +77,7 @@ public class HttpRenderUtil {
 		JSONObject object = new JSONObject();
 		object.put("code",300);
 		object.put("message",errorMessage);
-		return render(object, CONTENT_TYPE_JSON);
+		return render(object, RenderType.JSON);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package com.redant.core.interceptor;
 
 import com.redant.core.common.util.HttpRenderUtil;
 import com.redant.core.DataHolder;
+import com.redant.core.render.RenderType;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,7 +26,7 @@ public abstract class AfterHandleInterceptor extends ChannelInboundHandlerAdapte
         if(!afterHandle(ctx, msg)){
             // 释放ThreadLocal对象
             DataHolder.removeAll();
-            HttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
+            HttpResponse response = HttpRenderUtil.render(null,RenderType.TEXT);
             // 从该channel直接返回
             ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             return;
@@ -39,9 +40,6 @@ public abstract class AfterHandleInterceptor extends ChannelInboundHandlerAdapte
 
     /**
      * 后置拦截器拦截的方法
-     * @param ctx
-     * @param msg
-     * @return
      */
     public abstract boolean afterHandle(ChannelHandlerContext ctx, Object msg);
 

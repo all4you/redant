@@ -5,7 +5,6 @@ import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.util.HttpRenderUtil;
 import com.redant.core.invocation.ControllerProxy;
 import com.redant.core.invocation.ProxyInvocation;
-import com.redant.core.render.Render;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.RouteResult;
 import com.redant.core.router.RouterContext;
@@ -28,7 +27,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
-        FullHttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
+        FullHttpResponse response = HttpRenderUtil.render(null,RenderType.TEXT);
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
             DataHolder.store(DataHolder.HolderType.REQUEST,request);
@@ -41,8 +40,8 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
                     response = HttpRenderUtil.getNotFoundResponse();
                 }else {
                     // 每一个Controller的方法返回类型约定为Render的实现类
-                    Render render = ProxyInvocation.invoke(controllerProxy);
-                    response = render.response();
+                    Object result = ProxyInvocation.invoke(controllerProxy);
+                    response = HttpRenderUtil.render(result,RenderType.JSON);
                 }
             }catch(Exception e){
                 LOGGER.error("Slave Server channelRead0 error,cause:",e);

@@ -6,7 +6,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
  * @author gris.wang
  * @date 2017/11/15
  **/
-public interface CookieRender extends Render{
+public interface CookieRender {
 
     /**
      * 设置一个Cookie

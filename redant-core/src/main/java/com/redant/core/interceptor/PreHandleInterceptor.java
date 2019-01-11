@@ -1,6 +1,7 @@
 package com.redant.core.interceptor;
 
 import com.redant.core.common.util.HttpRenderUtil;
+import com.redant.core.render.RenderType;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -21,7 +22,7 @@ public abstract class PreHandleInterceptor extends ChannelInboundHandlerAdapter 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // 当拦截的方法返回false直接返回，否则进入下一个handler
         if(!preHandle(ctx, msg)){
-            HttpResponse response = HttpRenderUtil.render(null,HttpRenderUtil.CONTENT_TYPE_TEXT);
+            HttpResponse response = HttpRenderUtil.render(null,RenderType.TEXT);
             // 从该channel直接返回
             ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
             return;
@@ -35,9 +36,6 @@ public abstract class PreHandleInterceptor extends ChannelInboundHandlerAdapter 
 
     /**
      * 前置拦截器拦截的方法
-     * @param ctx
-     * @param msg
-     * @return
      */
     public abstract boolean preHandle(ChannelHandlerContext ctx, Object msg);
 

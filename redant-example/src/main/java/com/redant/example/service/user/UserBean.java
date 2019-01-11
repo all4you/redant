@@ -1,12 +1,16 @@
 package com.redant.example.service.user;
 
 
+import com.alibaba.fastjson.JSON;
+
+import java.io.Serializable;
+
 /**
  * UserBean
  * @author gris.wang
  * @date 2017-10-20
  */
-public class UserBean {
+public class UserBean implements Serializable {
 
     private Integer id;
 
@@ -40,10 +44,6 @@ public class UserBean {
 
     @Override
     public String toString() {
-        return new StringBuffer().append("{")
-                                 .append("\"id\":\"").append(this.id)
-                                 .append("\",\"userName\":\"").append(this.userName)
-                                 .append("\",\"password\":\"").append(this.password)
-                                 .append("}").toString();
+        return JSON.toJSONString(this);
     }
 }

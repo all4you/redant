@@ -1,11 +1,10 @@
 package com.redant.core.handler;
 
+import com.redant.core.DataHolder;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.util.HttpRenderUtil;
-import com.redant.core.DataHolder;
 import com.redant.core.invocation.ControllerProxy;
 import com.redant.core.invocation.ProxyInvocation;
-import com.redant.core.render.Render;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.RouteResult;
 import com.redant.core.router.RouterContext;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
 
-    private final static Logger logger = LoggerFactory.getLogger(ControllerDispatcher.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ControllerDispatcher.class);
 
     private final static Logger routerLogger = LoggerFactory.getLogger("routerMsgLog");
 
@@ -47,8 +46,8 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                         response = HttpRenderUtil.getNotFoundResponse();
                     }else {
                         // 每一个Controller的方法返回类型约定为Render的实现类
-                        Render render = ProxyInvocation.invoke(controllerProxy);
-                        response = render.response();
+                        Object result = ProxyInvocation.invoke(controllerProxy);
+                        response = HttpRenderUtil.render(result, routeResult.target());
                     }
                 }
             }catch(Exception e){
@@ -78,7 +77,7 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("ctx close,cause:",cause);
+        LOGGER.error("ctx close,cause:",cause);
     }
 
 
