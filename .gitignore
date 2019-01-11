@@ -45,6 +45,14 @@ Thumbs.db
 target/
 build/
 
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
 # IntelliJ specific files/directories
 out
 .idea
@@ -61,3 +69,8 @@ atlassian-ide-plugin.xml
 
 # NetBeans specific files/directories
 .nbattrs
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
