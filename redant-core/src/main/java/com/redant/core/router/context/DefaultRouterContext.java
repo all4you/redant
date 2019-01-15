@@ -128,6 +128,7 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
 
     private void initRouter(){
         try {
+            LOGGER.info("[DefaultRouterContext] initRouter");
             // 获取所有RouterController
             Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(CommonConstants.BEAN_SCAN_PACKAGE, Controller.class);
             router = new Router<>();
@@ -146,7 +147,7 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
                     }
                 }
                 router.notFound(RenderType.HTML);
-                LOGGER.info("[DefaultRouterContext] Init routers success! routers are listed blow:" +
+                LOGGER.info("[DefaultRouterContext] initRouter success! routers are listed blow:" +
                         "\n*************************************" +
                         "\n{}" +
                         "*************************************\n",

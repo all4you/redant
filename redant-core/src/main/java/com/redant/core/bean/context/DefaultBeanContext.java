@@ -106,6 +106,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
         // 初始化时需要同步
         synchronized (DefaultBeanContext.class){
             if(!inited){
+                LOGGER.info("[DefaultBeanContext] doInit");
                 if(context==null) {
                     context = new DefaultBeanContext();
                 }
@@ -125,7 +126,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      * 初始化Bean
      */
     private void initBean(){
-        LOGGER.info("[DefaultBeanContext] Start initBean");
+        LOGGER.info("[DefaultBeanContext] start initBean");
         try {
             /*
              * 扫描指定package下指定的类，并返回set
@@ -141,7 +142,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
                     if (bean != null) {
                         String beanName = StrUtil.isNotBlank(bean.name())?bean.name():cls.getName();
                         if(beanMap.containsKey(beanName)){
-                            LOGGER.warn("[DefaultBeanContext] Duplicate bean with name={}",beanName);
+                            LOGGER.warn("[DefaultBeanContext] duplicate bean with name={}",beanName);
                             continue;
                         }
                         beanMap.put(beanName, cls.newInstance());
@@ -149,7 +150,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
                 }
                 LOGGER.info("[DefaultBeanContext] initBean success!");
             }else{
-                LOGGER.warn("[DefaultBeanContext] No bean classes scanned!");
+                LOGGER.warn("[DefaultBeanContext] no bean classes scanned!");
             }
         } catch (Exception e) {
             LOGGER.error("[DefaultBeanContext] initBean error,cause:{}",e.getMessage(),e);
@@ -163,7 +164,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      * 否则根据属性所属类型来扫描配置文件获取要注入的实例引用
      */
     private void injectAnnotation() {
-        LOGGER.info("[DefaultBeanContext] Start injectAnnotation");
+        LOGGER.info("[DefaultBeanContext] start injectAnnotation");
         for (Map.Entry<String, Object> entry : beanMap.entrySet()) {
             Object bean = entry.getValue();
             if (bean != null) {
@@ -179,7 +180,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      * 处理BeanContextAware
      */
     private void processBeanContextAware() {
-        LOGGER.info("[DefaultBeanContext] Start processBeanContextAware");
+        LOGGER.info("[DefaultBeanContext] start processBeanContextAware");
         try {
             /*
              * 扫描指定package下指定的类，并返回set
@@ -193,9 +194,9 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
                     }
                 }
             }
-            LOGGER.info("[DefaultBeanContext] ProcessBeanContextAware success!");
+            LOGGER.info("[DefaultBeanContext] processBeanContextAware success!");
         } catch (Exception e) {
-            LOGGER.error("[DefaultBeanContext] ProcessBeanContextAware error,cause:{}",e.getMessage(),e);
+            LOGGER.error("[DefaultBeanContext] processBeanContextAware error,cause:{}",e.getMessage(),e);
         }
     }
 
@@ -204,7 +205,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      * @param bean 处理的bean
      */
     private void propertyAnnotation(Object bean){
-        LOGGER.info("[DefaultBeanContext] Start propertyAnnotation");
+        LOGGER.info("[DefaultBeanContext] start propertyAnnotation");
         try {
             // 获取其属性的描述
             PropertyDescriptor[] descriptors = Introspector.getBeanInfo(bean.getClass()).getPropertyDescriptors();
@@ -248,7 +249,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      * @param bean 处理的bean
      */
     private void fieldAnnotation(Object bean){
-        LOGGER.info("[DefaultBeanContext] Start fieldAnnotation");
+        LOGGER.info("[DefaultBeanContext] start fieldAnnotation");
         try {
             // 获取其全部的字段描述
             Field[] fields = bean.getClass().getDeclaredFields();

@@ -37,20 +37,20 @@ public final class InitExecutor {
                         Constructor<?> constructor = cls.getDeclaredConstructor();
                         constructor.setAccessible(true);
                         InitFunc initFunc = (InitFunc)constructor.newInstance();
-                        LOGGER.info("[InitExecutor] Found init func: " + initFunc.getClass().getCanonicalName());
+                        LOGGER.info("[InitExecutor] found InitFunc: " + initFunc.getClass().getCanonicalName());
                         insertSorted(initList, initFunc);
                     }
                 }
                 for (OrderWrapper w : initList) {
                     w.func.init();
-                    LOGGER.info("[InitExecutor] Initialized: {} with order {}", w.func.getClass().getCanonicalName(), w.order);
+                    LOGGER.info("[InitExecutor] initialized: {} with order={}", w.func.getClass().getCanonicalName(), w.order);
                 }
             }
         } catch (Exception ex) {
-            LOGGER.warn("[InitExecutor] Init failed", ex);
+            LOGGER.warn("[InitExecutor] init failed", ex);
             ex.printStackTrace();
         } catch (Error error) {
-            LOGGER.warn("[InitExecutor] Init failed with fatal error", error);
+            LOGGER.warn("[InitExecutor] init failed with fatal error", error);
             error.printStackTrace();
             throw error;
         }
