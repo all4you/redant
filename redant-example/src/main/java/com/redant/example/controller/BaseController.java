@@ -8,20 +8,20 @@ import com.redant.core.common.html.HtmlMakerEnum;
 import com.redant.core.common.html.HtmlMakerFactory;
 import com.redant.core.common.util.HtmlContentUtil;
 import com.redant.core.common.view.PageIndex;
+import com.redant.core.controller.annotation.Controller;
 import com.redant.core.render.RenderType;
-import com.redant.core.router.annotation.RouterController;
-import com.redant.core.router.annotation.RouterMapping;
+import com.redant.core.controller.annotation.Mapping;
 
 
 /**
  * BaseController
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
-@RouterController(path="/")
+@Controller(path="/")
 public class BaseController {
 
-    @RouterMapping(requestMethod=RequestMethod.GET,renderType=RenderType.HTML)
+    @Mapping(requestMethod=RequestMethod.GET,renderType=RenderType.HTML)
     public String index(){
         HtmlMaker htmlMaker = HtmlMakerFactory.instance().build(HtmlMakerEnum.STRING,DefaultHtmlMaker.class);
         String htmlTpl = PageIndex.HTML;

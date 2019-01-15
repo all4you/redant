@@ -1,10 +1,10 @@
-package com.redant.core.router.annotation;
+package com.redant.core.controller.annotation;
 
 import java.lang.annotation.*;
 
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface RouterParam {
+public @interface Param {
 	
 	/**
 	 * 将使用什么样的键值读取对象，对于field，就是他名字 对于method的parameter，需要指明

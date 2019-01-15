@@ -2,7 +2,7 @@ package com.redant.example.bootstrap.cluster;
 
 /**
  * SlaveServerBootstrap
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  **/
 public class SlaveServerBootstrap {

@@ -1,7 +1,7 @@
 package com.redant.cluster.zk;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/21
  **/
 public class ZkNode {

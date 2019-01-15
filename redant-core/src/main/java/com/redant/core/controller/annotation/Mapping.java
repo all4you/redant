@@ -1,4 +1,4 @@
-package com.redant.core.router.annotation;
+package com.redant.core.controller.annotation;
 
 import com.redant.core.common.enums.RequestMethod;
 import com.redant.core.render.RenderType;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RouterMapping {
+public @interface Mapping {
 
     /**
      * 请求方法类型

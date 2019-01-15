@@ -1,4 +1,4 @@
-package com.redant.core.invocation;
+package com.redant.core.controller;
 
 
 import com.redant.core.common.exception.InvocationException;
@@ -8,7 +8,7 @@ import com.redant.core.common.util.HttpRequestUtil;
 import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveConverter;
 import com.redant.core.converter.PrimitiveTypeUtil;
-import com.redant.core.router.annotation.RouterParam;
+import com.redant.core.controller.annotation.Param;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 import org.apache.commons.beanutils.BeanUtils;
@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * 封装了ControllerProxy的调用过程
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class ProxyInvocation {
@@ -38,7 +38,7 @@ public class ProxyInvocation {
 	}
 
 
-	private static class Invocation{
+	private static class Invocation {
 
 		private static Logger logger = LoggerFactory.getLogger(Invocation.class);
 
@@ -74,7 +74,7 @@ public class ProxyInvocation {
 				if (annotation == null || annotation.length == 0) {
 					// 如果该参数类型是基础类型，则需要加RouterParam注解
 					if(PrimitiveTypeUtil.isPriType(type)){
-						logger.warn("Must specify a @RouterParam annotation for primitive type parameter in method={}", method.getName());
+						logger.warn("Must specify a @Param annotation for primitive type parameter in method={}", method.getName());
 						continue;
 					}
 					// 封装对象类型的parameter
@@ -82,7 +82,7 @@ public class ProxyInvocation {
 					BeanUtils.populate(parameter,paramMap);
 					parameters[i] = parameter;
 				}else{
-					RouterParam param = (RouterParam) annotation[0];
+					Param param = (Param) annotation[0];
 					try{
 						//生成当前的调用参数
 						parameter = parseParameter(paramMap, type, param, method, i);
@@ -91,7 +91,8 @@ public class ProxyInvocation {
 						}
 						parameters[i] = parameter;
 					}catch(Exception e){
-						throw new IllegalArgumentException("参数"+param.key()+"不合法,类型应该为:"+type.toString(), e);
+					    logger.error("param ["+param.key()+"] is invalid，cause:"+e.getMessage());
+						throw new IllegalArgumentException("参数["+param.key()+"]不合法："+e.getMessage());
 					}
 				}
 			}
@@ -101,17 +102,9 @@ public class ProxyInvocation {
 
 		/**
 		 * GET 参数解析
-		 * @param paramMap
-		 * @param type
-		 * @param param
-		 * @param method
-		 * @param index
-		 * @return
-		 * @throws InstantiationException
-		 * @throws IllegalAccessException
 		 */
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private Object parseParameter(Map<String, List<String>> paramMap, Class<?> type, RouterParam param, Method method, int index) throws InstantiationException, IllegalAccessException{
+		private Object parseParameter(Map<String, List<String>> paramMap, Class<?> type, Param param, Method method, int index) throws InstantiationException, IllegalAccessException{
 			Object value = null;
 			String key = param.key();
 			String defaultValue= param.defaultValue();
@@ -195,7 +188,7 @@ public class ProxyInvocation {
 		 * @return 渲染结果
 		 * @throws Exception 异常
 		 */
-		public Object invoke(Object controller,Method method,String methodName) throws Exception {
+        Object invoke(Object controller, Method method, String methodName) throws Exception {
 			if (method == null) {
 				throw new NoSuchMethodException("Can not find specified method: " + methodName);
 			}

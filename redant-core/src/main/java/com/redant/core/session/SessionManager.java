@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Session管理器
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/6
  */
 public class SessionManager {

@@ -2,7 +2,7 @@ package com.redant.core.common.util;
 
 /**
  * 线程工具类
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class ThreadUtil {

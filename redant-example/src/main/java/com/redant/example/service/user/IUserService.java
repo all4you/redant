@@ -1,7 +1,7 @@
 package com.redant.example.service.user;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public interface IUserService {

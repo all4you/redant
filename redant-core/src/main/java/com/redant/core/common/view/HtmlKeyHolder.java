@@ -1,7 +1,7 @@
 package com.redant.core.common.view;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public class HtmlKeyHolder {

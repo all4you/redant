@@ -1,18 +1,17 @@
 package com.redant.cluster.slave;
 
 import com.redant.cluster.service.register.RegisteryWrapper;
-import com.redant.core.bean.BeanContext;
 import com.redant.core.common.constants.CommonConstants;
-import com.redant.core.router.RouterContext;
+import com.redant.core.init.InitExecutor;
 import com.redant.core.server.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SlaveServer
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  */
 public final class SlaveServer implements Server {
@@ -38,8 +37,7 @@ public final class SlaveServer implements Server {
 
     @Override
     public void preStart() {
-        BeanContext.initBeans();
-        RouterContext.initRouters();
+        InitExecutor.init();
         // 注册Slave到ZK
         RegisteryWrapper.register(zkServerAddress, node);
     }

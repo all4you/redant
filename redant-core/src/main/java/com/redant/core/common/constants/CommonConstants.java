@@ -4,7 +4,7 @@ import com.redant.core.common.util.PropertiesUtil;
 
 /**
  * 公共常量
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class CommonConstants {

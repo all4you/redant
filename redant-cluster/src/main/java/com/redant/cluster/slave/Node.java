@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * Node
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  **/
 public class Node {
@@ -49,8 +49,8 @@ public class Node {
 
     /**
      * 从JsonObject中解析出SlaveNode
-     * @param object
-     * @return
+     * @param object 对象
+     * @return 节点
      */
     public static Node parse(JSONObject object){
         if(object==null){

@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 默认的HtmlMaker，只处理字符串
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public class DefaultHtmlMaker implements HtmlMaker {

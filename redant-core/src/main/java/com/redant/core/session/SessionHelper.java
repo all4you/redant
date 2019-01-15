@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Session辅助器
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/6
  */
 public class SessionHelper {

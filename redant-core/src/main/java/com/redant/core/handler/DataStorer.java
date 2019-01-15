@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 将请求数据存储起来
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/7
  */
 public class DataStorer extends ChannelInboundHandlerAdapter {

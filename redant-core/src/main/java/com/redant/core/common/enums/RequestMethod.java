@@ -3,7 +3,7 @@ package com.redant.core.common.enums;
 import io.netty.handler.codec.http.HttpMethod;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public enum RequestMethod {

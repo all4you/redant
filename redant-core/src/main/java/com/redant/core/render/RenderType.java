@@ -2,7 +2,7 @@ package com.redant.core.render;
 
 /**
  * 返回的响应类型
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public enum RenderType {

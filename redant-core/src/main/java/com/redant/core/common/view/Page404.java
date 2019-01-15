@@ -4,7 +4,7 @@ package com.redant.core.common.view;
 import cn.hutool.core.util.StrUtil;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public class Page404 {

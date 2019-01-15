@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 服务发现
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  **/
 public class DefaultServiceDiscovery implements ServiceDiscovery {

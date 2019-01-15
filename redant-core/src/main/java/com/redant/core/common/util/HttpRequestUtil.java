@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/16
  **/
 public class HttpRequestUtil {

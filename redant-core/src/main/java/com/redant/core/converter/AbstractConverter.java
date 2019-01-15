@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 /**
  * 转换器的抽象实现类
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public abstract class AbstractConverter implements Converter {

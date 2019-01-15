@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandler;
 import java.util.Set;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/15
  **/
 public class InterceptorUtil {

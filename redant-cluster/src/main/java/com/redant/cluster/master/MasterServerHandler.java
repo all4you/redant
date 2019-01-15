@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * MasterServerHandler is a http master which
  * will transfer http request to slave server
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  */
 public class MasterServerHandler extends ChannelInboundHandlerAdapter {

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * UserBean
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class UserBean implements Serializable {

@@ -1,13 +1,12 @@
 package com.redant.core.server;
 
-import com.redant.core.bean.BeanContext;
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
 import com.redant.core.handler.DataStorer;
 import com.redant.core.handler.ResponseWriter;
 import com.redant.core.handler.ssl.SslContextHelper;
+import com.redant.core.init.InitExecutor;
 import com.redant.core.interceptor.InterceptorUtil;
-import com.redant.core.router.RouterContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,8 +15,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
@@ -30,7 +27,7 @@ import javax.net.ssl.SSLEngine;
 
 /**
  * NettyServer
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public final class NettyServer implements Server {
@@ -39,8 +36,7 @@ public final class NettyServer implements Server {
 
     @Override
     public void preStart() {
-        BeanContext.initBeans();
-        RouterContext.initRouters();
+        InitExecutor.init();
     }
 
     @Override

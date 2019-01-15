@@ -2,7 +2,7 @@ package com.redant.core.common.exception;
 
 /**
  * 非法session
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class InvalidSessionException extends RuntimeException{

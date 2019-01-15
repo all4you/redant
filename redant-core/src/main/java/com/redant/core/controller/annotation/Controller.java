@@ -1,4 +1,4 @@
-package com.redant.core.router.annotation;
+package com.redant.core.controller.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,11 +7,11 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RouterController {
+public @interface Controller {
 
     /**
      * 请求uri
-     * @return
+     * @return url
      */
     String path() default "";
 

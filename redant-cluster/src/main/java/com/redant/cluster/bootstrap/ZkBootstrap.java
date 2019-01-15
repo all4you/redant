@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * ZK启动入口，可以启动单机模式或者（伪）集群模式
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/21
  **/
 public class ZkBootstrap {

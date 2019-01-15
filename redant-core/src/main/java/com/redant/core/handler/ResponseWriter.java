@@ -12,7 +12,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * 写响应
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/7
  */
 public class ResponseWriter extends SimpleChannelInboundHandler {

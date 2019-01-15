@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 public class HtmlMakerFactory {

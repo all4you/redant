@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/21
  **/
 public class DefaultServiceRegistery implements ServiceRegistery {

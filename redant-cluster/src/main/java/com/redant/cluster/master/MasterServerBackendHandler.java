@@ -3,7 +3,7 @@ package com.redant.cluster.master;
 import io.netty.channel.*;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2018/1/18
  **/
 public class MasterServerBackendHandler extends ChannelInboundHandlerAdapter {

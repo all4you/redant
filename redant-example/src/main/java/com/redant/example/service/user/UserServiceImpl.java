@@ -4,7 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.redant.core.bean.annotation.Bean;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/12/1
  **/
 @Bean(name="userService")

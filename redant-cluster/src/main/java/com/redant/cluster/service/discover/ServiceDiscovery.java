@@ -3,7 +3,7 @@ package com.redant.cluster.service.discover;
 import com.redant.cluster.slave.Node;
 
 /**
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/20
  **/
 public interface ServiceDiscovery {
@@ -15,7 +15,7 @@ public interface ServiceDiscovery {
 
     /**
      * 发现可用的Slave节点
-     * @return
+     * @return 可用节点
      */
     Node discover();
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 后置拦截器
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/7
  */
 public abstract class AfterHandleInterceptor extends ChannelInboundHandlerAdapter {

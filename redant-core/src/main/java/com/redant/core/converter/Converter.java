@@ -2,7 +2,7 @@ package com.redant.core.converter;
 
 /**
  * 类型转换器所需要实现的总接口。TypeConverter中有唯一的一个方法,实现类请特别注意方法所需要返回的值。
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public interface Converter {

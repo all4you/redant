@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * 启动zk所需要的配置信息
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/21
  */
 public class ZkConfig {

@@ -2,7 +2,7 @@ package com.redant.core.session;
 
 /**
  * 针对HttpSession的全局配置项
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/6
  */
 public class SessionConfig {

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * GenericsUtil
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class GenericsUtil {

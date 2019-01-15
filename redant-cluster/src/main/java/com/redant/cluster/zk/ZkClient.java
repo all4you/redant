@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 操作ZK的客户端
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017/11/21
  **/
 public class ZkClient {

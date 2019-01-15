@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * DataHolder 将请求消息对象存放在静态ThreadLocal的实例变量中
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class DataHolder {

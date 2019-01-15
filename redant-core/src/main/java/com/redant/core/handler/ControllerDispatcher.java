@@ -3,11 +3,13 @@ package com.redant.core.handler;
 import com.redant.core.DataHolder;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.util.HttpRenderUtil;
-import com.redant.core.invocation.ControllerProxy;
-import com.redant.core.invocation.ProxyInvocation;
+import com.redant.core.controller.ControllerProxy;
+import com.redant.core.controller.ProxyInvocation;
+import com.redant.core.controller.context.ControllerContext;
+import com.redant.core.controller.context.DefaultControllerContext;
 import com.redant.core.render.RenderType;
 import com.redant.core.router.RouteResult;
-import com.redant.core.router.RouterContext;
+import com.redant.core.router.context.RouterContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
@@ -17,14 +19,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 请求分发控制器
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ControllerDispatcher.class);
 
-    private final static Logger routerLogger = LoggerFactory.getLogger("routerMsgLog");
+    private final static Logger ROUTER_LOGGER = LoggerFactory.getLogger("routerMsgLog");
+
+    private static ControllerContext controllerContext = DefaultControllerContext.getInstance();
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -33,25 +37,18 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
             boolean forceClose = false;
             HttpResponse response;
             try{
-                // 获得路由结果
-                RouteResult<RenderType> routeResult = RouterContext.getRouteResult(request.method(),request.uri());
-                if(routeResult==null){
+                // 根据路由获得具体的ControllerProxy
+                ControllerProxy controllerProxy = controllerContext.getProxy(request.method(),request.uri());
+                if(controllerProxy == null){
                     forceClose = true;
                     response = HttpRenderUtil.getNotFoundResponse();
-                }else{
-                    // 根据路由获得具体的ControllerProxy
-                    ControllerProxy controllerProxy = RouterContext.getControllerProxy(routeResult);
-                    if(controllerProxy == null){
-                        forceClose = true;
-                        response = HttpRenderUtil.getNotFoundResponse();
-                    }else {
-                        // 每一个Controller的方法返回类型约定为Render的实现类
-                        Object result = ProxyInvocation.invoke(controllerProxy);
-                        response = HttpRenderUtil.render(result, routeResult.target());
-                    }
+                }else {
+                    // 每一个Controller的方法返回类型约定为Render的实现类
+                    Object result = ProxyInvocation.invoke(controllerProxy);
+                    response = HttpRenderUtil.render(result, controllerProxy.getRenderType());
                 }
             }catch(Exception e){
-                routerLogger.error("Server Internal Error,cause:",e);
+                ROUTER_LOGGER.error("Server Internal Error,cause:",e);
                 forceClose = true;
                 if(e instanceof IllegalArgumentException || e instanceof InvocationException){
                     response = HttpRenderUtil.getErrorResponse(e.getMessage());

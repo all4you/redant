@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * BaseBean 所有bean都继承该类
- * @author gris.wang
+ * @author houyi.wh
  * @date 2017-10-20
  */
 public class BaseBean implements Serializable {
