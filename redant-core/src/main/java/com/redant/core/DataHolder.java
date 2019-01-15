@@ -17,9 +17,8 @@ public class DataHolder {
 
 	/**
 	 * 使用FastThreadLocal替代JDK自带的ThreadLocal以提升并发性能
-	 * private static final ThreadLocal<Map<String,Object>> LOCAL_DATA = new ThreadLocal<Map<String,Object>>();
 	 */
-	private static final FastThreadLocal<Map<String,Object>> LOCAL_DATA = new FastThreadLocal<Map<String,Object>>();
+	private static final FastThreadLocal<Map<String,Object>> LOCAL_DATA = new FastThreadLocal<>();
 
 
 	public enum HolderType {
@@ -58,7 +57,7 @@ public class DataHolder {
 	public static void store(HolderType holderType,Object value){
 		Map<String,Object> map = LOCAL_DATA.get();
 		if(map==null){
-			map = new HashMap<String,Object>();
+			map = new HashMap<>();
 		}
 		map.put(holderType.getType(),value);
 		LOCAL_DATA.set(map);
@@ -87,7 +86,7 @@ public class DataHolder {
 	public static void remove(HolderType holderType){
 		Map<String,Object> map = LOCAL_DATA.get();
 		if(map==null){
-			map = new HashMap<String,Object>();
+			map = new HashMap<>();
 		}
 		map.remove(holderType.getType());
 		LOCAL_DATA.set(map);

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataStorer extends ChannelInboundHandlerAdapter {
 
-    private final static Logger logger = LoggerFactory.getLogger(DataStorer.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(DataStorer.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -27,7 +27,7 @@ public class DataStorer extends ChannelInboundHandlerAdapter {
                 DataHolder.store(DataHolder.HolderType.CONTEXT,ctx);
             }
         }
-        /**
+        /*
          * 提交给下一个ChannelHandler去处理
          * 并且不需要调用ReferenceCountUtil.release(msg);来释放引用计数
          */
@@ -42,7 +42,7 @@ public class DataStorer extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("ctx close,cause:",cause);
+        LOGGER.error("ctx close,cause:",cause);
     }
 
 

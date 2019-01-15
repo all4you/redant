@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -178,6 +179,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
 
     /**
      * 处理BeanContextAware
+     * 让那些实现了BeanContextAware接口的类能注入BeanContext
      */
     private void processBeanContextAware() {
         LOGGER.info("[DefaultBeanContext] start processBeanContextAware");
@@ -190,7 +192,10 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
                 for (Class<?> cls : classSet) {
                     // 如果cls是BeanContextAware的实现类
                     if(!cls.isInterface() && BeanContextAware.class.isAssignableFrom(cls)){
-                        ((BeanContextAware)cls.newInstance()).setBeanContext(context);
+                        Constructor<?> constructor = cls.getDeclaredConstructor();
+                        constructor.setAccessible(true);
+                        BeanContextAware aware = (BeanContextAware)constructor.newInstance();
+                        aware.setBeanContext(context);
                     }
                 }
             }
