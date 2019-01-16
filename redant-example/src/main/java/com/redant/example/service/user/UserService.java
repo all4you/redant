@@ -4,7 +4,7 @@ package com.redant.example.service.user;
  * @author houyi.wh
  * @date 2017/12/1
  **/
-public interface IUserService {
+public interface UserService {
 
     /**
      * 获取用户信息

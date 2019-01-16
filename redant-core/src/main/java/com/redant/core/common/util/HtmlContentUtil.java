@@ -21,10 +21,10 @@ public class HtmlContentUtil {
 
     /**
      * 获取页面内容
-     * @param htmlMaker
-     * @param htmlTemplate
-     * @param contentMap
-     * @return
+     * @param htmlMaker htmlMaker
+     * @param htmlTemplate html模板
+     * @param contentMap 参数
+     * @return 页面内容
      */
     public static String getPageContent(HtmlMaker htmlMaker, String htmlTemplate, Map<String, Object> contentMap){
         try {

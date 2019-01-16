@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
  * @author houyi.wh
  * @date 2017/12/1
  **/
-public class PageError {
+public final class PageError {
 
     private PageError(){
 

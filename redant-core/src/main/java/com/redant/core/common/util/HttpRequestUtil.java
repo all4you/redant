@@ -22,8 +22,8 @@ public class HttpRequestUtil {
 
     /**
      * 获取请求参数的Map
-     * @param request
-     * @return
+     * @param request http请求
+     * @return 参数map
      */
     public static Map<String, List<String>> getParameterMap(HttpRequest request){
         Map<String, List<String>> paramMap = new HashMap<>();
@@ -111,8 +111,8 @@ public class HttpRequestUtil {
 
     /**
      * 获取contentType
-     * @param headers
-     * @return
+     * @param headers http请求头
+     * @return 内容类型
      */
     public static String getContentType(HttpHeaders headers){
         String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE);

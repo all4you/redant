@@ -7,7 +7,7 @@ import cn.hutool.core.util.StrUtil;
  * @author houyi.wh
  * @date 2017/12/1
  **/
-public class Page404 {
+public final class Page404 {
 
     private Page404(){
 

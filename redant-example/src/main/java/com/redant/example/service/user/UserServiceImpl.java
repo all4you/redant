@@ -1,6 +1,5 @@
 package com.redant.example.service.user;
 
-import cn.hutool.core.util.RandomUtil;
 import com.redant.core.bean.annotation.Bean;
 
 /**
@@ -8,7 +7,7 @@ import com.redant.core.bean.annotation.Bean;
  * @date 2017/12/1
  **/
 @Bean(name="userService")
-public class UserServiceImpl implements IUserService{
+public class UserServiceImpl implements UserService {
 
     @Override
     public UserBean selectUserInfo(Integer id) {
@@ -20,7 +19,7 @@ public class UserServiceImpl implements IUserService{
 
     @Override
     public int selectCount() {
-        return RandomUtil.randomInt(10);
+        return 10;
     }
 
 }

@@ -9,7 +9,7 @@ public class ThreadUtil {
 
     /**
      * 获取当前线程名称
-     * @return
+     * @return 线程名称
      */
     public static String currentThreadName(){
         return Thread.currentThread().getName();
