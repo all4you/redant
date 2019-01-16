@@ -1,11 +1,11 @@
 package com.redant.core.controller;
 
 
+import com.redant.core.TemporaryDataHolder;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.exception.ValidationException;
 import com.redant.core.common.util.GenericsUtil;
 import com.redant.core.common.util.HttpRequestUtil;
-import com.redant.core.DataHolder;
 import com.redant.core.converter.PrimitiveConverter;
 import com.redant.core.converter.PrimitiveTypeUtil;
 import com.redant.core.controller.annotation.Param;
@@ -63,7 +63,7 @@ public class ProxyInvocation {
 			Annotation[][] annotationArray = method.getParameterAnnotations();
 
 			//获取参数列表
-			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(DataHolder.getHttpRequest());
+			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(TemporaryDataHolder.loadHttpRequest());
 
 			//构造调用所需要的参数数组
 			for (int i = 0; i < parameterTypes.length; i++) {
@@ -84,15 +84,18 @@ public class ProxyInvocation {
 				}else{
 					Param param = (Param) annotation[0];
 					try{
-						//生成当前的调用参数
+						// 生成当前的调用参数v
 						parameter = parseParameter(paramMap, type, param, method, i);
-						if(param.checkNull()){
+						if(param.notNull()){
 							GenericsUtil.checkNull(param.key(), parameter);
+						}
+						if(param.notBlank()){
+							GenericsUtil.checkBlank(param.key(), parameter);
 						}
 						parameters[i] = parameter;
 					}catch(Exception e){
 					    logger.error("param ["+param.key()+"] is invalid，cause:"+e.getMessage());
-						throw new IllegalArgumentException("参数["+param.key()+"]不合法："+e.getMessage());
+						throw new IllegalArgumentException("参数 "+param.key()+" 不合法："+e.getMessage());
 					}
 				}
 			}
@@ -168,9 +171,9 @@ public class ProxyInvocation {
 
 		/**
 		 * 返回调用异常
-		 * @param msg
-		 * @param cause
-		 * @return
+		 * @param msg 消息
+		 * @param cause 异常
+		 * @return 调用异常
 		 */
 		private InvocationException getInvokeException(String msg, Throwable cause){
 			return new InvocationException(msg,cause);

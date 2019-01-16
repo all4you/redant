@@ -1,5 +1,6 @@
 package com.redant.core.common.util;
 
+import cn.hutool.core.util.StrUtil;
 import com.redant.core.common.exception.ValidationException;
 
 import java.lang.reflect.Method;
@@ -45,17 +46,32 @@ public class GenericsUtil {
 
 	/**
 	 * 断言非空
-	 * @param dataName
-	 * @param values
+	 * @param dataName 参数
+	 * @param values 值
 	 */
 	public static void checkNull(String dataName, Object... values){
 		if(values == null){
-			throw new ValidationException(dataName +" cannot be null");
+			throw new ValidationException("["+ dataName + "] cannot be null");
 		}
-		for (int i = 0; i < values.length; i++) {
-			Object value = values[i];
-			if(value == null){
-				throw new ValidationException(dataName +" cannot be null at " + dataName + "[" + i + "]");
+		for (Object value : values) {
+			if (value == null) {
+				throw new ValidationException("[" + dataName + "] cannot be null");
+			}
+		}
+	}
+
+	/**
+	 * 断言非空
+	 * @param dataName 参数
+	 * @param values 值
+	 */
+	public static void checkBlank(String dataName, Object... values){
+		if(values == null){
+			throw new ValidationException("["+ dataName + "] cannot be null");
+		}
+		for (Object value : values) {
+			if (value == null || StrUtil.isBlank(value.toString())) {
+				throw new ValidationException("[" + dataName + "] cannot be blank");
 			}
 		}
 	}

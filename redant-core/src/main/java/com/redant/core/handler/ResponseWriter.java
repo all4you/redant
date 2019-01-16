@@ -1,11 +1,16 @@
 package com.redant.core.handler;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.redant.core.TemporaryDataHolder;
 import com.redant.core.common.constants.CommonConstants;
-import com.redant.core.DataHolder;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -17,7 +22,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class ResponseWriter extends SimpleChannelInboundHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ResponseWriter.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ResponseWriter.class);
 
     private HttpRequest request;
     private Channel channel;
@@ -35,8 +40,8 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
                 ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
             }
             channel = ctx.channel();
-            forceClose = DataHolder.getForceClose();
-            response = DataHolder.getHttpResponse();
+            forceClose = TemporaryDataHolder.loadForceClose();
+            response = TemporaryDataHolder.loadHttpResponse();
             writeResponse();
         }
     }
@@ -46,13 +51,13 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
         // 释放ThreadLocal对象
-        DataHolder.removeAll();
+        TemporaryDataHolder.removeAll();
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        logger.error("ctx close,cause:",cause);
+        LOGGER.error("ctx close,cause:",cause);
     }
 
     /**
@@ -62,6 +67,13 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
         boolean close = isClose();
         if(!close && !forceClose && !response.headers().contains(HttpHeaderNames.CONTENT_LENGTH)){
             response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
+        }
+        // 写cookie
+        Set<Cookie> cookies = TemporaryDataHolder.loadCookies();
+        if(!CollectionUtil.isEmpty(cookies)){
+            for(Cookie cookie : cookies){
+                response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+            }
         }
         ChannelFuture future = channel.write(response);
         if(close || forceClose){

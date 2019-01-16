@@ -1,139 +1,91 @@
 package com.redant.core.cookie;
 
-import com.redant.core.DataHolder;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
 
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Cookie管理器
+ * cookie管理
  * @author houyi.wh
- * @date 2017/11/6
+ * @date 2019-01-16
  */
-
-public class CookieManager {
-
-    /**
-     * 获取HttpRequest中的Cookies
-     * @return
-     */
-    public static Set<Cookie> getCookies(){
-        HttpRequest request = DataHolder.getHttpRequest();
-        return CookieHelper.getCookies(request);
-    }
+public interface CookieManager {
 
     /**
-     * 设置Cookie
-     * @param cookie
+     * 获取所有的cookie
+     * @return cookie集合
      */
-    @Deprecated
-    public static void setCookie(Cookie cookie){
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.setCookie(response,cookie);
-    }
+    Set<Cookie> getCookies();
 
     /**
-     * 设置所有的Cookie
+     * 获取所有的cookie，并返回一个Map
+     * @return cookie的map
      */
-    @Deprecated
-    public static void setCookies(){
-        HttpRequest request = DataHolder.getHttpRequest();
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.setCookies(request,response);
-    }
+    Map<String,Cookie> getCookieMap();
 
     /**
-     * 添加一个Cookie
-     * @param name  cookie名字
-     * @param value cookie值
+     * 根据名称获取cookie
+     * @param name 名称
+     * @return cookie
      */
-    @Deprecated
-    public static void addCookie(String name,String value){
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.addCookie(response,name,value,null);
-    }
+    Cookie getCookie(String name);
 
     /**
-     * 添加一个Cookie
-     * @param name  cookie名字
-     * @param value cookie值
-     * @param domain cookie所在域
+     * 根据名称获取cookie的值
+     * @param name 名称
+     * @return cookie的值
      */
-    @Deprecated
-    public static void addCookie(String name,String value,String domain){
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.addCookie(response,name,value,domain,0);
-    }
-
+    String getCookieValue(String name);
 
     /**
-     * 添加一个Cookie
-     * @param name  cookie名字
-     * @param value cookie值
-     * @param maxAge cookie生命周期  以秒为单位
+     * 设置cookie到响应结果中
+     * @param cookie cookie
      */
-    @Deprecated
-    public static void addCookie(String name,String value,long maxAge){
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.addCookie(response,name,value,null,maxAge);
-    }
-
+    void setCookie(Cookie cookie);
 
     /**
-     * 添加一个Cookie
-     * @param name  cookie名字
-     * @param value cookie值
-     * @param domain cookie所在域
-     * @param maxAge cookie生命周期  以秒为单位
+     * 获取所有的cookie后，全部设置到响应结果中
      */
-    @Deprecated
-    public static void addCookie(String name,String value,String domain,long maxAge){
-        HttpResponse response = DataHolder.getHttpResponse();
-        CookieHelper.addCookie(response,name,value,domain,maxAge);
-    }
+    void setCookies();
 
     /**
-     * 将cookie封装到Map里面
-     * @return
+     * 添加一个cookie
+     * @param name cookie的名称
+     * @param value cookie的值
      */
-    public static Map<String,Cookie> getCookieMap(){
-        HttpRequest request = DataHolder.getHttpRequest();
-        return CookieHelper.getCookieMap(request);
-    }
+    void addCookie(String name,String value);
 
     /**
-     * 根据名字获取Cookie
-     * @param name cookie名字
-     * @return
+     * 添加一个cookie
+     * @param name cookie的名称
+     * @param value cookie的值
+     * @param domain cookie的作用域
      */
-    public static Cookie getCookie(String name){
-        HttpRequest request = DataHolder.getHttpRequest();
-        return CookieHelper.getCookie(request,name);
-    }
+    void addCookie(String name,String value,String domain);
 
     /**
-     * 获取Cookie的值
-     * @param name cookie名字
-     * @return
+     * 添加一个cookie
+     * @param name cookie的名称
+     * @param value cookie的值
+     * @param maxAge cookie的有效期
      */
-    public static String getCookieValue(String name){
-        HttpRequest request = DataHolder.getHttpRequest();
-        return CookieHelper.getCookieValue(request,name);
-    }
+    void addCookie(String name,String value,long maxAge);
 
     /**
-     * 删除一个Cookie
-     * @param name
-     * @return
+     * 添加一个cookie
+     * @param name cookie的名称
+     * @param value cookie的值
+     * @param domain cookie的作用域
+     * @param maxAge cookie的有效期
      */
-    @Deprecated
-    public static boolean deleteCookie(String name) {
-        HttpRequest request = DataHolder.getHttpRequest();
-        HttpResponse response = DataHolder.getHttpResponse();
-        return CookieHelper.deleteCookie(request,response,name);
-    }
+    void addCookie(String name,String value,String domain,long maxAge);
+
+    /**
+     * 删除一个cookie
+     * @param name cookie的名称
+     * @return 操作结果
+     */
+    boolean deleteCookie(String name);
 
 }

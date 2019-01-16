@@ -1,15 +1,13 @@
 package com.redant.core.handler;
 
-import com.redant.core.DataHolder;
+import com.redant.core.TemporaryDataHolder;
+import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.util.HttpRenderUtil;
 import com.redant.core.controller.ControllerProxy;
 import com.redant.core.controller.ProxyInvocation;
 import com.redant.core.controller.context.ControllerContext;
 import com.redant.core.controller.context.DefaultControllerContext;
-import com.redant.core.render.RenderType;
-import com.redant.core.router.RouteResult;
-import com.redant.core.router.context.RouterContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequest;
@@ -34,6 +32,11 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
+            if(!CommonConstants.FAVICON_ICO.equals(request.uri())){
+                // 将request和context存储到ThreadLocal中去，便于后期在其他地方获取并使用
+                TemporaryDataHolder.storeHttpRequest(request);
+                TemporaryDataHolder.storeContext(ctx);
+            }
             boolean forceClose = false;
             HttpResponse response;
             try{
@@ -56,8 +59,8 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                     response = HttpRenderUtil.getServerErrorResponse();
                 }
             }
-            DataHolder.store(DataHolder.HolderType.FORCE_CLOSE,forceClose);
-            DataHolder.store(DataHolder.HolderType.RESPONSE,response);
+            TemporaryDataHolder.storeForceClose(forceClose);
+            TemporaryDataHolder.storeHttpResponse(response);
         }
         /*
          * 提交给下一个ChannelHandler去处理

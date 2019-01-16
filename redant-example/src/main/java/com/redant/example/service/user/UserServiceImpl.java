@@ -14,7 +14,7 @@ public class UserServiceImpl implements IUserService{
     public UserBean selectUserInfo(Integer id) {
         UserBean user = new UserBean();
         user.setId(id);
-        user.setUserName("fakeName");
+        user.setUserName("逅弈逐码");
         return user;
     }
 

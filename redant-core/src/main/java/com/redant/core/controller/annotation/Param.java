@@ -7,7 +7,9 @@ import java.lang.annotation.*;
 public @interface Param {
 	
 	/**
-	 * 将使用什么样的键值读取对象，对于field，就是他名字 对于method的parameter，需要指明
+	 * 将使用什么样的键值读取对象，
+	 * 对于field，就是他名字
+	 * 对于method的parameter，需要指明
 	 * @return 参数的key
 	 */
 	String key() default "";
@@ -22,6 +24,12 @@ public @interface Param {
      * 是否校验参数为空
      * @return true：校验参数 false：不校验参数
      */
-    boolean checkNull() default false;
+    boolean notNull() default false;
+
+    /**
+     * 是否校验参数为空
+     * @return true：校验参数 false：不校验参数
+     */
+    boolean notBlank() default false;
 
 }

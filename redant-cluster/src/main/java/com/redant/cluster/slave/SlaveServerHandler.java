@@ -1,6 +1,7 @@
 package com.redant.cluster.slave;
 
-import com.redant.core.DataHolder;
+import com.redant.core.TemporaryDataHolder;
+import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.util.HttpRenderUtil;
 import com.redant.core.controller.ControllerProxy;
@@ -32,7 +33,11 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
         FullHttpResponse response = HttpRenderUtil.render(null,RenderType.TEXT);
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
-            DataHolder.store(DataHolder.HolderType.REQUEST,request);
+            if(!CommonConstants.FAVICON_ICO.equals(request.uri())){
+                // 将request和context存储到ThreadLocal中去，便于后期在其他地方获取并使用
+                TemporaryDataHolder.storeHttpRequest(request);
+                TemporaryDataHolder.storeContext(ctx);
+            }
             try{
                 // 根据路由获得具体的ControllerProxy
                 ControllerProxy controllerProxy = controllerContext.getProxy(request.method(),request.uri());
@@ -58,7 +63,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
-        DataHolder.removeAll();
+        TemporaryDataHolder.removeAll();
     }
 
     @Override

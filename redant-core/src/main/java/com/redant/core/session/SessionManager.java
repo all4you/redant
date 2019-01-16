@@ -1,6 +1,6 @@
 package com.redant.core.session;
 
-import com.redant.core.DataHolder;
+import com.redant.core.TemporaryDataHolder;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -22,7 +22,7 @@ public class SessionManager {
      * @return
      */
     public static boolean containsSession(){
-        ChannelHandlerContext context = DataHolder.getContext();
+        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
         return SessionHelper.instange().containsSession(context);
     }
 
@@ -31,7 +31,7 @@ public class SessionManager {
      * @param session
      */
     public static void addSession(HttpSession session){
-        ChannelHandlerContext context = DataHolder.getContext();
+        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
         SessionHelper.instange().addSession(context, session);
     }
 
@@ -40,7 +40,7 @@ public class SessionManager {
      * @return
      */
     public static HttpSession getSession(){
-        ChannelHandlerContext context = DataHolder.getContext();
+        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
         return SessionHelper.instange().getSession(context);
     }
 
@@ -50,7 +50,7 @@ public class SessionManager {
      * @return
      */
     public static HttpSession getSession(boolean createIfNull){
-        ChannelHandlerContext context = DataHolder.getContext();
+        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
         return SessionHelper.instange().getSession(context,createIfNull);
     }
 

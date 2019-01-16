@@ -2,7 +2,6 @@ package com.redant.core.server;
 
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
-import com.redant.core.handler.DataStorer;
 import com.redant.core.handler.ResponseWriter;
 import com.redant.core.handler.ssl.SslContextHelper;
 import com.redant.core.init.InitExecutor;
@@ -26,13 +25,13 @@ import javax.net.ssl.SSLEngine;
 
 
 /**
- * NettyServer
+ * NettyHttpServer
  * @author houyi.wh
  * @date 2017-10-20
  */
-public final class NettyServer implements Server {
+public final class NettyHttpServer implements Server {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NettyServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NettyHttpServer.class);
 
     @Override
     public void preStart() {
@@ -54,12 +53,12 @@ public final class NettyServer implements Server {
 
             ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
             long cost = System.currentTimeMillis()-start;
-            LOGGER.info("[NettyServer] Startup at port:{} cost:{}[ms]",CommonConstants.SERVER_PORT,cost);
+            LOGGER.info("[NettyHttpServer] Startup at port:{} cost:{}[ms]",CommonConstants.SERVER_PORT,cost);
 
             // 等待服务端Socket关闭
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            LOGGER.error("[NettyServer] InterruptedException:",e);
+            LOGGER.error("[NettyHttpServer] InterruptedException:",e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -105,8 +104,6 @@ public final class NettyServer implements Server {
             if(preInterceptors.length>0) {
                 pipeline.addLast(preInterceptors);
             }
-            // 临时保存请求数据
-            pipeline.addLast(new DataStorer());
             // 路由分发器
             pipeline.addLast(new ControllerDispatcher());
             // 后置拦截器

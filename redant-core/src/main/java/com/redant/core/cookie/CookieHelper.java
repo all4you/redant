@@ -22,8 +22,8 @@ public class CookieHelper {
 
     /**
      * 获取HttpRequest中的Cookies
-     * @param request
-     * @return
+     * @param request http请求
+     * @return cookie集合
      */
     public static Set<Cookie> getCookies(HttpRequest request){
         Set<Cookie> cookies;
@@ -38,8 +38,8 @@ public class CookieHelper {
 
     /**
      * 设置Cookie
-     * @param response
-     * @param cookie
+     * @param response http响应
+     * @param cookie cookie
      */
     public static void setCookie(HttpResponse response,Cookie cookie){
         response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
@@ -137,7 +137,7 @@ public class CookieHelper {
      */
     public static Cookie getCookie(HttpRequest request,String name){
         Map<String,Cookie> cookieMap = getCookieMap(request);
-        return cookieMap.containsKey(name)?cookieMap.get(name):null;
+        return cookieMap.getOrDefault(name, null);
     }
 
     /**

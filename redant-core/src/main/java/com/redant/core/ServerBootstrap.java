@@ -1,6 +1,6 @@
 package com.redant.core;
 
-import com.redant.core.server.NettyServer;
+import com.redant.core.server.NettyHttpServer;
 import com.redant.core.server.Server;
 
 /**
@@ -11,7 +11,7 @@ import com.redant.core.server.Server;
 public final class ServerBootstrap {
 
     public static void main(String[] args) {
-        Server nettyServer = new NettyServer();
+        Server nettyServer = new NettyHttpServer();
         // 各种初始化工作
         nettyServer.preStart();
         // 启动服务器
