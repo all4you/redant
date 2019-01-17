@@ -1,19 +1,16 @@
 package com.redant.cluster.zk;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import org.apache.zookeeper.server.*;
-import org.apache.zookeeper.server.admin.AdminServer;
-import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
-import org.apache.zookeeper.server.quorum.QuorumPeer;
+import org.apache.zookeeper.server.ServerConfig;
+import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig.ConfigException;
 import org.apache.zookeeper.server.quorum.QuorumPeerMain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * ZooKeeper服务端
@@ -25,130 +22,54 @@ public class ZkServer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZkServer.class);
 
-	/**
-	 * zk的基础目录，用以存放运行时所需的配置文件
-	 */
-	public static final String BASE_ZOOKEEPER_DIR = "/zookeeper/";
-
-	/**
-	 * 每次启动时会将zk的服务端地址写在该文件中
-	 */
-	public static final String ZOOKEEPER_ADDRESS_CFG = BASE_ZOOKEEPER_DIR+"zk_address.cfg";
-
-	public static final String ZOOKEEPER_STANDALONE_PROPERTIES_FILE = BASE_ZOOKEEPER_DIR+"zk_standalone.properties";
-
-	public static final String ZOOKEEPER_CLUSTER_PROPERTIES_FILE = BASE_ZOOKEEPER_DIR+"zk_cluster_server_%d.properties";
-
-	/**
-	 * ZK服务端地址
-	 */
-	private static String ZK_SERVER_ADDRESS;
-
-
-	public static final String getZkServerAddressWithArgs(String[] args){
-		String zkServerAddress = ZkServer.getZkServerAddress();
+	public static String getZkAddressArgs(String[] args, ZkConfig zkConfig){
+		String zkAddress = ZkServer.getZkAddress(zkConfig);
 		if(args.length>0 && StrUtil.isNotBlank(args[0])){
-			LOGGER.info("zkServerAddress is read from args");
-			zkServerAddress = args[0];
+			LOGGER.info("zkAddress is read from args");
+			zkAddress = args[0];
 		}
-		if(StrUtil.isBlank(zkServerAddress)){
-			LOGGER.error("zkServerAddress is blank please check file={}",ZkServer.ZOOKEEPER_ADDRESS_CFG);
+		if(StrUtil.isBlank(zkAddress)){
 			System.exit(1);
 		}
-		return zkServerAddress;
+		return zkAddress;
 	}
 
-	public static final String getZkServerAddress(){
-		if(StrUtil.isBlank(ZK_SERVER_ADDRESS)){
-			ZK_SERVER_ADDRESS = FileUtil.readUtf8String(new File(ZOOKEEPER_ADDRESS_CFG).getPath());
-		}
-		return ZK_SERVER_ADDRESS;
+	public static String getZkAddress(ZkConfig zkConfig){
+		return zkConfig!=null ? zkConfig.generateZkAddress() : null;
 	}
-
-
-	/**
-	 * 启动单机模式
-	 * @param zkPropertiesPath
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ConfigException
-	 */
-	public void startStandalone(String zkPropertiesPath) throws IOException, ConfigException, AdminServer.AdminServerException {
-		ServerConfig config = new ServerConfig();
-		config.parse(zkPropertiesPath);
-		startStandalone(config);
-	}
-
 
 	/**
 	 * 通过官方的ZooKeeperServerMain启动类启动单机模式
-	 * @param config
-	 * @throws IOException
-	 * @throws AdminServer.AdminServerException
+	 * @param zkConfig 配置对象
+	 * @throws ConfigException 配置异常
+	 * @throws IOException IO异常
 	 */
-	public void startStandalone(ServerConfig config) throws IOException, AdminServer.AdminServerException {
-		ZooKeeperServerMain main = new ZooKeeperServerMain();
-		main.runFromConfig(config);
-	}
+	public void startStandalone(ZkConfig zkConfig) throws ConfigException, IOException {
+		Properties zkProp = zkConfig.toProp();
 
-
-	/**
-	 * 启动集群模式
-	 * @param zkPropertiesPath
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ConfigException
-	 */
-	public void startCluster(String zkPropertiesPath) throws IOException, ConfigException{
 		QuorumPeerConfig config = new QuorumPeerConfig();
-		// 从配置文件读取配置
-		config.parse(zkPropertiesPath);
-		startFakeCluster(config);
-	}
+		config.parseProperties(zkProp);
 
+		ServerConfig serverConfig = new ServerConfig();
+		serverConfig.readFrom(config);
 
-	/**
-	 * 启动伪集群模式
-	 * @param config
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ConfigException
-	 */
-	public void startFakeCluster(QuorumPeerConfig config) throws IOException{
-
-		ServerCnxnFactory cnxnFactory = new NIOServerCnxnFactory();
-		cnxnFactory.configure(config.getClientPortAddress(), config.getMaxClientCnxns());
-
-		QuorumPeer quorumPeer = new QuorumPeer(config.getServers(), config.getDataDir(), config.getDataLogDir(), config.getElectionAlg(), config.getServerId(), config.getTickTime(), config.getInitLimit(), config.getSyncLimit(), config.getQuorumListenOnAllIPs(), cnxnFactory, config.getQuorumVerifier());
-		quorumPeer.setClientAddress(config.getClientPortAddress());
-		quorumPeer.setTxnFactory(new FileTxnSnapLog(config.getDataLogDir(), config.getDataDir()));
-		quorumPeer.setElectionType(config.getElectionAlg());
-		quorumPeer.setMyid(config.getServerId());
-		quorumPeer.setTickTime(config.getTickTime());
-		quorumPeer.setMinSessionTimeout(config.getMinSessionTimeout());
-		quorumPeer.setMaxSessionTimeout(config.getMaxSessionTimeout());
-		quorumPeer.setInitLimit(config.getInitLimit());
-		quorumPeer.setSyncLimit(config.getSyncLimit());
-		quorumPeer.setQuorumVerifier(config.getQuorumVerifier(), true);
-		quorumPeer.setCnxnFactory(cnxnFactory);
-		quorumPeer.setZKDatabase(new ZKDatabase(quorumPeer.getTxnFactory()));
-		quorumPeer.setLearnerType(config.getPeerType());
-		quorumPeer.setSyncEnabled(config.getSyncEnabled());
-		quorumPeer.setQuorumListenOnAllIPs(config.getQuorumListenOnAllIPs());
-
-		quorumPeer.start();
-		LOGGER.info("ZkServerCluster Started! ClientPortAddress={}", config.getClientPortAddress());
+		ZooKeeperServerMain zkServer = new ZooKeeperServerMain();
+		zkServer.runFromConfig(serverConfig);
 	}
 
 	/**
 	 * 通过官方的QuorumPeerMain启动类启动真集群模式
 	 * 会执行quorumPeer.join();
 	 * 需要在不同的服务器上执行
-	 * @param config
-	 * @throws IOException
-	 * @throws AdminServer.AdminServerException
+	 * @param zkConfig 配置对象
+	 * @throws ConfigException 配置异常
+	 * @throws IOException IO异常
 	 */
-	public void startCluster(QuorumPeerConfig config) throws IOException, AdminServer.AdminServerException {
+	public void startCluster(ZkConfig zkConfig) throws ConfigException, IOException {
+		Properties zkProp = zkConfig.toProp();
+		QuorumPeerConfig config = new QuorumPeerConfig();
+		config.parseProperties(zkProp);
+
 		QuorumPeerMain main = new QuorumPeerMain();
 		main.runFromConfig(config);
 	}

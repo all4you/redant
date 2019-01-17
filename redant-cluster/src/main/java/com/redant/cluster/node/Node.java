@@ -1,10 +1,10 @@
-package com.redant.cluster.slave;
+package com.redant.cluster.node;
 
-import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.redant.core.common.util.GenericsUtil;
 
 /**
  * Node
@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject;
  **/
 public class Node {
 
-    private static final String DEFAULT_HOST = NetUtil.getLocalhostStr();
+    private static final String DEFAULT_HOST = GenericsUtil.getLocalIpV4();
 
     private static final int DEFAULT_PORT = 8088;
 

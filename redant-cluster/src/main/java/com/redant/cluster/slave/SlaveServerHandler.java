@@ -46,7 +46,7 @@ public class SlaveServerHandler extends SimpleChannelInboundHandler {
                 }else {
                     // 每一个Controller的方法返回类型约定为Render的实现类
                     Object result = ProxyInvocation.invoke(controllerProxy);
-                    response = HttpRenderUtil.render(result,RenderType.JSON);
+                    response = HttpRenderUtil.render(result,controllerProxy.getRenderType());
                 }
             }catch(Exception e){
                 LOGGER.error("Slave Server channelRead0 error,cause:",e);

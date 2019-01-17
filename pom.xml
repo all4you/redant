@@ -21,13 +21,9 @@
         <fastjson.version>1.2.54</fastjson.version>
         <netty.version>4.1.9.Final</netty.version>
         <cglib.version>3.2.4</cglib.version>
-        <protostuff.version>1.0.8</protostuff.version>
-        <mockito.version>1.9.5</mockito.version>
         <hutool-all.version>4.2.1</hutool-all.version>
-        <javassist.version>3.20.0-GA</javassist.version>
-        <velocity.version>1.7</velocity.version>
-        <zookeeper.version>3.5.1-alpha</zookeeper.version>
-        <curator.version>3.2.1</curator.version>
+        <zookeeper.version>3.4.13</zookeeper.version>
+        <curator.version>4.0.1</curator.version>
     </properties>
 
     <modules>
@@ -76,44 +72,9 @@
                 <version>${cglib.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-core</artifactId>
-                <version>${protostuff.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-api</artifactId>
-                <version>${protostuff.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-collectionschema</artifactId>
-                <version>${protostuff.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.dyuproject.protostuff</groupId>
-                <artifactId>protostuff-runtime</artifactId>
-                <version>${protostuff.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool-all.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>${velocity.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>

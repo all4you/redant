@@ -1,6 +1,7 @@
 package com.redant.cluster.slave;
 
-import com.redant.cluster.service.register.RegisteryWrapper;
+import com.redant.cluster.node.Node;
+import com.redant.cluster.service.register.ZkServiceRegister;
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.init.InitExecutor;
 import com.redant.core.server.Server;
@@ -27,11 +28,11 @@ public final class SlaveServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SlaveServer.class);
 
-    private String zkServerAddress;
+    private String zkAddress;
     private Node node;
 
-    public SlaveServer(String zkServerAddress, Node node){
-        this.zkServerAddress = zkServerAddress;
+    public SlaveServer(String zkAddress, Node node){
+        this.zkAddress = zkAddress;
         this.node = node;
     }
 
@@ -39,7 +40,7 @@ public final class SlaveServer implements Server {
     public void preStart() {
         InitExecutor.init();
         // 注册Slave到ZK
-        RegisteryWrapper.register(zkServerAddress, node);
+        ZkServiceRegister.getInstance(zkAddress).register(node);
     }
 
     @Override

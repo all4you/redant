@@ -1,7 +1,8 @@
 package com.redant.cluster.master;
 
-import com.redant.cluster.slave.Node;
-import com.redant.cluster.service.discover.DiscoveryWrapper;
+import com.redant.cluster.service.discover.ServiceDiscover;
+import com.redant.cluster.service.discover.ZkServiceDiscover;
+import com.redant.cluster.node.Node;
 import com.redant.core.common.constants.CommonConstants;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * MasterServerHandler is a http master which
- * will transfer http request to slave server
+ * will transfer http request to node server
  * @author houyi.wh
  * @date 2017/11/20
  */
@@ -23,7 +24,7 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(MasterServerHandler.class);
 
-    private Node slave;
+    private Node node;
 
     /**
      * Client--->Master Channel
@@ -37,9 +38,15 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
 
     private ChannelFuture outboundConnectFuture;
 
+    private ServiceDiscover serviceDiscover;
+
+    public MasterServerHandler(String zkAddress){
+        this.serviceDiscover = ZkServiceDiscover.getInstance(zkAddress);
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        slave = DiscoveryWrapper.nextSlave();
+        node = serviceDiscover.discover();
         inboundChannel = ctx.channel();
 
         // Start the connection attempt.
@@ -57,8 +64,8 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                     }
                 });
         bootstrap.option(ChannelOption.AUTO_READ, false);
-        // connect to slave
-        outboundConnectFuture = bootstrap.connect(slave.getHost(), slave.getPort());
+        // connect to node
+        outboundConnectFuture = bootstrap.connect(node.getHost(), node.getPort());
         // get outboundChannel to remote server
         outboundChannel = outboundConnectFuture.channel();
 
@@ -85,7 +92,7 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                                         // was able to flush out data, start to read the next chunk
                                         ctx.channel().read();
                                     } else {
-                                        LOGGER.error("write to backend {}:{} error,cause:{}", slave.getHost(), slave.getPort(),future.cause());
+                                        LOGGER.error("write to backend {}:{} error,cause:{}", node.getHost(), node.getPort(),future.cause());
                                         future.channel().close();
                                     }
                                 }
@@ -95,7 +102,7 @@ public class MasterServerHandler extends ChannelInboundHandlerAdapter {
                         }
                     }
                 } else {
-                    LOGGER.error("connect to backend {}:{} error,cause:{}", slave.getHost(), slave.getPort(),future.cause());
+                    LOGGER.error("connect to backend {}:{} error,cause:{}", node.getHost(), node.getPort(),future.cause());
                     // Close the connection if the connection attempt has failed.
                     inboundChannel.close();
                 }

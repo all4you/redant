@@ -1,6 +1,7 @@
 package com.redant.cluster.bootstrap;
 
 import com.redant.cluster.master.MasterServer;
+import com.redant.cluster.zk.ZkConfig;
 import com.redant.cluster.zk.ZkServer;
 import com.redant.core.server.Server;
 
@@ -12,10 +13,10 @@ import com.redant.core.server.Server;
 public class MasterServerBootstrap {
 
     public static void main(String[] args) {
-        String zkServerAddress = ZkServer.getZkServerAddressWithArgs(args);
+        String zkAddress = ZkServer.getZkAddressArgs(args,ZkConfig.DEFAULT);
 
         // 启动MasterServer
-        Server proxyServer = new MasterServer(zkServerAddress);
+        Server proxyServer = new MasterServer(zkAddress);
         proxyServer.preStart();
         proxyServer.start();
     }

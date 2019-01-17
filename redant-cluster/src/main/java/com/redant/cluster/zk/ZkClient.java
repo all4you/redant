@@ -32,41 +32,40 @@ public class ZkClient {
     private static Lock lock;
 
     static{
-        clients = new ConcurrentHashMap<String,CuratorFramework>();
+        clients = new ConcurrentHashMap<>();
         lock = new ReentrantLock();
     }
 
     /**
      * 获取ZK客户端
-     * @param zkServerAddress
-     * @return
+     * @param zkAddress zk服务端地址
+     * @return zk客户端
      */
-    public static CuratorFramework getClient(String zkServerAddress){
-        if(zkServerAddress == null || zkServerAddress.trim().length() == 0){
+    public static CuratorFramework getClient(String zkAddress){
+        if(zkAddress == null || zkAddress.trim().length() == 0){
             return null;
         }
-        CuratorFramework client = clients.get(zkServerAddress);
+        CuratorFramework client = clients.get(zkAddress);
         if(client==null){
             lock.lock();
             try {
-                if(!clients.containsKey(zkServerAddress)) {
+                if(!clients.containsKey(zkAddress)) {
                     client = CuratorFrameworkFactory.newClient(
-                            zkServerAddress,
+                            zkAddress,
                             DEFAULT_SESSION_TIMEOUT_MS,
                             DEFAULT_CONNECTION_TIMEOUT_MS,
                             new RetryNTimes(10, 5000)
                     );
                     client.start();
-                    clients.putIfAbsent(zkServerAddress,client);
+                    clients.putIfAbsent(zkAddress,client);
                 }else{
-                    client = clients.get(zkServerAddress);
+                    client = clients.get(zkAddress);
                 }
             }finally {
                 lock.unlock();
             }
         }
         return client;
-
     }
 
 }

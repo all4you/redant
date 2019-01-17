@@ -1,5 +1,6 @@
 package com.redant.core.common.util;
 
+import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.StrUtil;
 import com.redant.core.common.exception.ValidationException;
 
@@ -7,6 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -74,6 +76,15 @@ public class GenericsUtil {
 				throw new ValidationException("[" + dataName + "] cannot be blank");
 			}
 		}
+	}
+
+	/**
+	 * 获取ipV4
+	 * @return ipV4
+	 */
+	public static String getLocalIpV4(){
+		LinkedHashSet<String> ipV4Set = NetUtil.localIpv4s();
+		return ipV4Set.isEmpty()?"":ipV4Set.toArray()[0].toString();
 	}
 
 }

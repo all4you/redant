@@ -1,7 +1,7 @@
 package com.redant.cluster.service.register;
 
 import cn.hutool.core.util.StrUtil;
-import com.redant.cluster.slave.Node;
+import com.redant.cluster.node.Node;
 import com.redant.cluster.zk.ZkClient;
 import com.redant.cluster.zk.ZkNode;
 import org.apache.curator.framework.CuratorFramework;
@@ -13,17 +13,32 @@ import org.slf4j.LoggerFactory;
  * @author houyi.wh
  * @date 2017/11/21
  **/
-public class DefaultServiceRegistery implements ServiceRegistery {
+public class ZkServiceRegister implements ServiceRegister {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceRegistery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZkServiceRegister.class);
 
     private CuratorFramework client;
 
+    private static ZkServiceRegister register;
 
-    public DefaultServiceRegistery(String zkServerAddress){
-        client = ZkClient.getClient(zkServerAddress);
+    private ZkServiceRegister(){
+
     }
 
+    private ZkServiceRegister(String zkAddress){
+        client = ZkClient.getClient(zkAddress);
+    }
+
+    public static ServiceRegister getInstance(String zkAddress){
+        if(register==null) {
+            synchronized (ZkServiceRegister.class) {
+                if(register==null) {
+                    register = new ZkServiceRegister(zkAddress);
+                }
+            }
+        }
+        return register;
+    }
 
     @Override
     public void register(Node node) {

@@ -1,6 +1,6 @@
 package com.redant.cluster.master;
 
-import com.redant.cluster.service.discover.DiscoveryWrapper;
+import com.redant.cluster.service.discover.ZkServiceDiscover;
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.server.Server;
 import io.netty.bootstrap.ServerBootstrap;
@@ -26,16 +26,16 @@ public final class MasterServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterServer.class);
 
-    private String zkServerAddress;
+    private String zkAddress;
 
-    public MasterServer(String zkServerAddress){
-        this.zkServerAddress = zkServerAddress;
+    public MasterServer(String zkAddress){
+        this.zkAddress = zkAddress;
     }
 
     @Override
     public void preStart() {
         // 监听SlaveNode的变化
-        DiscoveryWrapper.watchSlave(zkServerAddress);
+        ZkServiceDiscover.getInstance(zkAddress).watch();
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class MasterServer implements Server {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
 //             .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new MasterServerInitializer());
+             .childHandler(new MasterServerInitializer(zkAddress));
 
             ChannelFuture future = b.bind(CommonConstants.SERVER_PORT).sync();
             long cost = System.currentTimeMillis()-start;
@@ -67,6 +67,12 @@ public final class MasterServer implements Server {
 
     private static class MasterServerInitializer extends ChannelInitializer<SocketChannel> {
 
+        private String zkAddress;
+
+        MasterServerInitializer(String zkAddress){
+            this.zkAddress = zkAddress;
+        }
+
         @Override
         public void initChannel(SocketChannel ch) {
             ChannelPipeline pipeline = ch.pipeline();
@@ -75,7 +81,7 @@ public final class MasterServer implements Server {
             pipeline.addLast(new HttpContentCompressor());
             pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
             pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new MasterServerHandler());
+            pipeline.addLast(new MasterServerHandler(zkAddress));
         }
     }
 
