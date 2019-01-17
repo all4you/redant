@@ -4,16 +4,14 @@ import com.redant.cluster.node.Node;
 import com.redant.cluster.service.register.ZkServiceRegister;
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.init.InitExecutor;
+import com.redant.core.server.NettyHttpServerInitializer;
 import com.redant.core.server.Server;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +55,7 @@ public final class SlaveServer implements Server {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
 //             .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new SlaveServerInitializer());
+             .childHandler(new NettyHttpServerInitializer());
 
             ChannelFuture future = b.bind(node.getPort()).sync();
             long cost = System.currentTimeMillis()-start;
@@ -70,19 +68,6 @@ public final class SlaveServer implements Server {
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
-        }
-    }
-
-    private static class SlaveServerInitializer extends ChannelInitializer<SocketChannel> {
-        @Override
-        public void initChannel(SocketChannel ch) {
-            ChannelPipeline pipeline = ch.pipeline();
-
-            pipeline.addLast(new HttpServerCodec());
-            pipeline.addLast(new HttpContentCompressor());
-            pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
-            pipeline.addLast(new ChunkedWriteHandler());
-            pipeline.addLast(new SlaveServerHandler());
         }
     }
 

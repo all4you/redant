@@ -24,8 +24,6 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ControllerDispatcher.class);
 
-    private final static Logger ROUTER_LOGGER = LoggerFactory.getLogger("routerMsgLog");
-
     private static ControllerContext controllerContext = DefaultControllerContext.getInstance();
 
     @Override
@@ -51,7 +49,7 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                     response = HttpRenderUtil.render(result, controllerProxy.getRenderType());
                 }
             }catch(Exception e){
-                ROUTER_LOGGER.error("Server Internal Error,cause:",e);
+                LOGGER.error("Server Internal Error,cause:",e);
                 forceClose = true;
                 if(e instanceof IllegalArgumentException || e instanceof InvocationException){
                     response = HttpRenderUtil.getErrorResponse(e.getMessage());

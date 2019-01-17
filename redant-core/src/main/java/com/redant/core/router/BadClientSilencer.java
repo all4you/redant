@@ -27,7 +27,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  * catch all exceptions caused by bad client (closed connection, malformed request etc.)
  * and server processing, then close the connection.
  *
- * By default exceptions are logged to Netty internal logger. You may need to override
+ * By default exceptions are logged to Netty internal LOGGER. You may need to override
  * {@link #onUnknownMessage(Object)}, {@link #onBadClient(Throwable)}, and
  * {@link #onBadServer(Throwable)} to log to more suitable places.
  */
@@ -35,17 +35,17 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 public class BadClientSilencer extends SimpleChannelInboundHandler<Object> {
     private static final InternalLogger log = InternalLoggerFactory.getInstance(BadClientSilencer.class);
 
-    /** Logs to Netty internal logger. Override this method to log to other places if you want. */
+    /** Logs to Netty internal LOGGER. Override this method to log to other places if you want. */
     protected void onUnknownMessage(Object msg) {
         log.warn("Unknown msg: " + msg);
     }
 
-    /** Logs to Netty internal logger. Override this method to log to other places if you want. */
+    /** Logs to Netty internal LOGGER. Override this method to log to other places if you want. */
     protected void onBadClient(Throwable e) {
         log.warn("Caught exception (maybe client is bad)", e);
     }
 
-    /** Logs to Netty internal logger. Override this method to log to other places if you want. */
+    /** Logs to Netty internal LOGGER. Override this method to log to other places if you want. */
     protected void onBadServer(Throwable e) {
         log.warn("Caught exception (maybe server is bad)", e);
     }
