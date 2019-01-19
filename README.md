@@ -1,96 +1,95 @@
-# RedAnt Project
+# RedAnt 项目
 
-[中文文档](https://github.com/all4you/redant/blob/master/README_CN.md)
 
-**RedAnt** is a lightweight web container which based on Netty
+**RedAnt** 是一个基于 Netty 的轻量级 Web 容器
 
- **Features:**
+ **特性:**
  
-- **Bean Manager** : all objects can be managed by using Bean annotation 
-- **Object Autowired** : object can be injected automatically by using Autowired annotation
-- **Customized Route**  : user can self customize their routes with RouterController,RouterMapping,RouterParam annotation
-- **Param Convert**  : with TypeConverter interface http parameters can be converted into Object (support PrimitiveType,Map,List,JavaBean)
-- **Session Manager**  : include a session manager,a session is a Netty ChannelHandlerContext
-- **Cookie Manager**  : include a cookie manager,user should handle their cookies before return a render
-- **Result Render**  : a render interface which support html,xml,plain,json
-- **Standalone Mode**  : support single node mode
-- **Multi nodes Mode**  : support multi slaves and one master mode,which master is used as a proxy
+- **对象管理** : 像 Spring 一样管理所有的对象，通过加 @Bean 注解
+- **对象注入** : 像 Spring 一样自动注入对象，通过加 @Autowired 注解
+- **自定义路由**  : 通过 @Controller @Mapping @Param 注解可以自定义路由
+- **参数转换**  : 通过 TypeConverter 接口， http 参数会被转成对象(支持基本类型,Map,List,JavaBean)
+- **Session管理r**  : 内置一个 Session 管理器,通过 Netty 的 ChannelHandlerContext 作为一个Session
+- **Cookie管理**  : 内置一个 Cookie 管理器
+- **结果渲染**  : 支持对结果进行渲染，支持 html,xml,plain,json
+- **单机模式**  : 支持单机模式
+- **多节点模式**  : 支持多节点模式，一个主节点多个从节点，主节点作为代理
 
 -------------------
 
-## How to Run
+## 怎么运行
 
-### 1.Standalone mode
+### 1.单机模式
 
-Redant is a web container based on Netty,like Tomcat or WebLogic.
+Redant 是一个基于 Netty 的 Web 容器，类似 Tomcat 和 WebLogic 等容器
 
-The only thing you need to do is make it work by start it with java. 
+你需要做的就是通过启动它，让他来工作 
 
-- 1 : Use IDEA or eclipse to run the Main Class:
+- 1 : 通过 IDEA 或者 eclipse 等工具来运行下面的 Main 方法:
 
-``` sh
+``` java
 com.redant.core.ServerBootstrap
 ```
 
-- 2 : Use Maven to build Redant into an executable jar, and run:
+- 2 : 通过 Maven 将 Redant 打包成一个可执行的 jar 包, 然后运行它:
 
 ``` sh
 java -jar redant-jar-with-dependencies.jar
 ```
 
 
-### 2.Multi nodes mode
+### 2.多节点模式
 
-The Multi nodes mode is made up by a Master and several Slaves.
+多节点模式是由主节点和若干个从节点构成的。
 
-Master will accept http request,and send them to slave to handle.
+主节点接收到请求后，将请求转发给从节点来处理。
 
 
-#### Start a master
+#### 启动主节点
 
-- 1 : Start a ZooKeeperServer
+- 1 : 启动一个 ZooKeeper 服务端
 
-You can set to use Standalone or Cluster mode in zk.cfg default mode is cluster.
+你可以在 zk.cfg 中设置启动的模式，默认的是 `cluster` 模式
 
-But it is not required if you already have a zk server.
+但是这并不是必须的，如果你已经有一个正在运行的 Zk 的服务端，那么你可以直接使用它
 
-If you don't have a zk server currently just run the Main Class to start one:
+如果你没有可用的 Zk 服务端的话，那你可以通过运行下面的 Main 方法来启动一个：
 
-``` sh
+``` java
 com.redant.cluster.bootstrap.ZkBootstrap
 ```
 
-- 2 : Start a Master Server
+- 2 : 启动一个 Master 服务端
 
-Start a Master Server just run the Main Class:
+要启动一个 Master 服务端，只要运行下面的 Main 方法：
 
-``` sh
+``` java
 com.redant.cluster.bootstrap.MasterServerBootstrap
 ```
 
-#### Start a slave
+#### 启动从节点
 
-- 1：Start a Slave Server 
+- 1：启动一个 Slave 服务端
 
-Start a Slave Server just run the Main Class: 
+要启动一个 Slave 服务端，只要运行下面的 Main 方法： 
 
-``` sh
+``` java
 com.redant.cluster.bootstrap.SlaveServerBootstrap
 ```
 
-## Example
+## 例子
 
-You can start the Server provided in `redant-example` for experience.
+你可以运行 `redant-example` 模块中提供的例子来体验一下
 
-The way to start is just the same as upon.
+启动的方式和上面讲述的完全一样，区别只是主类是在 `redant-example` 中
 
-After startup the Server, visit  http://127.0.0.1:8888 (the default port can be modified in redant.properties) in a browser.
+启动完之后，你可以在浏览器中访问 http://127.0.0.1:8888 来查看具体的效果 (默认的端口可以在 redant.properties 中修改)
 
-If you get  "Welcome to redant!" which means the server is started successfully. 
+如果你看到了这样的消息："Welcome to redant!" 这就意味着你已经启动成功了. 
 
-There are several default Routers included in `redant-example` module:
+在 `redant-example` 模块中，内置了以下几个默认的路由:
 
-| Method Type       | URL                          | Response Type                 |
+| 方法类型           | URL                          | 响应类型                       |
 | ----------------- | ---------------------------- | ----------------------------- |
 | GET               | /                            | HTML                          |
 | \*                | \*                           | HTML                          |
@@ -101,49 +100,43 @@ There are several default Routers included in `redant-example` module:
 
 
 
-## Bean Manager
+## Bean 管理器
 
-All objects can be managed by using Bean annotation,and object can be injected automatically by using Autowired annotation.
+跟 Spring 一样，你可以通过 @Bean 注解来管理所有的对象，通过 @Autowired 来自动注入
 
-It's very easy to use them like you are doing it with spring.
-
-**Tips：** More information please see wiki: [Bean][1]
+**Tips：** 更多信息请查看wiki: [Bean][1]
 
 
 
-## Customized Route
+## 自定义路由
 
-Use RouterController to customize a Controller. 
+跟 Spring 一样，你可以通过 @Controller 来自定义一个 Controller.
+ 
+@Mapping 注解用在方法级别，@Controller + @Mapping 唯一定义一个 http 请求。
 
-RouterMapping will specify the exact method,RouterController+RouterMapping can only match a http request. 
+@Param 注解用在方法的参数上。通过该注解可以自动将基本类型转成 POJO 对象。
 
-RouterParam is used to mark the parameters in the method.
-
-POJO will be converted automatically while PrimitiveType should be marked with a RouterParam annotation.
-
-**Tips：** More information please see wiki: [Router][2]
+**Tips：** 更多信息请查看wiki: [Router][2]
 
 
 
-## Session Manager
+## Session 管理器
 
-A Session Manager is included to store custom sessions. 
+Session 管理器可以管理用户自定义的 Session. 
 
-A session is a Netty ChannelHandlerContext,and the channelId is used as a sessionId. 
+Session 是通过 Netty的 ChannelHandlerContext 来体现的，channelId 作为 sessionId。
+ 
+每个 Session 中都保持着一个 Map 来存储各种信息
 
-Each session hold a map to store the properties.
-
-**Tips：** More information please see wiki: [Session][3]
+**Tips：** 更多信息请查看wiki: [Session][3]
 
 
 
-## Cookie Manager
+## Cookie 管理器
 
-A Cookie Manager is included to handle custom cookies.
+Cookie 管理器可以管理用户自定义的 Cookie。
 
-It is important to note that`cookies should be set or remove before a render is returned`.
-
-**Tips：** More information please see wiki: [Cookie][4]
+**Tips：** 更多信息请查看wiki: [Cookie][4]
 
 
 
