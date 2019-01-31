@@ -16,9 +16,9 @@ public class MasterServerBootstrap {
         String zkAddress = ZkServer.getZkAddressArgs(args,ZkConfig.DEFAULT);
 
         // 启动MasterServer
-        Server proxyServer = new MasterServer(zkAddress);
-        proxyServer.preStart();
-        proxyServer.start();
+        Server masterServer = new MasterServer(zkAddress);
+        masterServer.preStart();
+        masterServer.start();
     }
 
 }

@@ -18,9 +18,9 @@ public class SlaveServerBootstrap {
         Node node = Node.getNodeWithArgs(args);
 
         // 启动SlaveServer
-        Server nodeServer = new SlaveServer(zkAddress,node);
-        nodeServer.preStart();
-        nodeServer.start();
+        Server slaveServer = new SlaveServer(zkAddress,node);
+        slaveServer.preStart();
+        slaveServer.start();
     }
 
 }
