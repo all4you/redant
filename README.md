@@ -4,8 +4,7 @@
 
  **特性:**
 
-- [x] **对象管理** : 像 Spring 一样管理所有的对象，通过加 @Bean 注解
-- [x] **对象注入** : 像 Spring 一样自动注入对象，通过加 @Autowired 注解
+- [x] **IOC容器** : 通过 @Bean 注解可以管理所有对象，通过 @Autowired 注解进行对象注入
 - [x] **自定义路由**  : 通过 @Controller @Mapping @Param 注解可以自定义路由
 - [x] **自动参数转换**  : 通过 TypeConverter 接口，http 参数会被转成对象(支持基本类型,Map,List,JavaBean)
 - [x] **结果渲染**  : 支持对结果进行渲染，支持 html, xml, plain, json 格式
