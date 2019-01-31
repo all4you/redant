@@ -37,10 +37,6 @@ public class TemporaryDataHolder {
 		 */
 		CONTEXT("context"),
 		/**
-		 * forceClose
-		 */
-		FORCE_CLOSE("forceClose"),
-		/**
 		 * cookie
 		 */
 		COOKIE("cookie"),
@@ -102,12 +98,6 @@ public class TemporaryDataHolder {
 		}
 	}
 
-	public static void storeForceClose(Boolean forceClose){
-		if(forceClose!=null){
-			TemporaryDataHolder.store(HolderType.FORCE_CLOSE,forceClose);
-		}
-	}
-
 	public static void storeContext(ChannelHandlerContext context){
 		if(context!=null){
 			TemporaryDataHolder.store(HolderType.CONTEXT,context);
@@ -133,11 +123,6 @@ public class TemporaryDataHolder {
 	public static FullHttpResponse loadHttpResponse(){
 	    Object object = TemporaryDataHolder.get(HolderType.RESPONSE);
 		return object==null?null:(FullHttpResponse)object;
-	}
-
-	public static boolean loadForceClose(){
-	    Object object = TemporaryDataHolder.get(HolderType.FORCE_CLOSE);
-		return object != null && (boolean) object;
 	}
 
 	public static ChannelHandlerContext loadContext(){

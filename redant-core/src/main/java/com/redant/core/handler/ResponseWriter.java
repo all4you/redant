@@ -26,7 +26,6 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
 
     private HttpRequest request;
     private Channel channel;
-    private boolean forceClose;
     private FullHttpResponse response;
 
     @Override
@@ -40,7 +39,6 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
                 ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
             }
             channel = ctx.channel();
-            forceClose = TemporaryDataHolder.loadForceClose();
             response = TemporaryDataHolder.loadHttpResponse();
             writeResponse();
         }
@@ -65,9 +63,7 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
      */
     private void writeResponse(){
         boolean close = isClose();
-        if(!close && !forceClose && !response.headers().contains(HttpHeaderNames.CONTENT_LENGTH)){
-            response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
-        }
+        response.headers().add(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().readableBytes()));
         // 写cookie
         Set<Cookie> cookies = TemporaryDataHolder.loadCookies();
         if(!CollectionUtil.isEmpty(cookies)){
@@ -76,7 +72,7 @@ public class ResponseWriter extends SimpleChannelInboundHandler {
             }
         }
         ChannelFuture future = channel.write(response);
-        if(close || forceClose){
+        if(close){
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }

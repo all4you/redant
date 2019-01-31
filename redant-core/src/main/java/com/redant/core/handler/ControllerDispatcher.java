@@ -30,13 +30,11 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
-            boolean forceClose = false;
             HttpResponse response;
             try{
                 // 根据路由获得具体的ControllerProxy
                 ControllerProxy controllerProxy = controllerContext.getProxy(request.method(),request.uri());
                 if(controllerProxy == null){
-                    forceClose = true;
                     response = HttpRenderUtil.getNotFoundResponse();
                 }else {
                     // 每一个Controller的方法返回类型约定为Render的实现类
@@ -45,14 +43,12 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
                 }
             }catch(Exception e){
                 LOGGER.error("Server Internal Error,cause:",e);
-                forceClose = true;
                 if(e instanceof IllegalArgumentException || e instanceof InvocationException){
                     response = HttpRenderUtil.getErrorResponse(e.getMessage());
                 }else{
                     response = HttpRenderUtil.getServerErrorResponse();
                 }
             }
-            TemporaryDataHolder.storeForceClose(forceClose);
             TemporaryDataHolder.storeHttpResponse(response);
         }
         /*
