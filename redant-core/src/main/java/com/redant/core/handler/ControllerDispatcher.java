@@ -30,11 +30,6 @@ public class ControllerDispatcher extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if(msg instanceof HttpRequest){
             HttpRequest request = (HttpRequest) msg;
-            if(!CommonConstants.FAVICON_ICO.equals(request.uri())){
-                // 将request和context存储到ThreadLocal中去，便于后期在其他地方获取并使用
-                TemporaryDataHolder.storeHttpRequest(request);
-                TemporaryDataHolder.storeContext(ctx);
-            }
             boolean forceClose = false;
             HttpResponse response;
             try{

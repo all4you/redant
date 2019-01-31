@@ -46,6 +46,16 @@ public class CommonConstants {
     public static final boolean USE_SSL = propertiesUtil.getBoolean("netty.server.use.ssl");
 
     /**
+     * 是否开启压缩
+     */
+    public static final boolean USE_COMPRESS = propertiesUtil.getBoolean("netty.server.use.compress");
+
+    /**
+     * 是否开启http对象聚合
+     */
+    public static final boolean USE_AGGREGATOR = propertiesUtil.getBoolean("netty.server.use.aggregator");
+
+    /**
      * KeyStore path
      */
     public static final String KEY_STORE_PATH = propertiesUtil.getString("ssl.keyStore.path");
