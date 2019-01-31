@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+  
+<!-- 从高到地低 OFF 、 FATAL 、 ERROR 、 WARN 、 INFO 、 DEBUG 、 TRACE 、 ALL -->  
+<!-- 日志输出规则  根据当前ROOT 级别，日志输出时，级别高于root默认的级别时  会输出 -->  
+<!-- 以下  每个配置的 filter 是过滤掉输出文件里面，会出现高级别文件，依然出现低级别的日志信息，通过filter 过滤只记录本级别的日志-->  
+  
+
+<!-- 属性描述 scan：性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。   
+    debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->  
+<configuration scan="true" scanPeriod="60 seconds" debug="false">  
+    <!-- 日志最大的历史 7天 -->  
+    <property name="maxHistory" value="7"/>  
+	<!-- 日志最大的文件大小 10MB-->
+	<property name="maxFileSize" value="10MB"/>
+
+	<property name="baseLogDir" value="${user.dir}/logback"/>
+
+    <!-- ConsoleAppender 控制台输出日志 -->  
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">  
+        <!-- 对日志进行格式化 -->  
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss,SSS} [%thread] %-5level %logger:%line - %msg%n</pattern>
+        </encoder>  
+    </appender>  
+  
+    <!-- WARN级别日志 appender -->  
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <!-- 过滤器，过滤掉 TRACE 和 DEBUG 和 INFO 级别的日志 -->  
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">  
+            <level>WARN</level>
+        </filter>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${baseLogDir}/logs/%d{yyyy-MM-dd}/warn-log.log</fileNamePattern>  
+            <!-- 日志最大的保存天数 -->  
+            <maxHistory>${maxHistory}</maxHistory>  
+        </rollingPolicy>  
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${maxFileSize}</maxFileSize>
+        </triggeringPolicy>
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger:%line - %msg%n</pattern>
+        </encoder>  
+    </appender>  
+
+    <!-- DEBUG级别日志 appender -->  
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">   
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+            <!-- 按天回滚 daily -->  
+            <fileNamePattern>${baseLogDir}/logs/%d{yyyy-MM-dd}/debug-log.log</fileNamePattern>  
+            <!-- 日志最大的历史 60天 -->  
+            <maxHistory>${maxHistory}</maxHistory>  
+        </rollingPolicy>  
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${maxFileSize}</maxFileSize>
+        </triggeringPolicy>
+        <encoder>  
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger:%line - %msg%n</pattern>
+        </encoder>  
+    </appender>
+
+
+    <logger name="com.redant" level="INFO"/>
+
+    <!-- root级别   DEBUG -->  
+    <root level="INFO">
+        <!-- 控制台输出 -->
+        <appender-ref ref="STDOUT" />
+        <!-- 文件输出 -->
+        <appender-ref ref="DEBUG" />
+    </root>
+
+
+    <!-- router的相关日志 -->
+    <appender name="ROUTER_MSG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${baseLogDir}/logs/%d{yyyy-MM-dd}/routerMsg.log</fileNamePattern>
+            <!-- 日志最大的保存天数 -->
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${maxFileSize}</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%-1relative - %d{HH:mm:ss.SSS} [%thread] %-5level %logger{0}:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- router的相关日志 -->
+    <logger name="routerMsgLog" additivity="true">
+        <level value="INFO"/>
+        <appender-ref ref="ROUTER_MSG" />
+    </logger>
+
+</configuration>  
