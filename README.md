@@ -1,93 +1,136 @@
 # RedAnt 项目
 
-
 **RedAnt** 是一个基于 Netty 的轻量级 Web 容器
 
  **特性:**
- 
-- **对象管理** : 像 Spring 一样管理所有的对象，通过加 @Bean 注解
-- **对象注入** : 像 Spring 一样自动注入对象，通过加 @Autowired 注解
-- **自定义路由**  : 通过 @Controller @Mapping @Param 注解可以自定义路由
-- **参数转换**  : 通过 TypeConverter 接口， http 参数会被转成对象(支持基本类型,Map,List,JavaBean)
-- **Session管理r**  : 内置一个 Session 管理器,通过 Netty 的 ChannelHandlerContext 作为一个Session
-- **Cookie管理**  : 内置一个 Cookie 管理器
-- **结果渲染**  : 支持对结果进行渲染，支持 html,xml,plain,json
-- **单机模式**  : 支持单机模式
-- **多节点模式**  : 支持多节点模式，一个主节点多个从节点，主节点作为代理
 
--------------------
+- [x] **对象管理** : 像 Spring 一样管理所有的对象，通过加 @Bean 注解
+- [x] **对象注入** : 像 Spring 一样自动注入对象，通过加 @Autowired 注解
+- [x] **自定义路由**  : 通过 @Controller @Mapping @Param 注解可以自定义路由
+- [x] **自动参数转换**  : 通过 TypeConverter 接口，http 参数会被转成对象(支持基本类型,Map,List,JavaBean)
+- [x] **结果渲染**  : 支持对结果进行渲染，支持 html, xml, plain, json 格式
+- [x] **Cookie管理**  : 内置一个 Cookie 管理器
+- [x] **前置后置拦截器** ：支持前置拦截器与后置拦截器
+- [x] **单机模式**  : 支持单机模式
+- [x] **多节点模式**  : 支持多节点模式，一个主节点多个从节点，主节点作为代理
+- [x] **服务注册与发现** ：实现了一个基于 Zk 的服务注册与发现，来支持多节点模式
+- [ ] **Session管理**  : 因为涉及到多节点模式，分布式 session 暂未实现
 
-## 怎么运行
+
+
+
+
+## 快速启动
 
 ### 1.单机模式
 
 Redant 是一个基于 Netty 的 Web 容器，类似 Tomcat 和 WebLogic 等容器
 
-你需要做的就是通过启动它，让他来工作 
-
-- 1 : 通过 IDEA 或者 eclipse 等工具来运行下面的 Main 方法:
+只需要启动一个 Server，默认的实现类是 NettyHttpServer 就能快速启动一个 web 容器了，如下所示：
 
 ``` java
-com.redant.core.ServerBootstrap
+public final class ServerBootstrap {
+    public static void main(String[] args) {
+        Server nettyServer = new NettyHttpServer();
+        // 各种初始化工作
+        nettyServer.preStart();
+        // 启动服务器
+        nettyServer.start();
+    }
+}
 ```
 
-- 2 : 通过 Maven 将 Redant 打包成一个可执行的 jar 包, 然后运行它:
-
-``` sh
-java -jar redant-jar-with-dependencies.jar
-```
 
 
 ### 2.多节点模式
 
-多节点模式是由主节点和若干个从节点构成的。
+多节点模式是由一个主节点和若干个从节点构成的。主节点接收到请求后，将请求转发给从节点来处理。
 
-主节点接收到请求后，将请求转发给从节点来处理。
+多节点模式需要有一个服务注册和发现的功能，目前是借助于 Zk 来做的服务注册与发现。
+
+
+
+
+#### 准备一个 Zk 服务端
+
+因为主节点需要把请求转发给从节点，所以主节点需要知道目前有哪些从节点，我通过 ZooKeeper 来实现服务注册与发现。
+
+如果你没有可用的 Zk 服务端的话，那你可以通过运行下面的 Main 方法来启动一个 ZooKeeper 服务端：
+
+``` java
+public final class ZkBootstrap {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZkBootstrap.class);
+
+    public static void main(String[] args) {
+        try {
+            ZkServer zkServer = new ZkServer();
+            zkServer.startStandalone(ZkConfig.DEFAULT);
+        }catch (Exception e){
+            LOGGER.error("ZkBootstrap start failed,cause:",e);
+            System.exit(1);
+        }
+    }
+}
+```
+
+这样你就可以在后面启动主从节点的时候使用这个 Zk 了。但是这并不是必须的，如果你已经有一个正在运行的 Zk 的服务端，那么你可以在启动主从节点的时候直接使用它，通过在 main 方法的参数中指定 Zk 的地址即可。
+
 
 
 #### 启动主节点
 
-- 1 : 启动一个 ZooKeeper 服务端
-
-你可以在 zk.cfg 中设置启动的模式，默认的是 `cluster` 模式
-
-但是这并不是必须的，如果你已经有一个正在运行的 Zk 的服务端，那么你可以直接使用它
-
-如果你没有可用的 Zk 服务端的话，那你可以通过运行下面的 Main 方法来启动一个：
+只需要运行下面的代码，就可以启动一个主节点了：
 
 ``` java
-com.redant.cluster.bootstrap.ZkBootstrap
+public class MasterServerBootstrap {
+    public static void main(String[] args) {
+        String zkAddress = ZkServer.getZkAddressArgs(args,ZkConfig.DEFAULT);
+
+        // 启动MasterServer
+        Server masterServer = new MasterServer(zkAddress);
+        masterServer.preStart();
+        masterServer.start();
+    }
+}
 ```
 
-- 2 : 启动一个 Master 服务端
+如果在 main 方法的参数中指定了 Zk 的地址，就通过该地址去进行服务发现，否则会使用默认的 Zk 地址
 
-要启动一个 Master 服务端，只要运行下面的 Main 方法：
 
-``` java
-com.redant.cluster.bootstrap.MasterServerBootstrap
-```
 
 #### 启动从节点
 
-- 1：启动一个 Slave 服务端
-
-要启动一个 Slave 服务端，只要运行下面的 Main 方法： 
+只需要运行下面的代码，就可以启动一个从节点了：
 
 ``` java
-com.redant.cluster.bootstrap.SlaveServerBootstrap
+public class SlaveServerBootstrap {
+
+    public static void main(String[] args) {
+        String zkAddress = ZkServer.getZkAddressArgs(args,ZkConfig.DEFAULT);
+        Node node = Node.getNodeWithArgs(args);
+
+        // 启动SlaveServer
+        Server slaveServer = new SlaveServer(zkAddress,node);
+        slaveServer.preStart();
+        slaveServer.start();
+    }
+
+}
 ```
+
+如果在 main 方法的参数中指定了 Zk 的地址，就通过该地址去进行服务注册，否则会使用默认的 Zk 地址
+
+
 
 ## 例子
 
-你可以运行 `redant-example` 模块中提供的例子来体验一下
-
-启动的方式和上面讲述的完全一样，区别只是主类是在 `redant-example` 中
+你可以运行 redant-example 模块中提供的例子来体验一下，example 模块中内置了两个 Controller 。
 
 启动完之后，你可以在浏览器中访问 http://127.0.0.1:8888 来查看具体的效果 (默认的端口可以在 redant.properties 中修改)
 
-如果你看到了这样的消息："Welcome to redant!" 这就意味着你已经启动成功了. 
+如果你看到了这样的消息："Welcome to redant!" 这就意味着你已经启动成功了。
 
-在 `redant-example` 模块中，内置了以下几个默认的路由:
+在 redant-example 模块中，内置了以下几个默认的路由:
 
 | 方法类型           | URL                          | 响应类型                       |
 | ----------------- | ---------------------------- | ----------------------------- |
@@ -111,24 +154,12 @@ com.redant.cluster.bootstrap.SlaveServerBootstrap
 ## 自定义路由
 
 跟 Spring 一样，你可以通过 @Controller 来自定义一个 Controller.
- 
+
 @Mapping 注解用在方法级别，@Controller + @Mapping 唯一定义一个 http 请求。
 
 @Param 注解用在方法的参数上。通过该注解可以自动将基本类型转成 POJO 对象。
 
 **Tips：** 更多信息请查看wiki: [Router][2]
-
-
-
-## Session 管理器
-
-Session 管理器可以管理用户自定义的 Session. 
-
-Session 是通过 Netty的 ChannelHandlerContext 来体现的，channelId 作为 sessionId。
- 
-每个 Session 中都保持着一个 Map 来存储各种信息
-
-**Tips：** 更多信息请查看wiki: [Session][3]
 
 
 
@@ -141,9 +172,9 @@ Cookie 管理器可以管理用户自定义的 Cookie。
 
 
 
-  [1]: https://github.com/all4you/redant/wiki/1:Bean
-  [2]: https://github.com/all4you/redant/wiki/2:Router
-  [3]: https://github.com/all4you/redant/wiki/3:Session
-  [4]: https://github.com/all4you/redant/wiki/4:Cookie
+[1]: https://github.com/all4you/redant/wiki/1:Bean
+[2]: https://github.com/all4you/redant/wiki/2:Router
+[3]: https://github.com/all4you/redant/wiki/3:Session
+[4]: https://github.com/all4you/redant/wiki/4:Cookie
 
 
