@@ -1,7 +1,7 @@
 package com.redant.core.cookie;
 
 import cn.hutool.core.util.StrUtil;
-import com.redant.core.TemporaryDataHolder;
+import com.redant.core.context.RedantContext;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -44,7 +44,7 @@ public class DefaultCookieManager implements CookieManager {
 
     @Override
     public Set<Cookie> getCookies() {
-        HttpRequest request = TemporaryDataHolder.loadHttpRequest();
+        HttpRequest request = RedantContext.currentContext().getRequest();
         Set<Cookie> cookies = new HashSet<>();
         if(request != null) {
             String value = request.headers().get(HttpHeaderNames.COOKIE);
@@ -81,7 +81,7 @@ public class DefaultCookieManager implements CookieManager {
 
     @Override
     public void setCookie(Cookie cookie) {
-        TemporaryDataHolder.storeCookie(cookie);
+        RedantContext.currentContext().addCookie(cookie);
     }
 
     @Override

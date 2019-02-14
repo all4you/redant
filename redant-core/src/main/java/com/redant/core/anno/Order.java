@@ -1,16 +1,16 @@
-package com.redant.core.init;
+package com.redant.core.anno;
 
 import java.lang.annotation.*;
 
 /**
- * 初始化器的排序规则，升序排序
+ * 排序规则，升序排序
  * @author houyi.wh
  * @date 2019-01-14
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Documented
-public @interface InitOrder {
+public @interface Order {
 
     /**
      * 最低优先级

@@ -2,11 +2,7 @@ package com.redant.core.server;
 
 import com.redant.core.common.constants.CommonConstants;
 import com.redant.core.handler.ControllerDispatcher;
-import com.redant.core.handler.ResponseWriter;
-import com.redant.core.handler.TemporaryDataStorer;
 import com.redant.core.handler.ssl.SslContextHelper;
-import com.redant.core.interceptor.InterceptorUtil;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -36,22 +32,10 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
         // HttpServerCodec is a combination of HttpRequestDecoder and HttpResponseEncoder
         // 使用HttpServerCodec将ByteBuf编解码为httpRequest/httpResponse
         pipeline.addLast(new HttpServerCodec());
+        addAdvanced(pipeline);
         pipeline.addLast(new ChunkedWriteHandler());
-        pipeline.addLast(new TemporaryDataStorer());
-        // 前置拦截器
-        ChannelHandler[] preInterceptors = InterceptorUtil.getPreInterceptors();
-        if(preInterceptors.length>0) {
-            pipeline.addLast(preInterceptors);
-        }
         // 路由分发器
         pipeline.addLast(new ControllerDispatcher());
-        // 后置拦截器
-        ChannelHandler[] afterInterceptors = InterceptorUtil.getAfterInterceptors();
-        if(afterInterceptors.length>0) {
-            pipeline.addLast(afterInterceptors);
-        }
-        // 请求结果响应
-        pipeline.addLast(new ResponseWriter());
     }
 
     private void initSsl(SocketChannel ch){
@@ -69,9 +53,9 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
     }
 
     /**
-     * 可以在 HttpServerCodec 之后添加这些 ChannelHandler
+     * 可以在 HttpServerCodec 之后添加这些 ChannelHandler 进行开启高级特性
      */
-    private void initOptional(ChannelPipeline pipeline){
+    private void addAdvanced(ChannelPipeline pipeline){
         if(CommonConstants.USE_COMPRESS) {
             // 对 http 响应结果开启 gizp 压缩
             pipeline.addLast(new HttpContentCompressor());

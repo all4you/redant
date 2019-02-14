@@ -1,65 +1,41 @@
 package com.redant.core.session;
 
-import com.redant.core.TemporaryDataHolder;
-import io.netty.channel.ChannelHandlerContext;
-
 /**
  * Session管理器
  * @author houyi.wh
  * @date 2017/11/6
  */
-public class SessionManager {
+public interface SessionManager {
 
-    private SessionManager(){
-
-    }
-
-
-    //======================================
 
     /**
      * 判断session是否存在
-     * @return
      */
-    public static boolean containsSession(){
-        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
-        return SessionHelper.instange().containsSession(context);
-    }
+    boolean sessionExists();
 
     /**
      * 添加一个session
-     * @param session
+     * @param session session对象
      */
-    public static void addSession(HttpSession session){
-        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
-        SessionHelper.instange().addSession(context, session);
-    }
+    void addSession(HttpSession session);
 
     /**
      * 获取一个session
-     * @return
+     * @return session对象
      */
-    public static HttpSession getSession(){
-        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
-        return SessionHelper.instange().getSession(context);
-    }
+    HttpSession getSession();
 
     /**
      * 获取一个session，获取不到时自动创建一个
-     * @param createIfNull
-     * @return
+     * @param createIfNull true：不存在时创建一个，false：不存在时也不创建
+     * @return session对象
      */
-    public static HttpSession getSession(boolean createIfNull){
-        ChannelHandlerContext context = TemporaryDataHolder.loadContext();
-        return SessionHelper.instange().getSession(context,createIfNull);
-    }
+    HttpSession getSession(boolean createIfNull);
 
     /**
      * 清除过期的session
      * 需要在定时器中执行该方法
      */
-    public static void clearExpireSession(){
-        SessionHelper.instange().clearExpireSession();
-    }
+    void clearExpireSession();
 
 }

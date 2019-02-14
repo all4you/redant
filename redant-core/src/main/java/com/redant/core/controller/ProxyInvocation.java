@@ -1,11 +1,11 @@
 package com.redant.core.controller;
 
 
-import com.redant.core.TemporaryDataHolder;
 import com.redant.core.common.exception.InvocationException;
 import com.redant.core.common.exception.ValidationException;
 import com.redant.core.common.util.GenericsUtil;
 import com.redant.core.common.util.HttpRequestUtil;
+import com.redant.core.context.RedantContext;
 import com.redant.core.converter.PrimitiveConverter;
 import com.redant.core.converter.PrimitiveTypeUtil;
 import com.redant.core.controller.annotation.Param;
@@ -63,7 +63,7 @@ public class ProxyInvocation {
 			Annotation[][] annotationArray = method.getParameterAnnotations();
 
 			//获取参数列表
-			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(TemporaryDataHolder.loadHttpRequest());
+			Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(RedantContext.currentContext().getRequest());
 
 			//构造调用所需要的参数数组
 			for (int i = 0; i < parameterTypes.length; i++) {

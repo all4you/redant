@@ -78,11 +78,25 @@ public final class MasterServer implements Server {
             ChannelPipeline pipeline = ch.pipeline();
 
             pipeline.addLast(new HttpServerCodec());
-            pipeline.addLast(new HttpContentCompressor());
-            pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
+            addAdvanced(pipeline);
             pipeline.addLast(new ChunkedWriteHandler());
             pipeline.addLast(new MasterServerHandler(zkAddress));
         }
+
+        /**
+         * 可以在 HttpServerCodec 之后添加这些 ChannelHandler 进行开启高级特性
+         */
+        private void addAdvanced(ChannelPipeline pipeline){
+            if(CommonConstants.USE_COMPRESS) {
+                // 对 http 响应结果开启 gizp 压缩
+                pipeline.addLast(new HttpContentCompressor());
+            }
+            if(CommonConstants.USE_AGGREGATOR) {
+                // 将多个HttpRequest组合成一个FullHttpRequest
+                pipeline.addLast(new HttpObjectAggregator(CommonConstants.MAX_CONTENT_LENGTH));
+            }
+        }
+
     }
 
 }
