@@ -97,7 +97,6 @@ public class RedantContext {
     }
 
     public static void clear(){
-        LOGGER.info("RedantContext removed");
         CONTEXT_HOLDER.remove();
     }
 
