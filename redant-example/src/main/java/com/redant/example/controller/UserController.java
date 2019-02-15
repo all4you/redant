@@ -10,8 +10,8 @@ import com.redant.core.controller.annotation.Controller;
 import com.redant.core.controller.annotation.Mapping;
 import com.redant.core.controller.annotation.Param;
 import com.redant.core.render.RenderType;
-import com.redant.example.service.user.UserService;
-import com.redant.example.service.user.UserBean;
+import com.redant.example.service.UserService;
+import com.redant.example.service.UserBean;
 
 /**
  * @author houyi.wh
