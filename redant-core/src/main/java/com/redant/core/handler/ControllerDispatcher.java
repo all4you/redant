@@ -54,7 +54,7 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
             // 处理业务逻辑
             response = invokeResponse(request);
             // 处理后置拦截器
-            InterceptorHandler.afterHandle(paramMap);
+            InterceptorHandler.postHandle(paramMap);
         }catch(Exception e){
             LOGGER.error("Server Internal Error,cause:",e);
             response = getErrorResponse(e);

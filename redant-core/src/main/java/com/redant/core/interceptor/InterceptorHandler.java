@@ -23,13 +23,13 @@ public class InterceptorHandler {
         return true;
     }
 
-    public static void afterHandle(Map<String, List<String>> paramMap){
+    public static void postHandle(Map<String, List<String>> paramMap){
         List<Interceptor> interceptors = InterceptorProvider.getInterceptors();
         if(CollectionUtil.isEmpty(interceptors)){
             return;
         }
         for(Interceptor interceptor : interceptors){
-            interceptor.afterHandle(paramMap);
+            interceptor.postHandle(paramMap);
         }
     }
 

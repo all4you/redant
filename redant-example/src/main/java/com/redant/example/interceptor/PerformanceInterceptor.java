@@ -28,7 +28,7 @@ public class PerformanceInterceptor extends Interceptor {
     }
 
     @Override
-    public void afterHandle(Map<String, List<String>> paramMap) {
+    public void postHandle(Map<String, List<String>> paramMap) {
         long end = System.currentTimeMillis();
         long cost = end - start;
         HttpRequest request = RedantContext.currentContext().getRequest();

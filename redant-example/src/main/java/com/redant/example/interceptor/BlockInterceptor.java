@@ -41,7 +41,7 @@ public class BlockInterceptor extends Interceptor {
     }
 
     @Override
-    public void afterHandle(Map<String, List<String>> paramMap) {
+    public void postHandle(Map<String, List<String>> paramMap) {
 
     }
 
