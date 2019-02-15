@@ -70,9 +70,9 @@ public class ProxyInvocation {
 				Object parameter;
 				Class<?> type = parameterTypes[i];
 				Annotation[] annotation = annotationArray[i];
-				// 如果该参数没有RouterParam注解
+				// 如果该参数没有 Param 注解
 				if (annotation == null || annotation.length == 0) {
-					// 如果该参数类型是基础类型，则需要加RouterParam注解
+					// 如果该参数类型是基础类型，则需要加 Param 注解
 					if(PrimitiveTypeUtil.isPriType(type)){
 						logger.warn("Must specify a @Param annotation for primitive type parameter in method={}", method.getName());
 						continue;
@@ -84,7 +84,7 @@ public class ProxyInvocation {
 				}else{
 					Param param = (Param) annotation[0];
 					try{
-						// 生成当前的调用参数v
+						// 生成当前的调用参数
 						parameter = parseParameter(paramMap, type, param, method, i);
 						if(param.notNull()){
 							GenericsUtil.checkNull(param.key(), parameter);
@@ -151,9 +151,9 @@ public class ProxyInvocation {
 							}else{
 								list = (List<Object>) type.newInstance();
 							}
-							for(int i = 0; i < params.size(); i++){
-								if(params.get(i).length() > 0){
-									list.add(PrimitiveConverter.getInstance().convert(params.get(i), listType));
+							for (String param1 : params) {
+								if (param1.length() > 0) {
+									list.add(PrimitiveConverter.getInstance().convert(param1, listType));
 								}
 							}
 							value = list;
