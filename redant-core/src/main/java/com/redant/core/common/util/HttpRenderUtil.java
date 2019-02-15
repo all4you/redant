@@ -6,16 +6,11 @@ import com.redant.core.common.html.HtmlMaker;
 import com.redant.core.common.html.HtmlMakerEnum;
 import com.redant.core.common.html.HtmlMakerFactory;
 import com.redant.core.common.view.Page404;
-import com.redant.core.common.view.Page500;
-import com.redant.core.common.view.PageError;
 import com.redant.core.render.RenderType;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * HttpRenderUtil
@@ -77,6 +72,17 @@ public class HttpRenderUtil {
 		JSONObject object = new JSONObject();
 		object.put("code",300);
 		object.put("message",errorMessage);
+		return render(object, RenderType.JSON);
+	}
+
+	/**
+	 * BlockedResponse
+	 * @return 响应对象
+	 */
+	public static FullHttpResponse getBlockedResponse(){
+		JSONObject object = new JSONObject();
+		object.put("code",1000);
+		object.put("message","Blocked by user defined interceptor");
 		return render(object, RenderType.JSON);
 	}
 

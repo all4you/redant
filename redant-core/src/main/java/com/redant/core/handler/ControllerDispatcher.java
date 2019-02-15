@@ -46,9 +46,9 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
             if(!InterceptorUtil.preHandle(paramMap)){
                 // 先从RedantContext中获取response，检查用户是否设置了response
                 response = RedantContext.currentContext().getResponse();
-                // 若获取不到就创建一个
+                // 若用户没有设置就返回一个默认的
                 if (response == null) {
-                    response = HttpRenderUtil.render(null, RenderType.TEXT);
+                    response = HttpRenderUtil.getBlockedResponse();
                 }
                 return;
             }

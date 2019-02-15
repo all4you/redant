@@ -8,6 +8,7 @@ import com.redant.core.context.RedantContext;
 import com.redant.core.interceptor.Interceptor;
 import com.redant.core.render.RenderType;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,9 @@ public class InterceptorExample extends Interceptor {
     public void afterHandle(Map<String, List<String>> paramMap) {
         long end = System.currentTimeMillis();
         long cost = end - start;
-        LOGGER.info("cost:{}[ms]",cost);
+        HttpRequest request = RedantContext.currentContext().getRequest();
+        String uri = request.uri();
+        LOGGER.info("uri={}, cost:{}[ms]", uri, cost);
     }
 
 }
