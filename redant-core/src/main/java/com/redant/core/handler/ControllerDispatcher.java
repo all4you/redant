@@ -39,9 +39,9 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
         stageRequest(request,ctx);
         HttpResponse response = null;
         try{
-            //获取参数列表
+            // 获取参数列表
             Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(RedantContext.currentContext().getRequest());
-            // 处理前置拦截器
+            // 处理拦截器的前置方法
             if(!InterceptorHandler.preHandle(paramMap)){
                 // 先从RedantContext中获取response，检查用户是否设置了response
                 response = RedantContext.currentContext().getResponse();
@@ -53,7 +53,7 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
             }
             // 处理业务逻辑
             response = invokeResponse(request);
-            // 处理后置拦截器
+            // 处理拦截器的后置方法
             InterceptorHandler.postHandle(paramMap);
         }catch(Exception e){
             LOGGER.error("Server Internal Error,cause:",e);

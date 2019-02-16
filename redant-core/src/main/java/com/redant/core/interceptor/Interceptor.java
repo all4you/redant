@@ -9,14 +9,14 @@ import java.util.Map;
 public abstract class Interceptor {
 
     /**
-     * 前置拦截器拦截的方法
+     * 拦截器的前置处理方法
      */
     public boolean preHandle(Map<String, List<String>> paramMap){
         return true;
     }
 
     /**
-     * 后置拦截器拦截的方法
+     * 拦截器的后置处理方法
      */
     public abstract void postHandle(Map<String, List<String>> paramMap);
 
