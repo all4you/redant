@@ -48,7 +48,7 @@ public class HttpRequestUtil {
      * 目前支持最常用的 application/json 、application/x-www-form-urlencoded 几种 POST Content-type，可自行扩展！！！
      */
     @SuppressWarnings("unchecked")
-    public static Map<String, List<String>> getPostParamMap(FullHttpRequest fullRequest) {
+    private static Map<String, List<String>> getPostParamMap(FullHttpRequest fullRequest) {
         Map<String, List<String>> paramMap = new HashMap<>();
         HttpHeaders headers = fullRequest.headers();
         String contentType = getContentType(headers);
@@ -114,7 +114,7 @@ public class HttpRequestUtil {
      * @param headers http请求头
      * @return 内容类型
      */
-    public static String getContentType(HttpHeaders headers){
+    private static String getContentType(HttpHeaders headers){
         String contentType = headers.get(HttpHeaderNames.CONTENT_TYPE);
         String[] list = contentType.split(";");
         return list[0];
