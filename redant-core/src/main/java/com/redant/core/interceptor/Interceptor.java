@@ -18,6 +18,6 @@ public abstract class Interceptor {
     /**
      * 后置拦截器拦截的方法
      */
-    public abstract void afterHandle(Map<String, List<String>> paramMap);
+    public abstract void postHandle(Map<String, List<String>> paramMap);
 
 }

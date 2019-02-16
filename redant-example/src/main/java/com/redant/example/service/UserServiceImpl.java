@@ -1,4 +1,4 @@
-package com.redant.example.service.user;
+package com.redant.example.service;
 
 import com.redant.core.bean.annotation.Bean;
 

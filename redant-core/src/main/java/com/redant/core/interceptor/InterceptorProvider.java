@@ -9,43 +9,38 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author houyi.wh
- * @date 2017/11/15
+ * @author houyi
  **/
-public class InterceptorUtil {
+public class InterceptorProvider {
 
-    public static boolean preHandle(Map<String, List<String>> paramMap){
-        List<Interceptor> interceptors = InterceptorsHolder.interceptors;
-        if(CollectionUtil.isEmpty(interceptors)){
-            return true;
-        }
-        for(Interceptor interceptor : interceptors){
-            if(!interceptor.preHandle(paramMap)){
-                return false;
+    private static volatile InterceptorBuilder builder = null;
+
+    private static final ServiceLoader<InterceptorBuilder> LOADER = ServiceLoader.load(InterceptorBuilder.class);
+
+    public static List<Interceptor> getInterceptors(){
+        // 优先获取用户自定义的 InterceptorBuilder 构造的 Interceptor
+        if(builder==null){
+            for (InterceptorBuilder b : LOADER) {
+                builder = b;
+                break;
             }
         }
-        return true;
+        if(builder!=null){
+            return builder.build();
+        }
+        // 获取不到时，再扫描所有指定目录下的 Interceptor
+        return InterceptorsHolder.interceptors;
     }
 
-    public static void afterHandle(Map<String, List<String>> paramMap){
-        List<Interceptor> interceptors = InterceptorsHolder.interceptors;
-        if(CollectionUtil.isEmpty(interceptors)){
-            return;
-        }
-        for(Interceptor interceptor : interceptors){
-            interceptor.afterHandle(paramMap);
-        }
-    }
+    static class InterceptorsHolder {
 
-    private static class InterceptorsHolder {
+        static List<Interceptor> interceptors;
 
-        private static List<Interceptor> interceptors;
-
-        static{
-            interceptors = getInterceptors();
+        static {
+            interceptors = scanInterceptors();
         }
 
-        private static List<Interceptor> getInterceptors(){
+        private static List<Interceptor> scanInterceptors() {
             Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.INTERCEPTOR_SCAN_PACKAGE,Interceptor.class);
             if(CollectionUtil.isEmpty(classSet)){
                 return Collections.emptyList();
@@ -101,10 +96,5 @@ public class InterceptorUtil {
                 return interceptor;
             }
         }
-
     }
-
-
-
-
 }

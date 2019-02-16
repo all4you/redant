@@ -10,8 +10,7 @@ import com.redant.core.controller.ControllerProxy;
 import com.redant.core.controller.ProxyInvocation;
 import com.redant.core.controller.context.ControllerContext;
 import com.redant.core.controller.context.DefaultControllerContext;
-import com.redant.core.interceptor.InterceptorUtil;
-import com.redant.core.render.RenderType;
+import com.redant.core.interceptor.InterceptorHandler;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -43,7 +42,7 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
             //获取参数列表
             Map<String, List<String>> paramMap = HttpRequestUtil.getParameterMap(RedantContext.currentContext().getRequest());
             // 处理前置拦截器
-            if(!InterceptorUtil.preHandle(paramMap)){
+            if(!InterceptorHandler.preHandle(paramMap)){
                 // 先从RedantContext中获取response，检查用户是否设置了response
                 response = RedantContext.currentContext().getResponse();
                 // 若用户没有设置就返回一个默认的
@@ -55,7 +54,7 @@ public class ControllerDispatcher extends SimpleChannelInboundHandler<HttpReques
             // 处理业务逻辑
             response = invokeResponse(request);
             // 处理后置拦截器
-            InterceptorUtil.afterHandle(paramMap);
+            InterceptorHandler.postHandle(paramMap);
         }catch(Exception e){
             LOGGER.error("Server Internal Error,cause:",e);
             response = getErrorResponse(e);
