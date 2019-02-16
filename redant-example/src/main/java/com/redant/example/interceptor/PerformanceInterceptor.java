@@ -23,8 +23,9 @@ public class PerformanceInterceptor extends Interceptor {
 
     @Override
     public boolean preHandle(Map<String, List<String>> paramMap) {
+        LOGGER.info("[PerformanceInterceptor] preHandle");
         start = System.currentTimeMillis();
-        return super.preHandle(paramMap);
+        return true;
     }
 
     @Override

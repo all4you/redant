@@ -8,6 +8,8 @@ import com.redant.core.context.RedantContext;
 import com.redant.core.interceptor.Interceptor;
 import com.redant.core.render.RenderType;
 import io.netty.handler.codec.http.FullHttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +21,11 @@ import java.util.Map;
 @Order(value = 1)
 public class BlockInterceptor extends Interceptor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlockInterceptor.class);
+
     @Override
     public boolean preHandle(Map<String, List<String>> paramMap) {
+        LOGGER.info("[BlockInterceptor] preHandle");
         if(CollectionUtil.isNotEmpty(paramMap)) {
             String blockKey = "block";
             String blockVal = "true";
@@ -29,20 +34,23 @@ public class BlockInterceptor extends Interceptor {
                 String val = values.get(0);
                 if(blockVal.equals(val)){
                     JSONObject content = new JSONObject();
-                    content.put("status","你被前置拦截器拦截了");
+                    content.put("status","你被前置方法拦截了");
                     content.put("reason","请求参数中有 block=true");
                     FullHttpResponse response = HttpRenderUtil.render(content, RenderType.JSON);
                     RedantContext.currentContext().setResponse(response);
+                    LOGGER.info("[BlockInterceptor] blocked preHandle");
                     return false;
                 }
             }
         }
-        return super.preHandle(paramMap);
+        LOGGER.info("[BlockInterceptor] passed preHandle");
+        return true;
     }
 
     @Override
     public void postHandle(Map<String, List<String>> paramMap) {
-
+        // do nothing
+        LOGGER.info("[BlockInterceptor] postHandle");
     }
 
 }
