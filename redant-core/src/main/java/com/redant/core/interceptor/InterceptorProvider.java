@@ -5,7 +5,10 @@ import cn.hutool.core.lang.ClassScaner;
 import com.redant.core.anno.Order;
 import com.redant.core.common.constants.CommonConstants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -13,16 +16,28 @@ import java.util.stream.Collectors;
  **/
 public class InterceptorProvider {
 
-    private static volatile InterceptorBuilder builder = null;
+    private static volatile boolean loaded = false;
 
-    private static final ServiceLoader<InterceptorBuilder> LOADER = ServiceLoader.load(InterceptorBuilder.class);
+    private static InterceptorBuilder builder = null;
 
     public static List<Interceptor> getInterceptors(){
         // 优先获取用户自定义的 InterceptorBuilder 构造的 Interceptor
-        if(builder==null){
-            for (InterceptorBuilder b : LOADER) {
-                builder = b;
-                break;
+        if(!loaded){
+            synchronized (InterceptorProvider.class) {
+                if(!loaded) {
+                    Set<Class<?>> builders = ClassScaner.scanPackageBySuper(CommonConstants.INTERCEPTOR_SCAN_PACKAGE, InterceptorBuilder.class);
+                    if (CollectionUtil.isNotEmpty(builders)) {
+                        try {
+                            for (Class<?> cls : builders) {
+                                builder = (InterceptorBuilder) cls.newInstance();
+                                break;
+                            }
+                        } catch (IllegalAccessException | InstantiationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    loaded = true;
+                }
             }
         }
         if(builder!=null){
