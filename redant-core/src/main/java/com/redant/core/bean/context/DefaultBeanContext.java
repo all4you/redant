@@ -24,6 +24,7 @@ import java.util.Set;
 
 /**
  * DefaultBeanContext
+ *
  * @author houyi.wh
  * @date 2017-10-20
  */
@@ -35,31 +36,22 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
     /**
      * 保存所有的bean，初始化过一次后不会改变
      */
-    private static Map<String,Object> beanMap;
+    private static Map<String, Object> beanMap;
 
     /**
      * bean加载完毕的标志
      */
     private static volatile boolean inited;
 
-    /**
-     * BeanContext的实例(单例)
-     */
-    private static DefaultBeanContext context;
-
-    private DefaultBeanContext() {
-
+    private static final class DefaultBeanContextHolder {
+        private static DefaultBeanContext context = new DefaultBeanContext();
     }
 
-    public static BeanContext getInstance(){
-        if(context==null) {
-            synchronized (DefaultBeanContext.class) {
-                if(context==null) {
-                    context = new DefaultBeanContext();
-                }
-            }
-        }
-        return context;
+    private DefaultBeanContext() {
+    }
+
+    public static BeanContext getInstance() {
+        return DefaultBeanContextHolder.context;
     }
 
     @Override
@@ -82,14 +74,14 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
     @Override
     public <T> T getBean(String name, Class<T> clazz) {
         Object bean = getBean(name);
-        return bean==null ? null : (T) bean;
+        return bean == null ? null : (T) bean;
     }
 
     /**
      * bean是否加载完毕
      */
-    private boolean inited(){
-        while(!inited){
+    private boolean inited() {
+        while (!inited) {
             doInit();
             try {
                 Thread.sleep(500);
@@ -105,12 +97,9 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
      */
     private void doInit() {
         // 初始化时需要同步
-        synchronized (DefaultBeanContext.class){
-            if(!inited){
+        synchronized (DefaultBeanContext.class) {
+            if (!inited) {
                 LOGGER.info("[DefaultBeanContext] doInit");
-                if(context==null) {
-                    context = new DefaultBeanContext();
-                }
                 // 初始化bean
                 initBean();
                 // 对象注入
@@ -126,14 +115,14 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
     /**
      * 初始化Bean
      */
-    private void initBean(){
+    private void initBean() {
         LOGGER.info("[DefaultBeanContext] start initBean");
         try {
             /*
              * 扫描指定package下指定的类，并返回set
              */
-            Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(CommonConstants.BEAN_SCAN_PACKAGE,Bean.class);
-            beanMap = new LinkedHashMap<>(classSet.size()+1);
+            Set<Class<?>> classSet = ClassScaner.scanPackageByAnnotation(CommonConstants.BEAN_SCAN_PACKAGE, Bean.class);
+            beanMap = new LinkedHashMap<>(classSet.size() + 1);
             if (CollectionUtil.isNotEmpty(classSet)) {
                 /*
                  * 遍历所有类，找出有beanClass注解的类，并封装到linkedHashMap里
@@ -141,20 +130,20 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
                 for (Class<?> cls : classSet) {
                     Bean bean = cls.getAnnotation(Bean.class);
                     if (bean != null) {
-                        String beanName = StrUtil.isNotBlank(bean.name())?bean.name():cls.getName();
-                        if(beanMap.containsKey(beanName)){
-                            LOGGER.warn("[DefaultBeanContext] duplicate bean with name={}",beanName);
+                        String beanName = StrUtil.isNotBlank(bean.name()) ? bean.name() : cls.getName();
+                        if (beanMap.containsKey(beanName)) {
+                            LOGGER.warn("[DefaultBeanContext] duplicate bean with name={}", beanName);
                             continue;
                         }
                         beanMap.put(beanName, cls.newInstance());
                     }
                 }
                 LOGGER.info("[DefaultBeanContext] initBean success!");
-            }else{
+            } else {
                 LOGGER.warn("[DefaultBeanContext] no bean classes scanned!");
             }
         } catch (Exception e) {
-            LOGGER.error("[DefaultBeanContext] initBean error,cause:{}",e.getMessage(),e);
+            LOGGER.error("[DefaultBeanContext] initBean error,cause:{}", e.getMessage(), e);
         }
     }
 
@@ -187,50 +176,51 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
             /*
              * 扫描指定package下指定的类，并返回set
              */
-            Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.BEAN_SCAN_PACKAGE,BeanContextAware.class);
+            Set<Class<?>> classSet = ClassScaner.scanPackageBySuper(CommonConstants.BEAN_SCAN_PACKAGE, BeanContextAware.class);
             if (CollectionUtil.isNotEmpty(classSet)) {
                 for (Class<?> cls : classSet) {
                     // 如果cls是BeanContextAware的实现类
-                    if(!cls.isInterface() && BeanContextAware.class.isAssignableFrom(cls)){
+                    if (!cls.isInterface() && BeanContextAware.class.isAssignableFrom(cls)) {
                         Constructor<?> constructor = cls.getDeclaredConstructor();
                         constructor.setAccessible(true);
-                        BeanContextAware aware = (BeanContextAware)constructor.newInstance();
-                        aware.setBeanContext(context);
+                        BeanContextAware aware = (BeanContextAware) constructor.newInstance();
+                        aware.setBeanContext(getInstance());
                     }
                 }
             }
             LOGGER.info("[DefaultBeanContext] processBeanContextAware success!");
         } catch (Exception e) {
-            LOGGER.error("[DefaultBeanContext] processBeanContextAware error,cause:{}",e.getMessage(),e);
+            LOGGER.error("[DefaultBeanContext] processBeanContextAware error,cause:{}", e.getMessage(), e);
         }
     }
 
     /**
      * 处理在set方法加入的注解
+     *
      * @param bean 处理的bean
      */
-    private void propertyAnnotation(Object bean){
+    private void propertyAnnotation(Object bean) {
         LOGGER.info("[DefaultBeanContext] start propertyAnnotation");
         try {
             // 获取其属性的描述
             PropertyDescriptor[] descriptors = Introspector.getBeanInfo(bean.getClass()).getPropertyDescriptors();
-            for(PropertyDescriptor descriptor : descriptors){
+            for (PropertyDescriptor descriptor : descriptors) {
                 // 获取所有set方法
                 Method setter = descriptor.getWriteMethod();
                 // 判断set方法是否定义了注解
-                if(setter!=null && setter.isAnnotationPresent(Autowired.class)){
+                if (setter != null && setter.isAnnotationPresent(Autowired.class)) {
                     // 获取当前注解，并判断name属性是否为空
                     Autowired resource = setter.getAnnotation(Autowired.class);
                     String name;
                     Object value = null;
-                    if(StrUtil.isNotBlank(resource.name())){
+                    if (StrUtil.isNotBlank(resource.name())) {
                         // 获取注解的name属性的内容
                         name = resource.name();
                         value = beanMap.get(name);
-                    }else{ // 如果当前注解没有指定name属性,则根据类型进行匹配
-                        for(Map.Entry<String,Object>  entry : beanMap.entrySet()){
+                    } else { // 如果当前注解没有指定name属性,则根据类型进行匹配
+                        for (Map.Entry<String, Object> entry : beanMap.entrySet()) {
                             // 判断当前属性所属的类型是否在beanHolderMap中存在
-                            if(descriptor.getPropertyType().isAssignableFrom(entry.getValue().getClass())){
+                            if (descriptor.getPropertyType().isAssignableFrom(entry.getValue().getClass())) {
                                 // 获取类型匹配的实例对象
                                 value = entry.getValue();
                                 break;
@@ -245,31 +235,32 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
             }
             LOGGER.info("[DefaultBeanContext] propertyAnnotation success!");
         } catch (Exception e) {
-            LOGGER.info("[DefaultBeanContext] propertyAnnotation error,cause:{}",e.getMessage(),e);
+            LOGGER.info("[DefaultBeanContext] propertyAnnotation error,cause:{}", e.getMessage(), e);
         }
     }
 
     /**
      * 处理在字段上的注解
+     *
      * @param bean 处理的bean
      */
-    private void fieldAnnotation(Object bean){
+    private void fieldAnnotation(Object bean) {
         LOGGER.info("[DefaultBeanContext] start fieldAnnotation");
         try {
             // 获取其全部的字段描述
             Field[] fields = bean.getClass().getDeclaredFields();
-            for(Field field : fields){
-                if(field!=null && field.isAnnotationPresent(Autowired.class)){
+            for (Field field : fields) {
+                if (field != null && field.isAnnotationPresent(Autowired.class)) {
                     Autowired resource = field.getAnnotation(Autowired.class);
                     String name;
                     Object value = null;
-                    if(StrUtil.isNotBlank(resource.name())){
+                    if (StrUtil.isNotBlank(resource.name())) {
                         name = resource.name();
                         value = beanMap.get(name);
-                    }else{
-                        for(Map.Entry<String,Object>  entry : beanMap.entrySet()){
+                    } else {
+                        for (Map.Entry<String, Object> entry : beanMap.entrySet()) {
                             // 判断当前属性所属的类型是否在配置文件中存在
-                            if(field.getType().isAssignableFrom(entry.getValue().getClass())){
+                            if (field.getType().isAssignableFrom(entry.getValue().getClass())) {
                                 // 获取类型匹配的实例对象
                                 value = entry.getValue();
                                 break;
@@ -284,7 +275,7 @@ public class DefaultBeanContext implements BeanContext, InitFunc {
             }
             LOGGER.info("[DefaultBeanContext] fieldAnnotation success!");
         } catch (Exception e) {
-            LOGGER.info("[DefaultBeanContext] fieldAnnotation error,cause:{}",e.getMessage(),e);
+            LOGGER.info("[DefaultBeanContext] fieldAnnotation error,cause:{}", e.getMessage(), e);
         }
     }
 
