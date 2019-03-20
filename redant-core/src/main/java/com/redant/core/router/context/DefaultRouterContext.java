@@ -27,6 +27,7 @@ import java.util.Set;
 
 /**
  * 默认的RouterContext
+ *
  * @author houyi.wh
  * @date 2017-10-20
  */
@@ -55,24 +56,16 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
      */
     private static ControllerContext controllerContext;
 
-    /**
-     * RouterContext的实例(单例)
-     */
-    private static volatile DefaultRouterContext context;
+    private static final class DefaultRouterContextHolder {
+        private static DefaultRouterContext context = new DefaultRouterContext();
+    }
 
-    private DefaultRouterContext(){
+    private DefaultRouterContext() {
 
     }
 
-    public static RouterContext getInstance(){
-        if(context==null) {
-            synchronized (DefaultRouterContext.class) {
-                if(context==null) {
-                    context = new DefaultRouterContext();
-                }
-            }
-        }
-        return context;
+    public static RouterContext getInstance() {
+        return DefaultRouterContextHolder.context;
     }
 
     @Override
@@ -84,8 +77,8 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
      * 获取路由结果
      */
     @Override
-    public RouteResult<RenderType> getRouteResult(HttpMethod method, String uri){
-        if(inited()){
+    public RouteResult<RenderType> getRouteResult(HttpMethod method, String uri) {
+        if (inited()) {
             RouteResult<RenderType> routeResult = router.route(method, uri);
             LOGGER.debug("getRouteResult with method={}, uri={}, routeResult={}", method, uri, routeResult);
             return routeResult;
@@ -96,8 +89,8 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
     /**
      * Router是否加载完毕
      */
-    private boolean inited(){
-        while(!inited){
+    private boolean inited() {
+        while (!inited) {
             doInit();
             try {
                 Thread.sleep(500);
@@ -113,8 +106,8 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
      */
     private void doInit() {
         // 初始化时需要同步
-        synchronized(DefaultRouterContext.class){
-            if(!inited) {
+        synchronized (DefaultRouterContext.class) {
+            if (!inited) {
                 LOGGER.info("[DefaultRouterContext] doInit");
                 beanContext = DefaultBeanContext.getInstance();
                 controllerContext = DefaultControllerContext.getInstance();
@@ -126,7 +119,7 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
         }
     }
 
-    private void initRouter(){
+    private void initRouter() {
         try {
             LOGGER.info("[DefaultRouterContext] initRouter");
             // 获取所有RouterController
@@ -140,17 +133,17 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
                     for (Method method : methods) {
                         Mapping mapping = method.getAnnotation(Mapping.class);
                         if (mapping != null) {
-                            addRoute(controller,mapping);
+                            addRoute(controller, mapping);
                             // 添加控制器
-                            addProxy(cls,method,controller,mapping);
+                            addProxy(cls, method, controller, mapping);
                         }
                     }
                 }
                 router.notFound(RenderType.HTML);
                 LOGGER.info("[DefaultRouterContext] initRouter success! routers are listed blow:" +
-                        "\n*************************************" +
-                        "\n{}" +
-                        "*************************************\n",
+                                "\n*************************************" +
+                                "\n{}" +
+                                "*************************************\n",
                         router);
             } else {
                 LOGGER.warn("[DefaultRouterContext] No Controller Scanned!");
@@ -162,7 +155,7 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
         }
     }
 
-    private void addRoute(Controller controller, Mapping mapping){
+    private void addRoute(Controller controller, Mapping mapping) {
         // Controller+Mapping 唯一确定一个控制器的方法
         String path = controller.path() + mapping.path();
         HttpMethod method = RequestMethod.getHttpMethod(mapping.requestMethod());
@@ -170,7 +163,7 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
         router.addRoute(method, path, mapping.renderType());
     }
 
-    private void addProxy(Class<?> cls, Method method, Controller controller, Mapping mapping){
+    private void addProxy(Class<?> cls, Method method, Controller controller, Mapping mapping) {
         try {
             // Controller+Mapping 唯一确定一个控制器的方法
             String path = controller.path() + mapping.path();
@@ -191,10 +184,10 @@ public class DefaultRouterContext implements RouterContext, InitFunc {
             proxy.setMethod(method);
             proxy.setMethodName(method.getName());
 
-            controllerContext.addProxy(path,proxy);
+            controllerContext.addProxy(path, proxy);
             LOGGER.info("[DefaultRouterContext] addProxy path={} to proxy={}", path, proxy);
-        }catch(Exception e){
-            LOGGER.error("[DefaultRouterContext] addProxy error,cause:",e.getMessage(),e);
+        } catch (Exception e) {
+            LOGGER.error("[DefaultRouterContext] addProxy error,cause:", e.getMessage(), e);
         }
     }
 

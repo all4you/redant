@@ -23,32 +23,24 @@ public class DefaultControllerContext implements ControllerContext {
     /**
      * 保存所有的RouterController的代理类
      */
-    private static Map<String,ControllerProxy> proxyMap;
+    private static Map<String, ControllerProxy> proxyMap;
 
     /**
      * 路由上下文
      */
     private static RouterContext routerContext;
 
-    /**
-     * RouterContext的实例(单例)
-     */
-    private volatile static DefaultControllerContext context;
+    private static final class DefaultControllerContextHolder {
+        private static DefaultControllerContext context = new DefaultControllerContext();
+    }
 
-    private DefaultControllerContext(){
+    private DefaultControllerContext() {
         routerContext = DefaultRouterContext.getInstance();
         proxyMap = new ConcurrentHashMap<>();
     }
 
-    public static ControllerContext getInstance(){
-        if(context==null) {
-            synchronized (DefaultControllerContext.class) {
-                if(context==null) {
-                    context = new DefaultControllerContext();
-                }
-            }
-        }
-        return context;
+    public static ControllerContext getInstance() {
+        return DefaultControllerContextHolder.context;
     }
 
 
@@ -60,15 +52,15 @@ public class DefaultControllerContext implements ControllerContext {
     @Override
     public ControllerProxy getProxy(HttpMethod method, String uri) {
         RouteResult<RenderType> routeResult = routerContext.getRouteResult(method, uri);
-        if(routeResult==null){
+        if (routeResult == null) {
             return null;
         }
         // 获取代理
         ControllerProxy controllerProxy = proxyMap.get(routeResult.decodedPath());
         LOGGER.debug("\n=========================  getControllerProxy =========================" +
-                     "\nmethod={}, uri={}" +
-                     "\ncontrollerProxy={}" +
-                     "\n=========================  getControllerProxy =========================",
+                        "\nmethod={}, uri={}" +
+                        "\ncontrollerProxy={}" +
+                        "\n=========================  getControllerProxy =========================",
                 method, uri, controllerProxy);
         return controllerProxy;
     }
