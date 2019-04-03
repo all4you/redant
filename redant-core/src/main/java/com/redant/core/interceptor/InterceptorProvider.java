@@ -18,7 +18,7 @@ public class InterceptorProvider {
 
     private static volatile boolean loaded = false;
 
-    private static InterceptorBuilder builder = null;
+    private static volatile InterceptorBuilder builder = null;
 
     public static List<Interceptor> getInterceptors(){
         // 优先获取用户自定义的 InterceptorBuilder 构造的 Interceptor

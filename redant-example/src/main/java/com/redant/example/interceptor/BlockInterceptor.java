@@ -25,7 +25,6 @@ public class BlockInterceptor extends Interceptor {
 
     @Override
     public boolean preHandle(Map<String, List<String>> paramMap) {
-        LOGGER.info("[BlockInterceptor] preHandle");
         if(CollectionUtil.isNotEmpty(paramMap)) {
             String blockKey = "block";
             String blockVal = "true";
@@ -43,14 +42,12 @@ public class BlockInterceptor extends Interceptor {
                 }
             }
         }
-        LOGGER.info("[BlockInterceptor] passed preHandle");
         return true;
     }
 
     @Override
     public void postHandle(Map<String, List<String>> paramMap) {
         // do nothing
-        LOGGER.info("[BlockInterceptor] postHandle");
     }
 
 }

@@ -19,11 +19,10 @@ public class PerformanceInterceptor extends Interceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceInterceptor.class);
 
-    private long start;
+    private volatile long start;
 
     @Override
     public boolean preHandle(Map<String, List<String>> paramMap) {
-        LOGGER.info("[PerformanceInterceptor] preHandle");
         start = System.currentTimeMillis();
         return true;
     }
