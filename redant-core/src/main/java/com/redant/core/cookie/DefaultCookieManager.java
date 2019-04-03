@@ -15,30 +15,23 @@ import java.util.Set;
 
 /**
  * Cookie管理器
+ *
  * @author houyi.wh
  * @date 2019-01-16
  */
 
 public class DefaultCookieManager implements CookieManager {
 
-    /**
-     * CookieManager的实例(单例)
-     */
-    private static CookieManager cookieManager;
+    private static final class DefaultCookieManagerHolder {
+        private static DefaultCookieManager cookieManager = new DefaultCookieManager();
+    }
 
     private DefaultCookieManager() {
 
     }
 
-    public static CookieManager getInstance(){
-        if(cookieManager ==null) {
-            synchronized (DefaultCookieManager.class) {
-                if(cookieManager ==null) {
-                    cookieManager = new DefaultCookieManager();
-                }
-            }
-        }
-        return cookieManager;
+    public static CookieManager getInstance() {
+        return DefaultCookieManagerHolder.cookieManager;
     }
 
 
@@ -46,7 +39,7 @@ public class DefaultCookieManager implements CookieManager {
     public Set<Cookie> getCookies() {
         HttpRequest request = RedantContext.currentContext().getRequest();
         Set<Cookie> cookies = new HashSet<>();
-        if(request != null) {
+        if (request != null) {
             String value = request.headers().get(HttpHeaderNames.COOKIE);
             if (value != null) {
                 cookies = ServerCookieDecoder.STRICT.decode(value);
@@ -57,10 +50,10 @@ public class DefaultCookieManager implements CookieManager {
 
     @Override
     public Map<String, Cookie> getCookieMap() {
-        Map<String,Cookie> cookieMap = new HashMap<>();
+        Map<String, Cookie> cookieMap = new HashMap<>();
         Set<Cookie> cookies = getCookies();
-        if(null!=cookies && !cookies.isEmpty()){
-            for(Cookie cookie : cookies){
+        if (null != cookies && !cookies.isEmpty()) {
+            for (Cookie cookie : cookies) {
                 cookieMap.put(cookie.name(), cookie);
             }
         }
@@ -69,14 +62,14 @@ public class DefaultCookieManager implements CookieManager {
 
     @Override
     public Cookie getCookie(String name) {
-        Map<String,Cookie> cookieMap = getCookieMap();
+        Map<String, Cookie> cookieMap = getCookieMap();
         return cookieMap.getOrDefault(name, null);
     }
 
     @Override
     public String getCookieValue(String name) {
         Cookie cookie = getCookie(name);
-        return cookie==null?null:cookie.value();
+        return cookie == null ? null : cookie.value();
     }
 
     @Override
@@ -96,22 +89,22 @@ public class DefaultCookieManager implements CookieManager {
 
     @Override
     public void addCookie(String name, String value) {
-        addCookie(name,value,null);
+        addCookie(name, value, null);
     }
 
     @Override
     public void addCookie(String name, String value, String domain) {
-        addCookie(name,value,domain,0);
+        addCookie(name, value, domain, 0);
     }
 
     @Override
     public void addCookie(String name, String value, long maxAge) {
-        addCookie(name,value,null,maxAge);
+        addCookie(name, value, null, maxAge);
     }
 
     @Override
     public void addCookie(String name, String value, String domain, long maxAge) {
-        if(StrUtil.isNotBlank(name) && StrUtil.isNotBlank(value)) {
+        if (StrUtil.isNotBlank(name) && StrUtil.isNotBlank(value)) {
             Cookie cookie = new DefaultCookie(name, value);
             cookie.setPath("/");
             if (domain != null && domain.trim().length() > 0) {
@@ -127,7 +120,7 @@ public class DefaultCookieManager implements CookieManager {
     @Override
     public boolean deleteCookie(String name) {
         Cookie cookie = getCookie(name);
-        if(cookie!=null){
+        if (cookie != null) {
             cookie.setMaxAge(0);
             cookie.setPath("/");
             setCookie(cookie);
