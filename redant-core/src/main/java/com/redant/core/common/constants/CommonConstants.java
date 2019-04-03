@@ -86,4 +86,29 @@ public class CommonConstants {
 
     public static final String CONNECTION_CLOSE = "close";
 
+    /**
+     * 是否异步处理业务逻辑
+     */
+    public static final boolean ASYNC_EXECUTE_EVENT = propertiesUtil.getBoolean("async.execute.event");
+
+    /**
+     * 业务线程池核心线程数
+     */
+    public static final int EVENT_EXECUTOR_POOL_CORE_SIZE = propertiesUtil.getInt("async.executor.pool.core.size",10);
+
+    /**
+     * 业务线程池最大线程数
+     */
+    public static final int EVENT_EXECUTOR_POOL_MAX_SIZE = propertiesUtil.getInt("async.executor.pool.max.size",20);
+
+    /**
+     * 业务线程池临时线程存活时间，单位：s
+     */
+    public static final int EVENT_EXECUTOR_POOL_KEEP_ALIVE_SECONDS = propertiesUtil.getInt("async.executor.pool.keep.alive.seconds",10);
+
+    /**
+     * 业务线程池阻塞队列大学
+     */
+    public static final int EVENT_EXECUTOR_POOL_BLOCKING_QUEUE_SIZE = propertiesUtil.getInt("async.executor.pool.blocking.queue.size",10);
+
 }
