@@ -19,21 +19,25 @@ public class PerformanceInterceptor extends Interceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PerformanceInterceptor.class);
 
-    private volatile long start;
+    private ThreadLocal<Long> start = new ThreadLocal<>();
 
     @Override
     public boolean preHandle(Map<String, List<String>> paramMap) {
-        start = System.currentTimeMillis();
+        start.set(System.currentTimeMillis());
         return true;
     }
 
     @Override
     public void postHandle(Map<String, List<String>> paramMap) {
-        long end = System.currentTimeMillis();
-        long cost = end - start;
-        HttpRequest request = RedantContext.currentContext().getRequest();
-        String uri = request.uri();
-        LOGGER.info("uri={}, cost:{}[ms]", uri, cost);
+        try {
+            long end = System.currentTimeMillis();
+            long cost = end - start.get();
+            HttpRequest request = RedantContext.currentContext().getRequest();
+            String uri = request.uri();
+            LOGGER.info("uri={}, cost:{}[ms]", uri, cost);
+        }finally {
+            start.remove();
+        }
     }
 
 }
