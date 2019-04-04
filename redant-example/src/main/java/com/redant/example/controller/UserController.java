@@ -13,6 +13,8 @@ import com.redant.core.render.RenderType;
 import com.redant.example.service.UserBean;
 import com.redant.example.service.UserService;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author houyi.wh
  * @date 2017/12/1
@@ -29,6 +31,11 @@ public class UserController {
 
     @Mapping(path = "/info", requestMethod = RequestMethod.GET, renderType = RenderType.JSON)
     public UserBean info(@Param(key = "id", notNull = true) Integer id) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return userService.selectUserInfo(id);
     }
 
