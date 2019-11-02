@@ -19,7 +19,7 @@
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.1.7</logback.version>
         <fastjson.version>1.2.54</fastjson.version>
-        <netty.version>4.1.9.Final</netty.version>
+        <netty.version>4.1.42.Final</netty.version>
         <cglib.version>3.2.4</cglib.version>
         <hutool-all.version>4.2.1</hutool-all.version>
         <zookeeper.version>3.4.13</zookeeper.version>
